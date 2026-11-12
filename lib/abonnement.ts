@@ -36,7 +36,7 @@ export const FORMULES: Record<Formule, DetailFormule> = {
   pro: {
     id: "pro", nom: "Pro", prix: 15000, accroche: "Pour publier tous les jours",
     membres: 2, postsAutoParJour: 15,
-    atouts: ["Tout Démarrage", "15 publications automatiques par jour", "NOVA répond aux commentaires", "Studio visuels et vidéos", "2 membres d'équipe"],
+    atouts: ["Tout Démarrage", "15 publications automatiques par jour", "NOVA répond aux commentaires", "Réactions en direct", "2 membres d'équipe"],
   },
   equipe: {
     id: "equipe", nom: "Équipe", prix: 35000, accroche: "Pour une rédaction complète",

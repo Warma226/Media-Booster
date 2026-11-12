@@ -145,7 +145,6 @@ export default function Dashboard() {
 
 
   const recapDate = d?.recap ? new Date(d.recap.date).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric" }) : null;
-  const m = d?.media?.categories;
   const rubriques = [
     { id: "actu", nom: nomDe("actu"), href: "/calendrier", meta: `${n(actu.publie)} publiées · 7 j`, c: ["#047857", "#047857"], ok: !n(actu.erreur), et: n(actu.erreur) ? `${pl(n(actu.erreur), "erreur")} à corriger` : auto ? "Pilote automatique actif" : "En attente de validation", bl: "Publiées · à valider · en erreur", v: [n(actu.publie), n(actu.a_valider) + n(actu.brouillon), n(actu.erreur)] },
     { id: "citation", nom: nomDe("citation"), href: "/calendrier", meta: `${n(cit.planifie)} planifiées`, c: ["#A9520A", "#A9520A"], ok: !n(cit.erreur), et: d?.citationsSansPhoto ? `${d.citationsSansPhoto} en attente de photo` : "Photos prêtes", bl: "Publiées · planifiées · en erreur", v: [n(cit.publie), n(cit.planifie), n(cit.erreur)] },
@@ -153,7 +152,6 @@ export default function Dashboard() {
     { id: "portrait", nom: nomDe("portrait"), href: "/creer", meta: "Vos visuels", c: ["#8A5A44", "#8A5A44"], ok: !n(por.erreur), et: n(por.planifie) ? `${pl(n(por.planifie), "portrait")} planifié${n(por.planifie) > 1 ? "s" : ""}` : "Prêt à recevoir un visuel", bl: "Publiés · planifiés · à faire", v: [n(por.publie), n(por.planifie), n(por.brouillon) + n(por.a_valider)] },
     { id: "", picto: "recap", nom: "Récap de la semaine", href: "/calendrier", meta: "Chaque vendredi", c: ["#3E4D47", "#3E4D47"], ok: d?.recap?.statut !== "erreur", et: recapDate ? `Dernier : ${recapDate}` : "Pas encore de récap", bl: "Publiés cette semaine", v: [n(actu.recap), 0, 0] },
     { id: "", picto: "avis", nom: "Commentaires", href: "/communaute", meta: "Assistante NOVA", c: ["#44608F", "#44608F"], ok: !d?.grin.aTraiter, et: d?.grin.aTraiter ? `${pl(d.grin.aTraiter, "message")} à traiter` : "Commentaires et messages suivis", bl: "À traiter", v: [0, n(d?.grin.aTraiter), 0] },
-    { id: "", picto: "studio", nom: "Studio", href: "/studio", meta: "Visuels et vidéos", c: ["#6B5B95", "#6B5B95"], ok: true, et: "Visuels, carrousels, vidéos", bl: "Images · voix off · vidéos", v: [n(m?.images.n), n(m?.voix.n), n(m?.videos.n)] },
   ].filter((r) => !r.id || actives.has(r.id));
   const BAR = ["#047857", "#F5B94A", "#C9D3E3"];
 
@@ -275,7 +273,7 @@ export default function Dashboard() {
 
         {/* Raccourcis (téléphone) */}
         <nav className="tv-raccourcis tv-mobile" aria-label="Raccourcis">
-          {[["/studio", "Studio", NAV_ICONS.studio], ["/reactions", "Réactions", NAV_ICONS.grin], ["/connexions", "Mes pages", NAV_ICONS.cnx]].map(([href, l, ic]) => (
+          {[["/reactions", "Réactions", NAV_ICONS.grin], ["/connexions", "Mes pages", NAV_ICONS.cnx], ["/calendrier", "Calendrier", NAV_ICONS.cal]].map(([href, l, ic]) => (
             <Link key={href} href={href}><span><Trait d={ic} size={20} /></span><span>{l}</span></Link>
           ))}
         </nav>

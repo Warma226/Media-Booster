@@ -26,7 +26,7 @@ export const peut = (role: Role, zone: Zone, ecrire = false) => {
 // Pages : préfixe → zone (null = ouvert à toute l'équipe)
 const PAGES: [string, Zone | null][] = [
   ["/compte", null], ["/apercu", null], ["/reactions", null], ["/calendrier", "calendrier"], ["/veille", "veille"], ["/rubriques", "creer"],
-  ["/creer", "creer"], ["/partage", "creer"], ["/editeur", "creer"], ["/studio", "studio"], ["/communaute", "grin"],
+  ["/creer", "creer"], ["/partage", "creer"], ["/editeur", "creer"], ["/communaute", "grin"],
   ["/mediatheque", "admin"], ["/connexions", "admin"], ["/declencheurs", "admin"], ["/sources", "admin"], ["/demarrage", "admin"], ["/marque", "admin"], ["/proposition", "admin"],
 ];
 export function zonePage(path: string): Zone | null | undefined {
@@ -46,7 +46,6 @@ const API: [string, Zone | null, Zone | null][] = [
   ["/api/settings", null, "admin"], ["/api/reactions", null, null], ["/api/propositions", "admin", "admin"], ["/api/tableau", null, "admin"], ["/api/posts", null, "publier"],
   ["/api/veille", "veille", "veille"], ["/api/generate", "creer", "creer"],
   ["/api/upload", null, "publier"], ["/api/upload-url", null, "publier"],
-  ["/api/studio", "studio", "studio"], ["/api/voix", "studio", "studio"],
   ["/api/cm", "grin", "grin"],
   ["/api/membres", "admin", "admin"], ["/api/mediatheque", "admin", "admin"], ["/api/connexions", "admin", "admin"],
   ["/api/sources", "admin", "admin"], ["/api/tiktok", "admin", "admin"],

@@ -31,7 +31,7 @@ export function completerMarque(m?: Marque | null): MarqueComplete {
 }
 
 // ─── Marque active dans le navigateur ────────────────────────────────
-// Les gabarits du Studio (lib/creation, lib/modeles, lib/minute) la lisent au moment de dessiner.
+// Les gabarits de visuels la lisent au moment de dessiner.
 // Elle est remplie une fois les réglages chargés (useMarque). Jamais utilisée côté serveur.
 export const marqueActive: MarqueComplete = completerMarque(null);
 export function definirMarqueActive(m?: Marque | null) {

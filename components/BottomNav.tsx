@@ -51,7 +51,6 @@ const MENU: { href: string; label: string; d: string; badge?: "grin" }[] = [
   { href: "/veille", label: "Veille", d: NAV_ICONS.veille },
   { href: "/creer", label: "Créer", d: NAV_ICONS.creer },
   { href: "/calendrier", label: "Calendrier", d: NAV_ICONS.cal },
-  { href: "/studio", label: "Studio", d: NAV_ICONS.studio },
   { href: "/communaute", label: "Commentaires", d: NAV_ICONS.grin, badge: "grin" },
   { href: "/reactions", label: "Réactions", d: NAV_ICONS.grin },
   { href: "/connexions", label: "Mes pages", d: NAV_ICONS.cnx },
@@ -67,7 +66,7 @@ const ONGLETS: { href: string; label: string; d: string }[] = [
   { href: "/communaute", label: "Avis", d: NAV_ICONS.grin },
 ];
 
-const SECONDAIRES = ["/demarrage", "/marque", "/themes", "/abonnement", "/studio", "/creer/", "/editeur", "/apercu", "/declencheurs", "/rubriques", "/sources", "/mediatheque", "/connexions", "/proposition", "/reactions"];
+const SECONDAIRES = ["/demarrage", "/marque", "/themes", "/abonnement", "/creer/", "/editeur", "/apercu", "/declencheurs", "/rubriques", "/sources", "/mediatheque", "/connexions", "/proposition", "/reactions"];
 
 type Etat = { autopilot: boolean; grin: number } | null;
 

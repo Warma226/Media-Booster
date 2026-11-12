@@ -3,7 +3,7 @@ import { signedUpload } from "@/lib/storage";
 
 export const dynamic = "force-dynamic";
 
-// POST { type, ext } → { signedUrl, publicUrl } : le navigateur envoie lui-même le fichier (vidéo du Studio).
+// POST { type, ext } → { signedUrl, publicUrl } : le navigateur envoie lui-même le fichier (gros fichiers de la Médiathèque).
 export async function POST(req: Request) {
   try {
     const { type, ext } = (await req.json()) as { type?: string; ext?: string };

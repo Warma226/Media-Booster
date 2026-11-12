@@ -1,6 +1,6 @@
 "use client";
 // Profil du média connecté (marque, rubriques, thèmes), lu une fois par chargement de page et partagé.
-// Charge aussi la marque dans les gabarits du Studio (definirMarqueActive).
+// Charge aussi la marque dans les gabarits de visuels (definirMarqueActive).
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { getInfo } from "@/lib/client";

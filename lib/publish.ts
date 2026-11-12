@@ -216,7 +216,7 @@ async function facebookCarousel(post: Post, slides: string[]) {
   return { ok: true, detail: `Carrousel de ${ids.length} images publié sur la Page`, url: json.id ? `https://www.facebook.com/${json.id}` : undefined, id: json.id };
 }
 
-// Vidéo (créée dans le Studio) : Facebook la récupère à partir de son lien.
+// Vidéo : Facebook la récupère à partir de son lien.
 async function facebookVideo(post: Post, url: string) {
   const { FB } = await identifiants();
   const version = FB_VERSION();
