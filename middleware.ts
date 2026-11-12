@@ -23,7 +23,8 @@ async function etatSession(sid: string): Promise<EtatSession> {
   if (!url || !cle) return { ouverte: true, acces: true };
   try {
     const r = await fetch(`${url}/rest/v1/sessions?id=eq.${encodeURIComponent(sid)}&select=id,espace:espaces(statut,essai_fin,payee_jusqu)`, {
-      headers: { apikey: cle, Authorization: `Bearer ${cle}` },
+      // Les nouvelles clés « sb_secret_… » passent seulement par apikey ; l'ancienne clé service_role (JWT) aussi par Authorization.
+      headers: cle.startsWith("sb_") ? { apikey: cle } : { apikey: cle, Authorization: `Bearer ${cle}` },
       cache: "no-store",
     });
     if (!r.ok) return { ouverte: true, acces: true }; // base injoignable : on ne bloque pas
