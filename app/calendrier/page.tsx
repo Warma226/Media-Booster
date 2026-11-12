@@ -11,6 +11,8 @@ import type { Post, PostStatus } from "@/lib/store";
 import type { RubriqueId } from "@/lib/config";
 import { getInfo, listPosts, listPostsEntre } from "@/lib/client";
 import { heureFixe } from "@/lib/schedule";
+import { useProfil } from "@/components/Profil";
+import { infoRubrique, rubriquesActives } from "@/lib/marque";
 
 type Ligne = RubriqueId | "recap";
 const LIGNES: { id: Ligne; nom: string; rythme: string; c: [string, string] }[] = [
@@ -115,8 +117,10 @@ function Calendrier() {
 
   const nbSansPhoto = tous.filter((p) => sansPhoto(p) && ["planifie", "erreur", "a_valider"].includes(p.status)).length;
   const nbErreurs = tous.filter((p) => p.status === "erreur" && !sansPhoto(p)).length;
-  const videsCyber = jours.filter((d) => !passe(d) && !(parCase.get(`cyberbase|${cle(d)}`) ?? []).length && tous.every((p) => !(p.rubrique === "cyberbase" && quand(p) && cle(quand(p) as Date) === cle(d))));
-  const videsCit = jours.filter((d) => !passe(d) && tous.every((p) => !(p.rubrique === "citation" && ["planifie", "a_valider"].includes(p.status) && quand(p) && cle(quand(p) as Date) === cle(d))));
+  const profilRub = useProfil()?.rubriques;
+  const actif = (id: string) => rubriquesActives(profilRub).some((r) => r.id === id);
+  const videsCyber = !actif("cyberbase") ? [] : jours.filter((d) => !passe(d) && !(parCase.get(`cyberbase|${cle(d)}`) ?? []).length && tous.every((p) => !(p.rubrique === "cyberbase" && quand(p) && cle(quand(p) as Date) === cle(d))));
+  const videsCit = !actif("citation") ? [] : jours.filter((d) => !passe(d) && tous.every((p) => !(p.rubrique === "citation" && ["planifie", "a_valider"].includes(p.status) && quand(p) && cle(quand(p) as Date) === cle(d))));
   const compte = (s: string) => (s === "tout" ? tous.length : tous.filter((p) => p.status === s).length);
 
   const duJour = filtres
@@ -195,7 +199,7 @@ function Calendrier() {
         <div className="row" style={{ flexWrap: "wrap", gap: 10 }}>
           {nbSansPhoto || nbErreurs || videsCyber.length ? <span className="tv-kicker" style={{ color: "#5B6B86" }}>À RÉGLER</span> : null}
           {nbSansPhoto ? <button type="button" className="tv-regler rouge" onClick={() => { setFiltre("sansphoto"); setVue("liste"); }}><i /><strong>{nbSansPhoto}</strong> citation{nbSansPhoto > 1 ? "s" : ""} sans photo</button> : null}
-          {videsCyber.length ? <Link href="/creer/cyberbase" className="tv-regler orange"><i /><strong>{videsCyber.length}</strong> jour{videsCyber.length > 1 ? "s" : ""} sans #CyberBase</Link> : null}
+          {videsCyber.length ? <Link href="/creer/cyberbase" className="tv-regler orange"><i /><strong>{videsCyber.length}</strong> jour{videsCyber.length > 1 ? "s" : ""} sans « {infoRubrique(profilRub, "cyberbase").nom} »</Link> : null}
           {nbErreurs ? <button type="button" className="tv-regler rouge" onClick={() => setFiltre("erreur")}><i /><strong>{nbErreurs}</strong> en erreur</button> : null}
           <span style={{ flex: 1 }} />
           <div className="hscroll" role="tablist" aria-label="Statut" style={{ gap: 6 }}>
@@ -329,7 +333,7 @@ function Calendrier() {
                 <section className="tv-voa" aria-labelledby="t-trous" style={{ flex: "none" }}>
                   <span className="tv-kicker" style={{ color: "#FCD34D" }}>CRÉNEAUX À COMBLER</span>
                   <h2 id="t-trous" style={{ fontSize: 17, fontWeight: 800, color: "#fff", lineHeight: 1.3 }}>Cette semaine, des jours restent vides.</h2>
-                  {([["citation", "Citations", videsCit], ["cyberbase", "#CyberBase", videsCyber]] as const).map(([r, nom, v]) => v.length ? (
+                  {([["citation", infoRubrique(profilRub, "citation").nom, videsCit], ["cyberbase", infoRubrique(profilRub, "cyberbase").nom, videsCyber]] as const).map(([r, nom, v]) => v.length ? (
                     <div key={r} className="row" style={{ gap: 12, padding: "10px 12px", borderRadius: 14, background: "rgba(255,255,255,0.08)" }}>
                       <Tuile rub={r} taille={30} />
                       <span style={{ flex: 1, display: "flex", flexDirection: "column", gap: 2 }}><strong style={{ fontSize: 14 }}>{nom}</strong><span style={{ fontSize: 12, color: "#CBD5E1" }}>{v.map((d) => d.toLocaleDateString("fr-FR", { weekday: "short", day: "numeric" }).replace(".", "")).join(", ")}</span></span>

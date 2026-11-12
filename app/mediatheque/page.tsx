@@ -3,6 +3,7 @@
 // Les fichiers ne s'affichent qu'à l'ouverture d'un dossier ou d'une catégorie.
 import Link from "next/link";
 import { Suspense, useCallback, useEffect, useRef, useState } from "react";
+import { useMoi } from "@/components/Moi";
 import { useRouter, useSearchParams } from "next/navigation";
 import { NAV_ICONS, Trait } from "@/components/BottomNav";
 import { useVoirPlus } from "@/components/VoirPlus";
@@ -12,7 +13,18 @@ type Fichier = { nom: string; chemin: string; url: string; taille: number; type:
 type Tri = "recent" | "ancien" | "lourd" | "nom";
 type Reponse = Stockage & { fichiers: Fichier[]; error?: string };
 
+// Réservée au propriétaire de la plateforme : le stockage est commun à tous les espaces clients.
 export default function Page() {
+  const moi = useMoi();
+  if (moi && !moi.plateforme) {
+    return (
+      <main className="page sub">
+        <p className="notice">Cette page est réservée à l&apos;administration de Media Booster.</p>
+        <a href="/" className="btn primary">Retour au tableau de bord</a>
+      </main>
+    );
+  }
+  if (!moi) return null;
   return (
     <Suspense fallback={null}>
       <Mediatheque />

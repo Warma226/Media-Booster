@@ -52,12 +52,10 @@ const MENU: { href: string; label: string; d: string; badge?: "grin" }[] = [
   { href: "/creer", label: "Créer", d: NAV_ICONS.creer },
   { href: "/calendrier", label: "Calendrier", d: NAV_ICONS.cal },
   { href: "/studio", label: "Studio", d: NAV_ICONS.studio },
-  { href: "/minute-cyber", label: "La minute cyber", d: NAV_ICONS.minute },
-  { href: "/communaute", label: "Le Grin · NOVA", d: NAV_ICONS.grin, badge: "grin" },
-  { href: "/sources", label: "Sources", d: NAV_ICONS.sources },
-  { href: "/declencheurs", label: "Déclencheurs", d: NAV_ICONS.eclair },
-  { href: "/connexions", label: "Connexions", d: NAV_ICONS.cnx },
-  { href: "/demarrage", label: "Configuration", d: NAV_ICONS.eclair },
+  { href: "/communaute", label: "Commentaires · NOVA", d: NAV_ICONS.grin, badge: "grin" },
+  { href: "/reactions", label: "Réactions", d: NAV_ICONS.grin },
+  { href: "/connexions", label: "Mes pages", d: NAV_ICONS.cnx },
+  { href: "/demarrage", label: "Mon média", d: NAV_ICONS.eclair },
   { href: "/abonnement", label: "Abonnement", d: NAV_ICONS.cnx },
 ];
 
@@ -66,10 +64,10 @@ const ONGLETS: { href: string; label: string; d: string }[] = [
   { href: "/veille", label: "Veille", d: NAV_ICONS.veille },
   { href: "/creer", label: "Créer", d: NAV_ICONS.plus },
   { href: "/calendrier", label: "Agenda", d: NAV_ICONS.cal },
-  { href: "/communaute", label: "Grin", d: NAV_ICONS.grin },
+  { href: "/communaute", label: "Avis", d: NAV_ICONS.grin },
 ];
 
-const SECONDAIRES = ["/demarrage", "/marque", "/themes", "/abonnement", "/studio", "/minute-cyber", "/creer/", "/editeur", "/apercu", "/declencheurs", "/rubriques", "/sources", "/mediatheque", "/connexions"];
+const SECONDAIRES = ["/demarrage", "/marque", "/themes", "/abonnement", "/studio", "/creer/", "/editeur", "/apercu", "/declencheurs", "/rubriques", "/sources", "/mediatheque", "/connexions", "/proposition", "/reactions"];
 
 type Etat = { autopilot: boolean; grin: number } | null;
 
@@ -106,7 +104,13 @@ export function BottomNav() {
             </Link>
           ))}
         </div>
-        {voit("/mediatheque") ? (
+        {moi?.plateforme ? (
+          <Link href="/plateforme" className="tv-side-item" aria-current={actif("/plateforme") ? "page" : undefined}>
+            <span className="tv-side-ico"><Trait d={NAV_ICONS.cnx} /></span>
+            <span>Mes clients</span>
+          </Link>
+        ) : null}
+        {moi?.plateforme ? (
           <Link href="/mediatheque" className="tv-side-item tv-side-media" aria-current={media ? "page" : undefined}>
             <span className="tv-side-ico"><Trait d={NAV_ICONS.media} /></span>
             <span>Médiathèque</span>

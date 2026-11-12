@@ -10,6 +10,7 @@ import { Courbe, Disque, Dossiers, Repartition, type Jour, type Stockage } from 
 import { getInfo, saveSettings, type Info } from "@/lib/client";
 import { useMoi } from "@/components/Moi";
 import { useProfil } from "@/components/Profil";
+import { infoRubrique, rubriquesActives } from "@/lib/marque";
 
 type Compte = Partial<Record<"publie" | "planifie" | "a_valider" | "brouillon" | "erreur" | "annule" | "recap", number>>;
 type Donnees = {
@@ -22,7 +23,6 @@ type Donnees = {
   citationsSansPhoto: number;
   erreurs: { id: string; titre: string; rubrique: string; detail: string }[];
   nbErreurs: number;
-  minute: { total: number; montes: number; brouillons: number; dernier: number };
   grin: { aTraiter: number };
   recap: { date: string; statut: string } | null;
   media: Stockage | null;
@@ -98,12 +98,12 @@ export default function Dashboard() {
   if (d?.citationsSansPhoto) alertes.push({ type: "À FAIRE", tag: ["#D97706", "#fff"], txt: `${pl(d.citationsSansPhoto, "citation")} ${d.citationsSansPhoto > 1 ? "attendent" : "attend"} leur photo avant de partir.`, cta: "Ajouter les photos", href: "/calendrier?filtre=erreur" });
   if (erreursAutres.length) {
     const e = erreursAutres[0];
-    const quoi = e.rubrique === "actu" ? "Une actualité" : e.rubrique === "cyberbase" ? "Un numéro #CyberBase" : "Un post";
+    const quoi = e.rubrique === "actu" ? "Une actualité" : e.rubrique === "cyberbase" ? "Une notion du jour" : "Un post";
     const canal = /facebook/i.test(e.detail) ? " sur Facebook" : /linkedin/i.test(e.detail) ? " sur LinkedIn" : "";
     alertes.push({ type: "ERREUR", tag: ["#FDD5D9", "#9F1239"], txt: erreursAutres.length > 1 ? `${erreursAutres.length} publications n'ont pas pu partir.` : `${quoi} n'a pas pu être publiée${canal}.`, cta: "Voir et republier", href: "/calendrier?filtre=erreur" });
   }
   if (aValider) alertes.push({ type: "À VALIDER", tag: ["#D1FAE5", "#065F46"], txt: `${pl(aValider, "post")} ${aValider > 1 ? "attendent" : "attend"} ton feu vert.`, cta: "Valider", href: "/calendrier?filtre=a_valider" });
-  if (d?.grin.aTraiter) alertes.push({ type: "LE GRIN", tag: ["#FDE68A", "#7A4A00"], txt: `${pl(d.grin.aTraiter, "message")} de la communauté ${d.grin.aTraiter > 1 ? "attendent" : "attend"} une réponse.`, cta: "Ouvrir le Grin", href: "/communaute" });
+  if (d?.grin.aTraiter) alertes.push({ type: "COMMENTAIRES", tag: ["#FDE68A", "#7A4A00"], txt: `${pl(d.grin.aTraiter, "message")} de la communauté ${d.grin.aTraiter > 1 ? "attendent" : "attend"} une réponse.`, cta: "Voir les commentaires", href: "/communaute" });
   if (info && !auto) alertes.push({ type: "RÉGLAGE", tag: ["rgba(255,255,255,0.15)", "#fff"], txt: "Le pilote automatique est en pause : rien ne part sans toi.", cta: "Le réactiver", action: basculer });
   if (info && !info.ai) alertes.push({ type: "RÉGLAGE", tag: ["rgba(255,255,255,0.15)", "#fff"], txt: "Rédaction par l'IA momentanément indisponible : les brouillons restent possibles.", cta: "Ouvrir les connexions", href: "/connexions" });
   const vAl = useVoirPlus(alertes, 3, alertes.length);
@@ -118,23 +118,26 @@ export default function Dashboard() {
     <span role="img" aria-label={label} title={label} style={{ width: 14, height: 14, borderRadius: 7, flexShrink: 0, background: ok ? VERT : ROUGE, boxShadow: `0 0 0 5px ${ok ? "rgba(34,197,94,0.18)" : "rgba(225,29,46,0.16)"}` }} />
   );
 
+  // Rubriques du client : seules celles qu'il a activées, sous le nom qu'il leur a donné.
+  const actives = new Set<string>(rubriquesActives(profil?.rubriques).map((r) => r.id));
+  const nomDe = (id: string) => infoRubrique(profil?.rubriques, id).nom;
   const une = [
-    { nom: "Actualités", href: "/calendrier", meta1: `${n(actu.publie)} publiées`, meta2: "7 derniers jours", desc: "La veille repère l'info tech, l'IA la résume en français, convertit les montants en FCFA et publie seule.", c: ["#60A5FA", "#065F46"], ok: !n(actu.erreur), vals: [n(actu.publie), n(actu.a_valider) + n(actu.brouillon), n(actu.erreur)], cols: [["#047857", "#fff"], ["#FDE7C8", "#9A4A00"], ["#FDD5D9", "#B4111F"]] as [string, string][], leg: "Publiées · à valider · erreurs", canaux: ["F", "in", "W"], rythme: auto ? "Toutes les 30 min" : "Sur validation" },
-    { nom: "Citations", href: "/calendrier", meta1: `${n(cit.planifie)} planifiées`, meta2: `${n(cit.publie)} publiées`, desc: "Des voix tech d'Afrique et du monde, vérifiées, une toutes les deux heures. Il suffit d'ajouter la photo.", c: ["#FCD34D", "#B45309"], ok: !n(cit.erreur), vals: [n(cit.publie), n(cit.planifie), n(cit.erreur)], cols: [["#B45309", "#fff"], ["#E9E3FF", "#92400E"], ["#FDD5D9", "#B4111F"]] as [string, string][], leg: "Publiées · planifiées · erreurs", canaux: ["F", "in"], rythme: "Toutes les 2 h" },
-  ];
+    { id: "actu", nom: nomDe("actu"), href: "/calendrier", meta1: `${n(actu.publie)} publiées`, meta2: "7 derniers jours", desc: "La veille repère les infos de vos sources, l'IA les résume dans le ton de votre média et publie aux heures choisies.", c: ["#60A5FA", "#065F46"], ok: !n(actu.erreur), vals: [n(actu.publie), n(actu.a_valider) + n(actu.brouillon), n(actu.erreur)], cols: [["#047857", "#fff"], ["#FDE7C8", "#9A4A00"], ["#FDD5D9", "#B4111F"]] as [string, string][], leg: "Publiées · à valider · erreurs", canaux: ["F", "in", "W"], rythme: auto ? "Pilote automatique" : "Sur validation" },
+    { id: "citation", nom: nomDe("citation"), href: "/calendrier", meta1: `${n(cit.planifie)} planifiées`, meta2: `${n(cit.publie)} publiées`, desc: "Des phrases vérifiables de personnalités, avec leur auteur et leur source. Il suffit d'ajouter la photo.", c: ["#FCD34D", "#B45309"], ok: !n(cit.erreur), vals: [n(cit.publie), n(cit.planifie), n(cit.erreur)], cols: [["#B45309", "#fff"], ["#E9E3FF", "#92400E"], ["#FDD5D9", "#B4111F"]] as [string, string][], leg: "Publiées · planifiées · erreurs", canaux: ["F", "in"], rythme: "Planifiées" },
+  ].filter((r) => actives.has(r.id));
+
 
   const recapDate = d?.recap ? new Date(d.recap.date).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric" }) : null;
   const m = d?.media?.categories;
   const rubriques = [
-    { nom: "Actualités", href: "/calendrier", meta: `${n(actu.publie)} publiées · 7 j`, c: ["#60A5FA", "#065F46"], ok: !n(actu.erreur), et: n(actu.erreur) ? `${pl(n(actu.erreur), "erreur")} à corriger` : auto ? "Pilote automatique actif" : "En attente de validation", bl: "Publiées · à valider · en erreur", v: [n(actu.publie), n(actu.a_valider) + n(actu.brouillon), n(actu.erreur)] },
-    { nom: "Citations", href: "/calendrier", meta: `${n(cit.planifie)} planifiées`, c: ["#FCD34D", "#B45309"], ok: !n(cit.erreur), et: d?.citationsSansPhoto ? `${d.citationsSansPhoto} en attente de photo` : "Photos prêtes", bl: "Publiées · planifiées · en erreur", v: [n(cit.publie), n(cit.planifie), n(cit.erreur)] },
-    { nom: "#CyberBase", href: "/rubriques", meta: "Chaque jour à 7 h", c: ["#5EEAD4", "#0E9F8E"], ok: !n(cyb.erreur), et: n(cyb.planifie) ? `${pl(n(cyb.planifie), "numéro")} d'avance` : "Aucun numéro d'avance", bl: "Publiés · planifiés · en erreur", v: [n(cyb.publie), n(cyb.planifie), n(cyb.erreur)] },
-    { nom: "Portrait", href: "/creer", meta: "Vos visuels", c: ["#FDBA74", "#D97706"], ok: !n(por.erreur), et: n(por.planifie) ? `${pl(n(por.planifie), "portrait")} planifié${n(por.planifie) > 1 ? "s" : ""}` : "Prêt à recevoir un visuel", bl: "Publiés · planifiés · à faire", v: [n(por.publie), n(por.planifie), n(por.brouillon) + n(por.a_valider)] },
-    { nom: "La minute cyber", href: "/minute-cyber", meta: "Vidéo · 1 min", c: ["#FCA5A5", "#B91C1C"], ok: true, et: d?.minute.dernier ? `Épisode ${d.minute.dernier} prêt` : "Premier épisode à écrire", bl: "Montés · brouillons", v: [n(d?.minute.montes), n(d?.minute.brouillons), 0] },
-    { nom: "Récap du vendredi", href: "/calendrier", meta: "Chaque vendredi", c: ["#93C5FD", "#0F172A"], ok: d?.recap?.statut !== "erreur", et: recapDate ? `Dernier : ${recapDate}` : "Pas encore de récap", bl: "Publiés cette semaine", v: [n(actu.recap), 0, 0] },
-    { nom: "Le Grin · NOVA", href: "/communaute", meta: "Community manager", c: ["#FDE68A", "#D97706"], ok: !d?.grin.aTraiter, et: d?.grin.aTraiter ? `${pl(d.grin.aTraiter, "message")} à traiter` : "Commentaires et messages suivis", bl: "À traiter", v: [0, n(d?.grin.aTraiter), 0] },
-    { nom: "Studio", href: "/studio", meta: "Visuels et vidéos", c: ["#A5B4FC", "#4338CA"], ok: true, et: "Visuels, carrousels, vidéos", bl: "Images · voix off · vidéos", v: [n(m?.images.n), n(m?.voix.n), n(m?.videos.n)] },
-  ];
+    { id: "actu", nom: nomDe("actu"), href: "/calendrier", meta: `${n(actu.publie)} publiées · 7 j`, c: ["#60A5FA", "#065F46"], ok: !n(actu.erreur), et: n(actu.erreur) ? `${pl(n(actu.erreur), "erreur")} à corriger` : auto ? "Pilote automatique actif" : "En attente de validation", bl: "Publiées · à valider · en erreur", v: [n(actu.publie), n(actu.a_valider) + n(actu.brouillon), n(actu.erreur)] },
+    { id: "citation", nom: nomDe("citation"), href: "/calendrier", meta: `${n(cit.planifie)} planifiées`, c: ["#FCD34D", "#B45309"], ok: !n(cit.erreur), et: d?.citationsSansPhoto ? `${d.citationsSansPhoto} en attente de photo` : "Photos prêtes", bl: "Publiées · planifiées · en erreur", v: [n(cit.publie), n(cit.planifie), n(cit.erreur)] },
+    { id: "cyberbase", nom: nomDe("cyberbase"), href: "/creer", meta: infoRubrique(profil?.rubriques, "cyberbase").heure !== null ? `Chaque jour à ${infoRubrique(profil?.rubriques, "cyberbase").heure} h` : "Chaque jour", c: ["#5EEAD4", "#0E9F8E"], ok: !n(cyb.erreur), et: n(cyb.planifie) ? `${pl(n(cyb.planifie), "numéro")} d'avance` : "Aucun numéro d'avance", bl: "Publiés · planifiés · en erreur", v: [n(cyb.publie), n(cyb.planifie), n(cyb.erreur)] },
+    { id: "portrait", nom: nomDe("portrait"), href: "/creer", meta: "Vos visuels", c: ["#FDBA74", "#D97706"], ok: !n(por.erreur), et: n(por.planifie) ? `${pl(n(por.planifie), "portrait")} planifié${n(por.planifie) > 1 ? "s" : ""}` : "Prêt à recevoir un visuel", bl: "Publiés · planifiés · à faire", v: [n(por.publie), n(por.planifie), n(por.brouillon) + n(por.a_valider)] },
+    { id: "", nom: "Récap de la semaine", href: "/calendrier", meta: "Chaque vendredi", c: ["#93C5FD", "#0F172A"], ok: d?.recap?.statut !== "erreur", et: recapDate ? `Dernier : ${recapDate}` : "Pas encore de récap", bl: "Publiés cette semaine", v: [n(actu.recap), 0, 0] },
+    { id: "", nom: "Commentaires · NOVA", href: "/communaute", meta: "Community manager", c: ["#FDE68A", "#D97706"], ok: !d?.grin.aTraiter, et: d?.grin.aTraiter ? `${pl(d.grin.aTraiter, "message")} à traiter` : "Commentaires et messages suivis", bl: "À traiter", v: [0, n(d?.grin.aTraiter), 0] },
+    { id: "", nom: "Studio", href: "/studio", meta: "Visuels et vidéos", c: ["#A5B4FC", "#4338CA"], ok: true, et: "Visuels, carrousels, vidéos", bl: "Images · voix off · vidéos", v: [n(m?.images.n), n(m?.voix.n), n(m?.videos.n)] },
+  ].filter((r) => !r.id || actives.has(r.id));
   const BAR = ["#047857", "#F5B94A", "#C9D3E3"];
 
   const piloteTexte = d?.prochaine ? `Prochaine : ${heure(d.prochaine.at)}${d.prochaine.titre ? ` · ${d.prochaine.titre.slice(0, 40)}` : ""}` : "Rien de planifié pour les prochaines heures";
@@ -255,7 +258,7 @@ export default function Dashboard() {
 
         {/* Raccourcis (téléphone) */}
         <nav className="tv-raccourcis tv-mobile" aria-label="Raccourcis">
-          {[["/studio", "Studio", NAV_ICONS.studio], ["/minute-cyber", "Minute cyber", NAV_ICONS.minute], ["/mediatheque", "Médiathèque", NAV_ICONS.media], ["/connexions", "Connexions", NAV_ICONS.cnx]].map(([href, l, ic]) => (
+          {[["/studio", "Studio", NAV_ICONS.studio], ["/reactions", "Réactions", NAV_ICONS.grin], ["/connexions", "Mes pages", NAV_ICONS.cnx]].map(([href, l, ic]) => (
             <Link key={href} href={href}><span><Trait d={ic} size={20} /></span><span>{l}</span></Link>
           ))}
         </nav>
@@ -338,12 +341,12 @@ export default function Dashboard() {
               </div>
             ))}
             <div className="tv-sombre">{vAl.bouton}</div>
-            <Link href="/communaute" style={{ fontSize: 13, fontWeight: 700, color: "#CBD5E1", textDecoration: "none" }}>Ouvrir le Grin de NOVA →</Link>
+            <Link href="/communaute" style={{ fontSize: 13, fontWeight: 700, color: "#CBD5E1", textDecoration: "none" }}>Voir les commentaires →</Link>
           </aside>
         </div>
 
-        {/* Médiathèque */}
-        <section aria-labelledby="media" className="tv-verre tv-media">
+        {/* Médiathèque : réservée au propriétaire de la plateforme */}
+        {moi?.plateforme ? <section aria-labelledby="media" className="tv-verre tv-media">
           <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 12 }}>
             <div style={{ flex: "1 1 260px", display: "flex", flexDirection: "column", gap: 4 }}>
               <h2 id="media" className="tv-h2" style={{ fontSize: 22 }}>Médiathèque</h2>
@@ -362,7 +365,7 @@ export default function Dashboard() {
               <Dossiers s={d.media} o={{ href: (c) => (c ? `/mediatheque?dossier=${c}` : "/mediatheque") }} />
             </>
           ) : <p className="tv-gris">{d ? "Stockage indisponible pour le moment." : "Lecture du stockage…"}</p>}
-        </section>
+        </section> : null}
       </div>
     </div>
   );

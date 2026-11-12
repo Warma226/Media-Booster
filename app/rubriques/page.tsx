@@ -1,6 +1,7 @@
 "use client";
 // Rubriques : le client choisit parmi quatre modèles ceux qu'il veut utiliser, et leur donne son propre nom,
 // hashtag, description et horaire. Rien n'est activé tant qu'il ne l'a pas décidé.
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { TopBar } from "@/components/BottomNav";
 import { useProfil } from "@/components/Profil";
@@ -69,6 +70,7 @@ export default function Rubriques() {
               );
             })}
             <Message msg={alerte || msg} erreur={Boolean(alerte) || erreur} />
+            {msg && !erreur && !alerte ? <Link href="/proposition" className="btn primary">Suivant : préparer ma veille</Link> : null}
             <button type="button" className="btn primary" disabled={busy} onClick={sauver}>{busy ? "Enregistrement…" : "Enregistrer les rubriques"}</button>
           </div>
         )}

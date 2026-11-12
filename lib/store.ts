@@ -6,7 +6,7 @@ import { completerMarque } from "./marque";
 
 export type PostStatus = "brouillon" | "a_valider" | "planifie" | "publie" | "erreur" | "annule";
 
-export type PublishResult = { ok: boolean; detail: string; url?: string; at: string };
+export type PublishResult = { ok: boolean; detail: string; url?: string; at: string; id?: string }; // id : identifiant du post sur le réseau (statistiques)
 
 export type Post = {
   id: string;

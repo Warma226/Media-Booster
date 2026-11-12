@@ -1,21 +1,14 @@
 import { NextResponse } from "next/server";
 import { dbGlobal } from "@/lib/store";
-import { moi } from "@/lib/equipe";
+import { estAdminPlateforme } from "@/lib/plateforme";
 import { prolonger } from "@/lib/paiement";
 import { FORMULES, accesOuvert, type Espace, type Formule } from "@/lib/abonnement";
 
 export const dynamic = "force-dynamic";
 
 // Administration de la plateforme (propriétaire de Media Booster) : tous les espaces clients, abonnements et paiements.
-// Accès réservé aux e-mails listés dans PLATEFORME_ADMINS (séparés par des virgules).
-async function autorise(): Promise<boolean> {
-  const admins = (process.env.PLATEFORME_ADMINS ?? "").split(",").map((x) => x.trim().toLowerCase()).filter(Boolean);
-  if (!admins.length) return false;
-  const m = await moi().catch(() => null);
-  if (!m) return false;
-  const { data } = await dbGlobal().from("membres").select("contact").eq("id", m.uid).eq("espace_id", m.espace).maybeSingle();
-  return admins.includes(String(data?.contact ?? "").toLowerCase());
-}
+// Accès réservé aux e-mails listés dans PLATEFORME_ADMINS (voir lib/plateforme).
+const autorise = estAdminPlateforme;
 
 export async function GET() {
   if (!(await autorise())) return NextResponse.json({ error: "Réservé à l'administration de Media Booster." }, { status: 403 });

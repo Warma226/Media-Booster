@@ -25,9 +25,9 @@ Définies dans `lib/abonnement.ts` (prix en FCFA, limites, atouts affichés) :
 
 | Formule | Prix / mois | Publications auto / jour | Membres d'équipe |
 |---|---|---|---|
-| Démarrage | 5 000 FCFA | 3 | aucun |
-| Pro | 15 000 FCFA | 10 | 2 |
-| Équipe | 35 000 FCFA | 30 | 10 |
+| Démarrage | 5 000 FCFA | 5 | aucun |
+| Pro | 15 000 FCFA | 15 | 2 |
+| Équipe | 35 000 FCFA | 35 | 10 |
 
 Durée de l'essai : `ESSAI_HEURES` dans le même fichier.
 

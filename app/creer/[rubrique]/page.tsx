@@ -15,6 +15,7 @@ import type { RubriqueId, Platform } from "@/lib/config";
 import type { Post } from "@/lib/store";
 import { listPosts, postAction, savePost, visuelsDe } from "@/lib/client";
 import { useProfil } from "@/components/Profil";
+import { infoRubrique } from "@/lib/marque";
 
 const RUBS: RubriqueId[] = ["actu", "citation", "cyberbase", "portrait"];
 const DEFAUT: Record<RubriqueId, Platform[]> = {
@@ -369,15 +370,15 @@ function AtelierRubrique({ rub }: { rub: RubriqueId }) {
     const depuis = Date.now() - 30 * 864e5;
     const traitees = posts.filter((p) => p.rubrique === "cyberbase" && p.status !== "annule" && new Date(p.scheduled_at ?? p.created_at).getTime() > depuis).map((p) => (p.visual?.titre || p.idea || p.title).trim()).filter(Boolean);
     const doublon = idea.trim() && traitees.some((t) => t.toLowerCase().includes(idea.trim().toLowerCase()) || idea.trim().toLowerCase().includes(t.toLowerCase()));
-    const IDEES = ["Rançongiciel", "VPN", "Mot de passe fort", "Sauvegarde 3-2-1", "Faux SMS bancaires", "Authentification à deux facteurs", "Hameçonnage par QR code"].filter((x) => !traitees.some((t) => t.toLowerCase().includes(x.toLowerCase())));
+    const IDEES = (profil?.themes ?? []).flatMap((t) => t.keywords.slice(0, 2)).filter((x) => x.length > 2).filter((x) => !traitees.some((t) => t.toLowerCase().includes(x.toLowerCase())));
     etapes = [
       { id: "notion", l: "Notion", etat: idea.trim() ? "fait" : "cours" },
       { id: "explication", l: "Explication", etat: gen ? "fait" : idea.trim() ? "cours" : "" },
       { id: "diffusion", l: "Diffusion", etat: gen ? "cours" : "" },
     ];
     canauxDetails = { facebook: "Visuel + 300 car.", linkedin: "Visuel + 600 car.", wordpress: "Fiche glossaire · 250 mots" };
-    libreTitre = "Prochain jour sans #CyberBase";
-    noteQuand = "#CyberBase sort chaque jour à heure fixe : NOVA prend le premier jour encore vide.";
+    libreTitre = `Prochain jour sans « ${infoRubrique(profil?.rubriques, "cyberbase").nom} »`;
+    noteQuand = "Cette rubrique sort chaque jour à heure fixe : NOVA prend le premier jour encore vide.";
     formulaire = (
       <>
         <Carte id="notion" titre="1 · La notion du jour">
@@ -398,7 +399,7 @@ function AtelierRubrique({ rub }: { rub: RubriqueId }) {
           <span className="tv-gris" style={{ fontSize: 13 }}>Écrite pour quelqu'un qui n'est pas du métier : c'est quoi, pourquoi ça compte, le bon réflexe.</span>
           {busy && !gen ? <p className="tv-gris" role="status">L'IA explique la notion…</p> : null}
           {blocAccroches}
-          <ImageField label="Votre visuel #CyberBase" hint="Le visuel que vous avez créé (fond crème #CyberBase). Vous pouvez aussi l'ajouter dans l'éditeur." value={photo} onChange={setPhoto} />
+          <ImageField label="Votre visuel" hint="Le visuel que vous avez créé pour cette rubrique. Vous pouvez aussi l'ajouter dans l'éditeur." value={photo} onChange={setPhoto} />
         </Carte>
         <Carte id="diffusion" titre="3 · Diffusion">
           <Canaux value={platforms} onChange={setPlatforms} details={canauxDetails} offerts={["facebook", "linkedin", "wordpress"]} />
@@ -409,7 +410,7 @@ function AtelierRubrique({ rub }: { rub: RubriqueId }) {
     controles = [
       [doublon ? "Notion déjà traitée récemment" : "Notion jamais traitée ces 30 derniers jours", Boolean(idea.trim()) && !doublon],
       [gen ? "Explication rédigée" : "Explication à rédiger", Boolean(gen)],
-      [photo ? "Visuel ajouté" : "Visuel #CyberBase à ajouter", Boolean(photo)],
+      [photo ? "Visuel ajouté" : "Visuel à ajouter", Boolean(photo)],
       [libre ? `Créneau libre : ${dateLongue(libre).toLowerCase()}` : "Aucun créneau libre trouvé", Boolean(libre)],
     ];
   } else {

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { db, isDemo } from "@/lib/store";
 import { cmDiagnostic, cmJeton } from "@/lib/cm";
 import { statsStockage } from "@/lib/mediatheque";
+import { estAdminPlateforme } from "@/lib/plateforme";
 import { aiProvider } from "@/lib/claude";
 import type { Platform } from "@/lib/config";
 
@@ -20,7 +21,7 @@ export async function GET() {
     db().from("posts").select("id,title,idea,scheduled_at,created_at,results").not("results", "is", null).gte("created_at", depuis).order("created_at", { ascending: false }).limit(400),
     cmJeton().catch(() => null),
     cmDiagnostic().catch(() => []),
-    statsStockage().catch(() => null),
+    estAdminPlateforme().then((ok) => (ok ? statsStockage() : null)).catch(() => null),
   ]);
   const plateformes: Platform[] = ["facebook", "linkedin", "wordpress", "tiktok"];
   const dernier: Partial<Record<Platform, string>> = {};

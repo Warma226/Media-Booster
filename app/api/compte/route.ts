@@ -3,6 +3,7 @@ import { db } from "@/lib/store";
 import { changerMdpMembre, fermerSession, fermerSessions, moi, sessionsDe } from "@/lib/equipe";
 import { lireEspace } from "@/lib/comptes";
 import { ROLE_NOM } from "@/lib/roles";
+import { contactAdminPlateforme } from "@/lib/plateforme";
 
 export const dynamic = "force-dynamic";
 
@@ -19,7 +20,7 @@ export async function GET() {
     const sessions = (await sessionsDe(m.uid)).map((x) => ({ ...x, moi: x.id === m.sid }));
     if (m.sid) await db().from("sessions").update({ vu_at: new Date().toISOString() }).eq("id", m.sid);
     return NextResponse.json({
-      uid: m.uid, role: m.role, roleNom: ROLE_NOM[m.role], ...profil, sessions,
+      uid: m.uid, role: m.role, roleNom: ROLE_NOM[m.role], ...profil, sessions, plateforme: contactAdminPlateforme(profil.contact),
       espace: espace ? { nom: espace.nom, formule: espace.formule, statut: espace.statut, essai_fin: espace.essai_fin, payee_jusqu: espace.payee_jusqu } : null,
       stats: { publies: posts.filter((p) => p.status === "publie" && p.created_at >= depuis).length, planifies: posts.filter((p) => p.status === "planifie").length, brouillons: posts.filter((p) => p.status === "brouillon").length },
       posts: posts.slice(0, 8),

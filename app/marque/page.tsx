@@ -1,5 +1,6 @@
 "use client";
 // Ma marque : identité du média du client. Elle guide l'IA (ton, public, ligne éditoriale) et signe les visuels.
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { TopBar } from "@/components/BottomNav";
 import { useProfil } from "@/components/Profil";
@@ -40,7 +41,7 @@ export default function MaMarque() {
         {!m ? <p className="muted">Chargement…</p> : (
           <form onSubmit={sauver} className="stack mb-form" style={{ gap: 16 }}>
             <label className="field">Nom du média
-              <input type="text" maxLength={60} required placeholder="Ex. Dakar Tech Info" {...champ("nom")} />
+              <input type="text" maxLength={60} required placeholder="Ex. Dakar Info" {...champ("nom")} />
             </label>
             <label className="field">Sigle (logo des visuels)
               <input type="text" maxLength={8} placeholder="Ex. DTI" {...champ("court")} />
@@ -53,13 +54,13 @@ export default function MaMarque() {
               <input type="text" inputMode="url" placeholder="https://www.facebook.com/monmedia" {...champ("facebook")} />
             </label>
             <label className="field">Votre média en une phrase
-              <input type="text" maxLength={160} placeholder="Ex. média d'actualité tech et cybersécurité" {...champ("description")} />
+              <input type="text" maxLength={160} placeholder="Ex. média d'actualité économique" {...champ("description")} />
             </label>
             <label className="field">Public visé
               <input type="text" maxLength={120} placeholder="Ex. les jeunes actifs du Sénégal" {...champ("public")} />
             </label>
             <label className="field">Ligne éditoriale (facultatif)
-              <textarea rows={4} maxLength={800} placeholder="Ex. Uniquement la tech : cybersécurité, mobile money, IA, startups. Priorité à l'Afrique de l'Ouest." {...champ("ligne")} />
+              <textarea rows={4} maxLength={800} placeholder="Ex. L'économie et l'entrepreneuriat au Sénégal, expliqués simplement. Priorité aux PME et aux jeunes." {...champ("ligne")} />
               <small className="muted small">Ce que vous traitez, ce que vous évitez, vos priorités. L&apos;IA s&apos;y tient.</small>
             </label>
             <fieldset className="mb-choix">
@@ -75,6 +76,7 @@ export default function MaMarque() {
               <input type="text" maxLength={8} placeholder="FCFA (laisser vide pour ne pas convertir)" {...champ("devise")} />
             </label>
             <Message msg={msg} erreur={erreur} />
+            {msg && !erreur ? <Link href="/rubriques" className="btn">Suivant : mes rubriques</Link> : null}
             <button type="submit" className="btn primary" disabled={busy}>{busy ? "Enregistrement…" : "Enregistrer"}</button>
           </form>
         )}

@@ -213,7 +213,7 @@ async function facebookCarousel(post: Post, slides: string[]) {
   const res = await fetch(`https://graph.facebook.com/${version}/${FB.pageId}/feed`, { method: "POST", body });
   const json = (await res.json()) as { id?: string; error?: { message: string } };
   if (!res.ok || json.error) throw new Error(`Facebook : ${json.error?.message ?? res.status}`);
-  return { ok: true, detail: `Carrousel de ${ids.length} images publié sur la Page`, url: json.id ? `https://www.facebook.com/${json.id}` : undefined };
+  return { ok: true, detail: `Carrousel de ${ids.length} images publié sur la Page`, url: json.id ? `https://www.facebook.com/${json.id}` : undefined, id: json.id };
 }
 
 // Vidéo (créée dans le Studio) : Facebook la récupère à partir de son lien.
@@ -224,7 +224,7 @@ async function facebookVideo(post: Post, url: string) {
   const res = await fetch(`https://graph-video.facebook.com/${version}/${FB.pageId}/videos`, { method: "POST", body });
   const json = (await res.json()) as { id?: string; error?: { message: string } };
   if (!res.ok || json.error) throw new Error(`Facebook (vidéo) : ${json.error?.message ?? res.status}`);
-  return { ok: true, detail: "Vidéo publiée sur la Page", url: json.id ? `https://www.facebook.com/${FB.pageId}/videos/${json.id}` : undefined };
+  return { ok: true, detail: "Vidéo publiée sur la Page", url: json.id ? `https://www.facebook.com/${FB.pageId}/videos/${json.id}` : undefined, id: json.id };
 }
 
 const facebook: Publisher = async (post) => {
@@ -240,7 +240,7 @@ const facebook: Publisher = async (post) => {
   const res = await fetch(`https://graph.facebook.com/${version}/${FB.pageId}/photos`, { method: "POST", body });
   const json = (await res.json()) as { id?: string; post_id?: string; error?: { message: string } };
   if (!res.ok || json.error) throw new Error(`Facebook : ${json.error?.message ?? res.status}`);
-  return { ok: true, detail: "Photo publiée sur la Page", url: json.post_id ? `https://www.facebook.com/${json.post_id}` : undefined };
+  return { ok: true, detail: "Photo publiée sur la Page", url: json.post_id ? `https://www.facebook.com/${json.post_id}` : undefined, id: json.post_id };
 };
 
 // Données envoyées à Make (scénario : Webhook → HTTP « Get a file » → LinkedIn « Create an Organization Image Post »).
@@ -290,7 +290,8 @@ const linkedin: Publisher = async (post) => {
     }),
   });
   if (!res.ok) throw new Error(`LinkedIn ${res.status} : ${(await res.text()).slice(0, 200)}`);
-  return { ok: true, detail: "Post publié sur LinkedIn" };
+  const urn = res.headers.get("x-restli-id") ?? undefined;
+  return { ok: true, detail: "Post publié sur LinkedIn", id: urn, url: urn ? `https://www.linkedin.com/feed/update/${urn}` : undefined };
 };
 
 const tiktok: Publisher = async (post) => {

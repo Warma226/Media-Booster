@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { estAdminPlateforme } from "@/lib/plateforme";
 import { isDemo } from "@/lib/store";
 import { CAPACITE, listerFichiers, renommerFichier, supprimerFichiers, usagesFichiers, type Categorie } from "@/lib/mediatheque";
 
@@ -8,6 +9,7 @@ const CATS: Categorie[] = ["images", "voix", "videos", "documents"];
 
 // GET /api/mediatheque → stockage par catégorie ; ?dossier=images → les fichiers de ce dossier, avec les publications qui les utilisent.
 export async function GET(req: Request) {
+  if (!(await estAdminPlateforme())) return NextResponse.json({ error: "Réservé à l'administration de Media Booster." }, { status: 403 });
   if (isDemo()) return NextResponse.json({ error: "La médiathèque demande Supabase (voir Connexions)." }, { status: 400 });
   try {
     const dossier = new URL(req.url).searchParams.get("dossier") as Categorie | "tous" | null;
@@ -30,6 +32,7 @@ export async function GET(req: Request) {
 
 // POST { renommer: chemin, nom } | { supprimer: [chemins] }
 export async function POST(req: Request) {
+  if (!(await estAdminPlateforme())) return NextResponse.json({ error: "Réservé à l'administration de Media Booster." }, { status: 403 });
   if (isDemo()) return NextResponse.json({ error: "La médiathèque demande Supabase." }, { status: 400 });
   try {
     const b = (await req.json().catch(() => ({}))) as { renommer?: string; nom?: string; supprimer?: string[] };

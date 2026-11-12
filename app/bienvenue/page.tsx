@@ -20,9 +20,9 @@ export const metadata: Metadata = {
 };
 
 const ACTUS = [
-  { source: "Votre source tech", titre: "Mobile money : un nouveau paiement par QR code" },
-  { source: "Votre source cyber", titre: "Une faille corrigée dans une app de messagerie" },
-  { source: "Votre source éco", titre: "Une levée de fonds record pour une startup locale" },
+  { source: "Votre source éco", titre: "Mobile money : un nouveau paiement par QR code" },
+  { source: "Votre source sport", titre: "Les Lions qualifiés pour la phase finale" },
+  { source: "Votre source locale", titre: "Une levée de fonds record pour une startup locale" },
 ];
 
 const ETAPES = [
@@ -39,7 +39,7 @@ const FONCTIONS = [
     points: ["Vos sources et vos thèmes, rien d'imposé", "Les sujets sensibles restent toujours en relecture", "10 minutes pour annuler une publication automatique"],
   },
   {
-    image: "/landing/creer.webp", alt: "Écran Créer avec les rubriques Actu Tech et Ils l'ont dit",
+    image: "/landing/creer.webp", alt: "Écran Créer avec les rubriques du média",
     titre: "Un post prêt en une minute, à votre façon",
     texte: "Vos rubriques portent vos noms et vos hashtags. L'IA écrit un texte par réseau dans le ton de votre média, cite la source et prépare le visuel à votre sigle.",
     points: ["Actualité, citation, notion du jour, portrait", "Ton neutre, chaleureux ou dynamique", "Montants convertis en FCFA"],

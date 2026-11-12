@@ -92,7 +92,7 @@ const VISUELS: Maquette[] = [
       T("ARNAQUE", 210, 790, 660, 140, { role: "tampon", police: 128, align: "center", couleur: OR, rot: -10, anim: A("pop", 1.4, "trembler") }),
       T("Un SMS qui demande un lien ou un code ?", 60, 1000, 960, 130, { role: "titre", police: 50, align: "center", interligne: 1.1 }),
       T("C'est toujours une arnaque. Ne cliquez pas, appelez votre opérateur.", 90, 1130, 900, 100, { role: "sous", police: 34, graisse: 600, align: "center", couleur: "#D1FAE5", interligne: 1.25 }),
-      Pa("#CyberActu", 390, 1235, 300, 66, { role: "bouton", police: 32, fond: OR }),
+      Pa(marqueActive.hashtag, 390, 1235, 300, 66, { role: "bouton", police: 32, fond: OR }),
     ])]),
   },
   {
@@ -365,7 +365,7 @@ const VIDEOS: Maquette[] = [
     F(160, 830, 760, 230, "rgba(217,119,6,0.15)", { nom: "Tampon (cadre)", rayon: 20, bordure: OR, epaisseur: 14, rot: -12, anim: A("pop", 3.1, "trembler") }),
     T("ARNAQUES", 160, 870, 760, 160, { role: "tampon", police: 140, couleur: OR, align: "center", rot: -12, anim: A("pop", 3.1, "trembler") }),
     T("Au moindre doute : ne cliquez pas.", 70, 1520, 940, 160, { role: "titre", police: 66, align: "center", interligne: 1.08, anim: A("glisser-haut", 4) }),
-    Pa("#CyberActu", 340, 1740, 400, 90, { role: "bouton", police: 42, fond: OR, anim: A("pop", 4.6, "pulser") }),
+    Pa(marqueActive.hashtag, 340, 1740, 400, 90, { role: "bouton", police: 42, fond: OR, anim: A("pop", 4.6, "pulser") }),
   ]),
   V("r-decompte", "Compte à rebours", "3… 2… 1… et l'annonce explose à l'écran.", 7, `rad:${B},${NUIT},#060B1A`, () => [
     nouveau.rayons({ x: -410, y: 10, couleur: "rgba(200,220,255,0.22)" }), ...logoS(),

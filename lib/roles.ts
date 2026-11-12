@@ -5,7 +5,7 @@ export const ROLES_MEMBRES: Role[] = ["redacteur", "cm", "monteur", "lecteur"];
 export const ROLE_NOM: Record<Role, string> = { admin: "Administrateur principal", redacteur: "Rédacteur", cm: "Community manager", monteur: "Monteur vidéo", lecteur: "Lecteur" };
 
 export type Zone = "veille" | "creer" | "studio" | "publier" | "calendrier" | "grin" | "admin";
-export const ZONE_NOM: Record<Zone, string> = { veille: "Veille", creer: "Créer et éditer", studio: "Studio", publier: "Publier et programmer", calendrier: "Calendrier", grin: "Le Grin", admin: "Médiathèque, connexions, réglages, équipe" };
+export const ZONE_NOM: Record<Zone, string> = { veille: "Veille", creer: "Créer et éditer", studio: "Studio", publier: "Publier et programmer", calendrier: "Calendrier", grin: "Commentaires", admin: "Médiathèque, connexions, réglages, équipe" };
 export const ZONE_DETAIL: Record<Zone, string> = {
   veille: "Lire les infos, reprendre une actu", creer: "Écrire et modifier des posts", studio: "Visuels, carrousels, vidéos, avec vos propres fichiers",
   publier: "Directement, sur tous les canaux", calendrier: "Voir et déplacer les publications", grin: "Commentaires et messages de la Page", admin: "Réservé à l'administrateur principal",
@@ -25,9 +25,9 @@ export const peut = (role: Role, zone: Zone, ecrire = false) => {
 
 // Pages : préfixe → zone (null = ouvert à toute l'équipe)
 const PAGES: [string, Zone | null][] = [
-  ["/compte", null], ["/apercu", null], ["/calendrier", "calendrier"], ["/veille", "veille"], ["/videos", "veille"], ["/rubriques", "creer"],
-  ["/creer", "creer"], ["/partage", "creer"], ["/editeur", "creer"], ["/studio", "studio"], ["/minute-cyber", "studio"], ["/communaute", "grin"],
-  ["/mediatheque", "admin"], ["/connexions", "admin"], ["/declencheurs", "admin"], ["/sources", "admin"], ["/demarrage", "admin"], ["/marque", "admin"],
+  ["/compte", null], ["/apercu", null], ["/reactions", null], ["/calendrier", "calendrier"], ["/veille", "veille"], ["/videos", "veille"], ["/rubriques", "creer"],
+  ["/creer", "creer"], ["/partage", "creer"], ["/editeur", "creer"], ["/studio", "studio"], ["/communaute", "grin"],
+  ["/mediatheque", "admin"], ["/connexions", "admin"], ["/declencheurs", "admin"], ["/sources", "admin"], ["/demarrage", "admin"], ["/marque", "admin"], ["/proposition", "admin"],
 ];
 export function zonePage(path: string): Zone | null | undefined {
   if (path === "/") return null;
@@ -43,10 +43,10 @@ export function pageAutorisee(role: Role, path: string): boolean {
 // API : préfixe → zone pour lire et zone pour écrire
 const API: [string, Zone | null, Zone | null][] = [
   ["/api/compte", null, null], ["/api/logout", null, null], ["/api/logo", null, null],
-  ["/api/settings", null, "admin"], ["/api/tableau", null, "admin"], ["/api/posts", null, "publier"],
+  ["/api/settings", null, "admin"], ["/api/reactions", null, null], ["/api/propositions", "admin", "admin"], ["/api/tableau", null, "admin"], ["/api/posts", null, "publier"],
   ["/api/veille", "veille", "veille"], ["/api/videos", "veille", "veille"], ["/api/generate", "creer", "creer"],
   ["/api/upload", null, "publier"], ["/api/upload-url", null, "publier"],
-  ["/api/studio", "studio", "studio"], ["/api/minute", "studio", "studio"], ["/api/voix", "studio", "studio"],
+  ["/api/studio", "studio", "studio"], ["/api/voix", "studio", "studio"],
   ["/api/cm", "grin", "grin"],
   ["/api/membres", "admin", "admin"], ["/api/mediatheque", "admin", "admin"], ["/api/connexions", "admin", "admin"],
   ["/api/sources", "admin", "admin"], ["/api/tiktok", "admin", "admin"],

@@ -36,7 +36,7 @@ export default function Inscription() {
     >
       <form onSubmit={submit} className="mb-auth-form" noValidate>
         <label htmlFor="media">Nom de votre média
-          <input id="media" type="text" autoComplete="organization" placeholder="Ex. Dakar Tech Info" value={media} onChange={(e) => setMedia(e.target.value)} maxLength={60} required />
+          <input id="media" type="text" autoComplete="organization" placeholder="Ex. Dakar Info" value={media} onChange={(e) => setMedia(e.target.value)} maxLength={60} required />
         </label>
         <label htmlFor="nom">Votre nom
           <input id="nom" type="text" autoComplete="name" placeholder="Prénom et nom" value={nom} onChange={(e) => setNom(e.target.value)} maxLength={60} required />

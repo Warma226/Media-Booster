@@ -30,18 +30,18 @@ export type DetailFormule = {
 export const FORMULES: Record<Formule, DetailFormule> = {
   demarrage: {
     id: "demarrage", nom: "Démarrage", prix: 5000, accroche: "Pour lancer son média seul",
-    membres: 0, postsAutoParJour: 3,
-    atouts: ["1 page par réseau", "Veille et rédaction par l'IA", "3 publications automatiques par jour", "Partage WhatsApp"],
+    membres: 0, postsAutoParJour: 5,
+    atouts: ["1 page par réseau", "Veille et rédaction par l'IA", "5 publications automatiques par jour", "Partage WhatsApp"],
   },
   pro: {
     id: "pro", nom: "Pro", prix: 15000, accroche: "Pour publier tous les jours",
-    membres: 2, postsAutoParJour: 10,
-    atouts: ["Tout Démarrage", "10 publications automatiques par jour", "NOVA répond aux commentaires", "Studio visuels et vidéos", "2 membres d'équipe"],
+    membres: 2, postsAutoParJour: 15,
+    atouts: ["Tout Démarrage", "15 publications automatiques par jour", "NOVA répond aux commentaires", "Studio visuels et vidéos", "2 membres d'équipe"],
   },
   equipe: {
     id: "equipe", nom: "Équipe", prix: 35000, accroche: "Pour une rédaction complète",
-    membres: 10, postsAutoParJour: 30,
-    atouts: ["Tout Pro", "30 publications automatiques par jour", "10 membres d'équipe avec rôles", "Récap hebdomadaire et vidéos"],
+    membres: 10, postsAutoParJour: 35,
+    atouts: ["Tout Pro", "35 publications automatiques par jour", "10 membres d'équipe avec rôles", "Récap hebdomadaire et vidéos"],
   },
 };
 

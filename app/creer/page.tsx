@@ -114,7 +114,7 @@ function Choix() {
           <section aria-labelledby="t-autres" style={{ flex: "999 1 520px", minWidth: 0, display: "flex", flexDirection: "column", gap: 12 }}>
             <h2 id="t-autres" className="tv-h2">Les autres ateliers</h2>
             <div className="row" style={{ flexWrap: "wrap", gap: 12, alignItems: "stretch" }}>
-              {([["/minute-cyber", "La minute cyber", "Vidéo d'une minute : script, voix, montage", NAV_ICONS.minute], ["/studio", "Studio", "Visuels libres, carrousels, vidéos", NAV_ICONS.studio], ["/calendrier", "Récap du vendredi", "Préparé tout seul chaque vendredi", NAV_ICONS.cal]] as const).map(([href, nom, d, ic]) => (
+              {([["/studio", "Studio", "Visuels libres, carrousels, vidéos", NAV_ICONS.studio], ["/calendrier", "Récap de la semaine", "Préparé tout seul chaque vendredi", NAV_ICONS.cal]] as const).map(([href, nom, d, ic]) => (
                 <Link key={href} href={href} className="tv-atelier-lien">
                   <span className="ico"><Trait d={ic} size={20} /></span>
                   <span style={{ display: "flex", flexDirection: "column", gap: 2 }}><strong style={{ fontSize: 15 }}>{nom}</strong><span className="tv-gris" style={{ fontSize: 13 }}>{d}</span></span>

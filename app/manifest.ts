@@ -31,7 +31,7 @@ export default function manifest(): MetadataRoute.Manifest {
       { name: "Créer un post", short_name: "Créer", url: "/creer?source=raccourci", icons: [{ src: "/icons/icon-192.png", sizes: "192x192" }] },
       { name: "Veille", url: "/veille?source=raccourci", icons: [{ src: "/icons/icon-192.png", sizes: "192x192" }] },
       { name: "Calendrier", url: "/calendrier?source=raccourci", icons: [{ src: "/icons/icon-192.png", sizes: "192x192" }] },
-      { name: "Le Grin", url: "/communaute?source=raccourci", icons: [{ src: "/icons/icon-192.png", sizes: "192x192" }] },
+      { name: "Commentaires", url: "/communaute?source=raccourci", icons: [{ src: "/icons/icon-192.png", sizes: "192x192" }] },
     ],
     // « Partager » depuis Chrome, YouTube, X… (Android) : le lien arrive directement dans Media Booster.
     share_target: {

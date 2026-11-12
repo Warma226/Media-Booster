@@ -1,4 +1,4 @@
-// Vidéos YouTube des chaînes suivies (Micode, France 24…), filtrées sur l'actu tech, et repérage des moments forts par Gemini.
+// Vidéos YouTube des chaînes suivies par le client, triées selon sa ligne éditoriale, et repérage des moments forts par Gemini.
 // Droits : une vidéo ne peut être coupée et republiée que si elle est sous licence CC BY ou si la chaîne a donné son
 // autorisation (case « Autorisation obtenue »). Sinon, on la commente, on cite une phrase courte et on renvoie vers l'original.
 import { aiJson } from "./claude";
@@ -20,8 +20,6 @@ export type Chaine = { handle: string; nom: string; type: TypeChaine; id?: strin
 export const CHAINES_DEFAUT: Chaine[] = [];
 
 // Mots qui signalent un sujet tech dans une chaîne d'info générale.
-const SIGLES = /\b(IA|5G|IoT|ChatGPT|OpenAI|Nvidia|TikTok|WhatsApp|Starlink|SpaceX|Tesla|Meta|Google|Apple|Microsoft|Amazon|Huawei|Samsung|Xiaomi|Pegasus)\b/; // sensibles à la casse (« IA », pas « ia »)
-const TECH = /\b(intelligence artificielle|cyber\w*|hack\w*|pirat\w*|ran[çc]ongiciels?|phishing|hameçonnage|données personnelles|fuites? de données|espionn\w*|technolog\w*|numérique|internet|réseaux sociaux|Facebook|Instagram|Telegram|YouTube|iPhone|Musk|Zuckerberg|Altman|satellites?|robots?|robotique|drones?|algorithmes?|deepfakes?|bitcoin|cryptomonnaies?|blockchain|mobile money|start-?ups?|smartphones?|data ?centers?|centres? de données|semi-?conducteurs?|puces électroniques|quantique|logiciels?|applis?|applications?|Silicon Valley|géants de la tech|big tech)\b/i;
 // Formations, tutos, guides d'achat et contenus hors actualité : écartés d'office.
 const HORS = /#shorts|\btuto\w*|formation|\bcours\b|leçon|débutants?|apprendre|comment (faire|installer|configurer|utiliser)|guide d'achat|top \d+|bons? plans?|promo\b|meilleurs? .* à moins de|#soins|unboxing|masterclass|webinaire/i;
 const DOCU = /documentaire|docu\b|enquête|reportage|investigation|grand format|immersion|documentary|investigat/i;
@@ -131,8 +129,7 @@ export async function rafraichir(): Promise<number> {
       const langue = (s.defaultAudioLanguage || s.defaultLanguage || "").slice(0, 2);
       if (langue && langue !== "fr") return []; // français uniquement
       if (HORS.test(s.title)) return [];
-      const texte = `${s.title} ${(s.description ?? "").slice(0, 250)}`;
-      if (c.type === "info" && !TECH.test(texte) && !SIGLES.test(texte)) return []; // chaîne d'info : sujets tech seulement
+      // Chaîne d'info générale : le tri par l'IA (ligne éditoriale du client) écarte ce qui est hors sujet.
       const genre: Genre = c.type === "interview" ? (DOCU.test(s.title) ? "docu" : "interview") : duree >= 1200 || DOCU.test(s.title) ? "docu" : INTERVIEW.test(s.title) ? "interview" : "actu";
       const vues = Number((v.statistics as { viewCount?: string })?.viewCount ?? 0);
       const info: VideoYT = {
@@ -164,11 +161,12 @@ async function trier(videos: VideoYT[]): Promise<Set<string>> {
     const lot = videos.slice(i, i + 40);
     try {
       const r = await aiJson<{ garder?: string[] }>(
-        `Tu es rédacteur en chef de ${M.nom}, un média d'actualité tech francophone. Tu tries des vidéos YouTube avec rigueur : dans le doute, tu écartes.
+        `Tu es rédacteur en chef de ${M.identite} Tu tries des vidéos YouTube avec rigueur : dans le doute, tu écartes.
+Ligne éditoriale du média : ${M.ligne}
 GARDER seulement si les deux conditions sont vraies :
 1. La vidéo est en français.
-2. Son sujet principal est l'actualité de la tech et du numérique : IA, cybersécurité et arnaques en ligne, réseaux sociaux et plateformes, géants de la tech et leurs dirigeants, télécoms et mobile money, startups, spatial, data centers, crypto (sous l'angle technologique), lois et politique du numérique, sorties et annonces de produits tech, enquêtes, documentaires et interviews sur la tech. Pour un entretien avec une personnalité (hacker, entrepreneur du numérique, dirigeant tech, chercheur en IA…), garde-le si la tech, le numérique, la cybersécurité ou l'IA occupe une place centrale dans l'échange.
-ÉCARTER : tutoriels, formations, cours, conseils pour débutants, guides d'achat, « top » et comparatifs d'achat, bons plans, beauté et électroménager, finance et bourse pure, politique, sport, climat, culture ou société sans angle tech central, journaux d'information multi-sujets, Shorts.
+2. Son sujet principal correspond à la ligne éditoriale ci-dessus (actualité, enquête, documentaire ou interview sur ces sujets).
+ÉCARTER : tutoriels, formations, guides d'achat, « top » et comparatifs d'achat, bons plans, sujets hors de la ligne éditoriale, journaux d'information multi-sujets, Shorts.
 Réponds uniquement en JSON : {"garder": ["id", ...]}`,
         lot.map((v) => `${v.id} | ${v.chaine} | ${v.titre} | ${v.description.replace(/\s+/g, " ").slice(0, 200)}`).join("\n"),
         1500,
@@ -176,7 +174,7 @@ Réponds uniquement en JSON : {"garder": ["id", ...]}`,
       for (const id of r.garder ?? []) if (lot.some((v) => v.id === id)) garder.add(id);
     } catch (e) {
       console.error("[videos] tri IA impossible", (e as Error).message);
-      for (const v of lot) if (TECH.test(v.titre) || SIGLES.test(v.titre)) garder.add(v.id);
+      for (const v of lot) garder.add(v.id); // sans IA : on laisse le client trier
     }
   }
   return garder;
@@ -205,7 +203,7 @@ export async function reperer(id: string): Promise<Extrait[]> {
   const info = data?.info as VideoYT | undefined;
   if (!info) throw new Error("Vidéo inconnue.");
   const choc = info.genre !== "actu";
-  const consigne = `Tu es éditeur vidéo pour ${M.nom}, un média tech francophone (public : ${M.public}) qui publie des Reels, TikTok et carrousels.
+  const consigne = `Tu es éditeur vidéo pour ${M.nom}, ${M.description} (public : ${M.public}) qui publie des Reels, TikTok et carrousels.
 Vidéo : « ${info.titre} » (chaîne ${info.chaine}, ${info.genre === "docu" ? "documentaire" : info.genre === "interview" ? "interview" : "actualité"}).
 ${choc
   ? `Repère les 4 moments les plus CHOCS : une révélation, un aveu, un chiffre qui frappe, une prise de position tranchée, une phrase qu'on a envie de partager. Pour une interview, garde la parole de l'invité, pas les questions. `

@@ -17,7 +17,7 @@ type Etat = {
 };
 type Filtre = "tout" | "valider" | "message" | "commentaire" | "mention" | "arnaque" | "traite";
 
-const CANAL: Record<string, string> = { commentaire: "Commentaire", message: "Message privé", mention: "Mention de Media Booster", lien: "Publication", grin: "Grin du jeudi", piliers: "Piliers du grin", alerte: "Radar à arnaques", crise: "Mode crise" };
+const CANAL: Record<string, string> = { commentaire: "Commentaire", message: "Message privé", mention: "Mention de Media Booster", lien: "Publication", grin: "Débat de la semaine", piliers: "Abonnés les plus actifs", alerte: "Radar à arnaques", crise: "Mode crise" };
 const ETAT: Record<string, [string, string]> = {
   propose: ["À valider", "#D97706"], signale: ["Pour vous", "#D97706"], erreur: ["Erreur", "#B42318"], repondu: ["Répondu par NOVA", "#16A34A"],
   aime: ["Aimé", "#16A34A"], masque: ["Masqué", "#5B6B86"], ignore: ["Ignoré", "#9AA8BE"], lien: ["Lien ajouté", "#047857"], publie: ["Publié", "#047857"], annule: ["Annulé", "#5B6B86"],
@@ -154,7 +154,7 @@ export default function Grin() {
     if (!r) return "";
     const gain = r.abonnes != null && r.abonnesVeille != null ? r.abonnes - r.abonnesVeille : null;
     return [
-      "Bonsoir ! Ici NOVA, avec le brief du grin.", r.resume,
+      "Bonsoir ! Ici NOVA, avec le brief du jour.", r.resume,
       gain != null ? `La Page compte ${r.abonnes} abonnés, ${gain >= 0 ? `soit ${gain} de plus` : `soit ${-gain} de moins`} qu'hier.` : "",
       r.questions.length ? `Les questions qui reviennent : ${r.questions.join(". ")}.` : "",
       r.idees.length ? `Mes idées pour demain : ${r.idees.join(". ")}.` : "",
@@ -205,7 +205,7 @@ export default function Grin() {
             <div className="row" style={{ gap: 12 }}>
               <Voa humeur={humeur} taille={56} />
               <div>
-                <h1 className="tv-titre">Le Grin · NOVA</h1>
+                <h1 className="tv-titre">Commentaires · NOVA</h1>
                 <span className="tv-gris" style={{ fontSize: 14 }}>{e ? (e.reglages.crise?.active ? "Mode crise" : HUMEURS[humeur]) : "…"} · commentaires, messages et mentions de la Page</span>
               </div>
             </div>
@@ -251,7 +251,7 @@ export default function Grin() {
           </nav>
 
           <section className="tv-grin-liste" aria-label="Échanges">
-            {!e ? <p className="tv-gris" style={{ padding: 12 }}>Chargement du grin…</p> : liste.length === 0 ? <p className="tv-gris" style={{ padding: 12 }}>{filtre === "valider" ? "Rien à valider. NOVA s'occupe de tout." : "Aucun échange ici."}</p> : null}
+            {!e ? <p className="tv-gris" style={{ padding: 12 }}>Chargement des commentaires…</p> : liste.length === 0 ? <p className="tv-gris" style={{ padding: 12 }}>{filtre === "valider" ? "Rien à valider. NOVA s'occupe de tout." : "Aucun échange ici."}</p> : null}
             {vListe.visibles.map((l) => {
               const et = ETAT[l.action] ?? [l.action, "#5B6B86"];
               return (
@@ -324,7 +324,7 @@ export default function Grin() {
         {/* Pouls de la communauté */}
         <div className="tv-grin-bas">
           <section className="tv-carte-side" aria-labelledby="t-humeur">
-            <h2 id="t-humeur" className="tv-h2" style={{ fontSize: 18 }}>L'humeur du grin</h2>
+            <h2 id="t-humeur" className="tv-h2" style={{ fontSize: 18 }}>L'humeur des commentaires</h2>
             <div style={{ height: 14, borderRadius: 7, overflow: "hidden", display: "flex", background: "#EDF1F7" }} role="img" aria-label={`${pc(tons.positif)} % positif, ${pc(tons.neutre)} % neutre, ${pc(tons.negatif)} % mécontent`}>
               <span style={{ width: `${pc(tons.positif)}%`, background: "#16A34A" }} /><span style={{ width: `${pc(tons.neutre)}%`, background: "#9AA8BE" }} /><span style={{ width: `${pc(tons.negatif)}%`, background: "#D97706" }} />
             </div>
@@ -361,14 +361,14 @@ export default function Grin() {
           </section>
 
           <section className="tv-carte-side" aria-labelledby="t-jeudi">
-            <div className="row" style={{ alignItems: "baseline" }}><h2 id="t-jeudi" className="tv-h2" style={{ fontSize: 18, flex: 1 }}>Le grin du jeudi</h2><span style={{ fontSize: 12, fontWeight: 800, color: "#D97706" }}>jeudi · 19 h</span></div>
+            <div className="row" style={{ alignItems: "baseline" }}><h2 id="t-jeudi" className="tv-h2" style={{ fontSize: 18, flex: 1 }}>Le débat de la semaine</h2><span style={{ fontSize: 12, fontWeight: 800, color: "#D97706" }}>jeudi · 19 h</span></div>
             <span style={{ fontSize: 13, color: "#33425C", lineHeight: 1.45 }}>NOVA lance une question-débat sur l'actu de la semaine ; vendredi à 12 h, elle publie le meilleur des réponses.</span>
-            {e?.dernierGrin?.lien ? <a href={e.dernierGrin.lien} target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, fontWeight: 700, textDecoration: "none" }}>Voir le dernier grin →</a> : null}
-            {e ? <div className="row" style={{ justifyContent: "space-between", borderTop: "1px solid #EDF1F7", paddingTop: 10 }}><span style={{ fontSize: 13, fontWeight: 600 }}>{e.reglages.grin ? "Activé" : "Désactivé"}</span><Interrupteur on={e.reglages.grin} label="Le grin du jeudi" onClick={() => regler({ grin: !e.reglages.grin })} /></div> : null}
+            {e?.dernierGrin?.lien ? <a href={e.dernierGrin.lien} target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, fontWeight: 700, textDecoration: "none" }}>Voir le dernier débat →</a> : null}
+            {e ? <div className="row" style={{ justifyContent: "space-between", borderTop: "1px solid #EDF1F7", paddingTop: 10 }}><span style={{ fontSize: 13, fontWeight: 600 }}>{e.reglages.grin ? "Activé" : "Désactivé"}</span><Interrupteur on={e.reglages.grin} label="Le débat de la semaine" onClick={() => regler({ grin: !e.reglages.grin })} /></div> : null}
           </section>
 
           <section className="tv-carte-side" aria-labelledby="t-piliers">
-            <h2 id="t-piliers" className="tv-h2" style={{ fontSize: 18 }}>Les piliers du grin</h2>
+            <h2 id="t-piliers" className="tv-h2" style={{ fontSize: 18 }}>Les abonnés les plus actifs</h2>
             <div className="row" style={{ gap: 8 }}>
               {e?.piliers.length ? e.piliers.map((p, i) => (
                 <span key={p.nom} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4, textAlign: "center" }}>
@@ -377,7 +377,7 @@ export default function Grin() {
                 </span>
               )) : <span className="tv-gris" style={{ fontSize: 13 }}>Les membres les plus actifs de la semaine apparaîtront ici.</span>}
             </div>
-            {e ? <div className="row" style={{ justifyContent: "space-between", borderTop: "1px solid #EDF1F7", paddingTop: 10 }}><span style={{ fontSize: 12, color: "#5B6B86" }}>Merci public le vendredi</span><Interrupteur on={e.reglages.piliers} label="Les piliers du grin" onClick={() => regler({ piliers: !e.reglages.piliers })} /></div> : null}
+            {e ? <div className="row" style={{ justifyContent: "space-between", borderTop: "1px solid #EDF1F7", paddingTop: 10 }}><span style={{ fontSize: 12, color: "#5B6B86" }}>Merci public le vendredi</span><Interrupteur on={e.reglages.piliers} label="Les abonnés les plus actifs" onClick={() => regler({ piliers: !e.reglages.piliers })} /></div> : null}
           </section>
 
           <section className="tv-carte-side" aria-labelledby="t-brief">

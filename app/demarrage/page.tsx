@@ -18,14 +18,14 @@ export default function Demarrage() {
   }, []);
   const s = info?.settings;
   const relie = Object.values(info?.connections ?? {}).some((c) => c.configured);
+  const proposee = (s?.customSources?.length ?? 0) > 0 || (s?.themes?.length ?? 0) > 0;
   const etapes: Etape[] = [
-    { href: "/marque", titre: "Votre marque", texte: "Nom, sigle, public visé et ton : l'IA écrit comme votre média.", fait: Boolean(s?.marque?.description || s?.marque?.public || s?.marque?.ligne) },
-    { href: "/rubriques", titre: "Vos rubriques", texte: "Actualité, citation, notion du jour, portrait : activez et nommez les vôtres.", fait: rubriquesActives(s?.rubriques).length > 0 },
-    { href: "/sources", titre: "Vos sources de veille", texte: "Les sites que Media Booster lit pour vous trouver des sujets.", fait: (s?.customSources?.length ?? 0) > 0 },
-    { href: "/themes", titre: "Vos thèmes", texte: "Les sujets qui comptent pour votre public, pour trier la veille.", fait: (s?.themes?.length ?? 0) > 0 },
-    { href: "/connexions", titre: "Vos pages", texte: "Reliez votre page Facebook, LinkedIn, votre site ou TikTok.", fait: relie },
-    { href: "/declencheurs", titre: "Pilote automatique", texte: "Laissez Media Booster publier seul les actus qui correspondent à vos règles.", fait: Boolean(s?.autopilot), facultatif: true },
+    { href: "/marque", titre: "Votre média", texte: "Son nom, son public et sa ligne éditoriale. C'est tout ce qu'il faut pour la suite.", fait: Boolean(s?.marque?.description || s?.marque?.public || s?.marque?.ligne) },
+    { href: "/rubriques", titre: "Vos rubriques", texte: "Actualité, citation, notion du jour, portrait : gardez celles qui vous ressemblent.", fait: rubriquesActives(s?.rubriques).length > 0 },
+    { href: "/proposition", titre: "Votre veille, préparée pour vous", texte: proposee ? "Sources, sujets et heures de publication en place. Touchez pour en proposer d'autres." : "Media Booster choisit vos sources, vos sujets et vos heures de publication. Vous validez d'un bouton.", fait: proposee },
+    { href: "/connexions", titre: "Vos pages", texte: "Reliez votre page Facebook, LinkedIn ou votre site.", fait: relie },
   ];
+
   const faites = etapes.filter((e) => e.fait && !e.facultatif).length, total = etapes.filter((e) => !e.facultatif).length;
   const essaiFin = espace?.statut === "essai" && espace.essai_fin ? new Date(espace.essai_fin) : null;
 
@@ -58,6 +58,17 @@ export default function Demarrage() {
         ))}
       </ol>
       <button type="button" className="btn primary" onClick={terminer}>{faites === total ? "Ouvrir le tableau de bord" : "Continuer plus tard"}</button>
+
+      <details className="mb-avance">
+        <summary>Réglages avancés</summary>
+        <p className="muted small">Pour ajouter vous-même une source, un sujet ou une règle. Tout se règle aussi depuis la proposition.</p>
+        <nav aria-label="Réglages avancés">
+          <Link href="/sources">Sources de veille</Link>
+          <Link href="/themes">Sujets suivis</Link>
+          <Link href="/declencheurs">Règles de publication</Link>
+          <Link href="/abonnement">Abonnement</Link>
+        </nav>
+      </details>
     </main>
   );
 }

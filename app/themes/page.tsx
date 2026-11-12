@@ -46,7 +46,7 @@ export default function Themes() {
       <main className="page sub">
         <p className="muted">Les sujets importants pour votre public. Quand une actu de vos sources contient un des mots-clés, elle remonte dans la veille et peut partir en pilote automatique.</p>
         <form onSubmit={ajouter} className="row mb-form" style={{ gap: 8 }}>
-          <input type="text" aria-label="Nouveau thème" placeholder="Ex. Mobile money, Cybersécurité, Football…" value={nouveau} onChange={(e) => setNouveau(e.target.value)} maxLength={40} style={{ flex: 1 }} />
+          <input type="text" aria-label="Nouveau thème" placeholder="Ex. Économie, Football, Santé…" value={nouveau} onChange={(e) => setNouveau(e.target.value)} maxLength={40} style={{ flex: 1 }} />
           <button type="submit" className="btn small primary">Ajouter</button>
         </form>
         {!themes ? <p className="muted">Chargement…</p> : themes.length === 0 ? (

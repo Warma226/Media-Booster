@@ -1314,3 +1314,66 @@ button.tv-etape-fixe:hover:not([aria-current="step"]) { background: rgba(15,23,4
   .mb-l-grille { grid-template-columns: repeat(3, 1fr); }
   .mb-l-formule + .mb-l-formule { border-top: 0; border-left: 1px solid #E7E5DE; }
 }
+
+/* ─── Proposition de Media Booster (sources, sujets, règles en un bouton) ─── */
+.mb-prop { display: flex; flex-direction: column; gap: 18px; padding-bottom: 40px; }
+.mb-prop-vide { gap: 12px; padding: 20px; }
+.mb-prop-vide h2 { font-size: 18px; }
+.mb-prop-attente { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px; padding: 48px 8px 24px; }
+.mb-prop-attente h2 { font-size: 20px; }
+.mb-prop-pulse { width: 56px; height: 56px; border-radius: 50%; background: var(--bleu); opacity: .9; animation: mb-pulse 1.6s ease-in-out infinite; }
+@keyframes mb-pulse { 0%, 100% { transform: scale(.82); opacity: .55; } 50% { transform: scale(1); opacity: 1; } }
+.mb-prop-flux { list-style: none; margin: 6px 0 0; padding: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+.mb-prop-flux li { font-size: 13px; font-weight: 600; padding: 5px 10px; border-radius: 999px; background: var(--bleu-pale); color: var(--bleu-nuit); }
+.mb-prop-tete h1 { font-size: 24px; line-height: 1.2; }
+.mb-prop-tete p { margin-top: 6px; }
+.mb-prop-resume { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; border: 1px solid var(--gris-2); border-radius: var(--rayon); background: var(--blanc); }
+.mb-prop-resume li { display: grid; grid-template-columns: 7rem 1fr; align-items: baseline; gap: 10px; padding: 14px 16px; }
+.mb-prop-resume li + li { border-top: 1px solid var(--gris-2); }
+.mb-prop-resume strong { font-family: var(--font-mont), var(--font-inter), sans-serif; font-size: 18px; font-weight: 800; color: var(--bleu); white-space: nowrap; }
+.mb-prop-resume span { color: var(--texte-3); line-height: 1.4; }
+.mb-prop-choix { border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.mb-prop-choix legend { font-weight: 700; margin-bottom: 8px; padding: 0; }
+.mb-prop-option { text-align: left; display: flex; flex-direction: column; gap: 3px; padding: 14px 16px; border-radius: 12px; border: 1px solid var(--gris-2); background: var(--blanc); color: var(--noir); cursor: pointer; font: inherit; }
+.mb-prop-option span { font-size: 13px; color: var(--texte-3); }
+.mb-prop-option[aria-checked="true"] { background: var(--bleu-pale); border: 1.5px solid var(--bleu); }
+.mb-prop-option:focus-visible, .mb-prop-detail summary:focus-visible { outline: 3px solid var(--bleu); outline-offset: 2px; }
+.mb-prop-ok { width: 100%; }
+.mb-prop-detail { border-top: 1px solid var(--gris-2); padding-top: 6px; }
+.mb-prop-detail summary { cursor: pointer; font-weight: 600; color: var(--bleu); padding: 10px 0; }
+.mb-prop-detail h2 { font-size: 15px; margin: 16px 0 6px; }
+.mb-prop-ligne { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--gris-1); }
+.mb-prop-ligne > span { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.mb-prop-ligne small { color: var(--texte-3); font-size: 12.5px; line-height: 1.4; overflow-wrap: anywhere; }
+.mb-prop-relance { align-self: center; }
+@media (prefers-reduced-motion: reduce) { .mb-prop-pulse { animation: none; } }
+.mb-avance { margin-top: 8px; border-top: 1px solid var(--gris-2); padding-top: 4px; }
+.mb-avance summary { cursor: pointer; font-weight: 600; color: var(--texte-3); padding: 12px 0; }
+.mb-avance nav { display: flex; flex-direction: column; }
+.mb-avance nav a { padding: 12px 0; border-bottom: 1px solid var(--gris-1); color: var(--noir); text-decoration: none; font-weight: 500; }
+.mb-avance summary:focus-visible, .mb-avance nav a:focus-visible { outline: 3px solid var(--bleu); outline-offset: 2px; }
+
+/* ─── Réactions en direct ─── */
+.mb-rx { display: flex; flex-direction: column; gap: 14px; padding-bottom: 40px; }
+.mb-rx-direct { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--texte-3); margin: 0; }
+.mb-rx-point { width: 9px; height: 9px; border-radius: 50%; background: #16a34a; box-shadow: 0 0 0 0 rgba(22,163,74,.5); animation: mb-rx-pulse 2s ease-out infinite; }
+@keyframes mb-rx-pulse { 0% { box-shadow: 0 0 0 0 rgba(22,163,74,.45); } 70% { box-shadow: 0 0 0 8px rgba(22,163,74,0); } 100% { box-shadow: 0 0 0 0 rgba(22,163,74,0); } }
+.mb-rx-vide { gap: 12px; padding: 20px; }
+.mb-rx-vide h2 { font-size: 18px; }
+.mb-rx-totaux { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid var(--gris-2); border-radius: var(--rayon); background: var(--blanc); }
+.mb-rx-totaux li { display: flex; flex-direction: column; align-items: center; padding: 14px 6px; gap: 2px; }
+.mb-rx-totaux li + li { border-left: 1px solid var(--gris-2); }
+.mb-rx-totaux strong { font-family: var(--font-mont), var(--font-inter), sans-serif; font-size: 24px; font-weight: 800; color: var(--bleu); font-variant-numeric: tabular-nums; }
+.mb-rx-totaux span { font-size: 12.5px; color: var(--texte-3); }
+.mb-rx-liste { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.mb-rx-post { display: flex; gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--gris-2); }
+.mb-rx-post img, .mb-rx-vignette { width: 56px; height: 56px; border-radius: 10px; object-fit: cover; flex-shrink: 0; background: var(--bleu-pale); }
+.mb-rx-corps { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.mb-rx-titre { font-size: 15px; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.mb-rx-ligne { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; font-size: 13px; color: var(--texte-3); text-decoration: none; padding-top: 2px; }
+a.mb-rx-ligne:focus-visible { outline: 3px solid var(--bleu); outline-offset: 2px; border-radius: 4px; }
+.mb-rx-reseau { font-weight: 700; color: var(--noir); min-width: 64px; }
+.mb-rx-compte strong { color: var(--noir); font-variant-numeric: tabular-nums; }
+.mb-rx-hausse { font-style: normal; font-weight: 800; color: #15803d; margin-left: 3px; animation: mb-rx-monte 1.2s ease-out; }
+@keyframes mb-rx-monte { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .mb-rx-point, .mb-rx-hausse { animation: none; } }

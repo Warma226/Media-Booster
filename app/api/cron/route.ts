@@ -177,7 +177,7 @@ async function run(log: string[], opts: { force: boolean; now: boolean } = { for
               wp_excerpt: g.wp_excerpt,
             },
             visual: {
-              titre: g.visuel_titre || themesDe(settings).find((t) => t.id === item.topics[0])?.label || "Actu tech",
+              titre: g.visuel_titre || themesDe(settings).find((t) => t.id === item.topics[0])?.label || "Actualité",
               texte: g.visuel_texte || item.title,
               image,
               // Catégorie WordPress choisie par l'IA, sinon déduite du titre et du texte.
@@ -204,14 +204,14 @@ async function run(log: string[], opts: { force: boolean; now: boolean } = { for
       : "Veille automatique en pause : ajoute GEMINI_API_KEY (gratuit) ou ANTHROPIC_API_KEY dans Vercel.");
   }
 
-  // ─── 1 bis. Récap tech du vendredi ───────────────────────────────
+  // ─── 1 bis. Récap de la semaine (vendredi) ───────────────────────────────
   if (aiConfigured() && settings.autopilot) await weeklyRecap(log, { force: false, dry: false });
 
 
   return NextResponse.json({ ok: true, log, at: new Date().toISOString() });
 }
 
-// Récap tech de la semaine : le vendredi à partir de 17 h, une seule fois par semaine.
+// Récap de la semaine : le vendredi à partir de 17 h, une seule fois par semaine.
 async function weeklyRecap(log: string[], opts: { force: boolean; dry: boolean }) {
   const now = new Date();
   // Lundi 0 h (UTC) de la semaine en cours
@@ -259,11 +259,11 @@ async function weeklyRecap(log: string[], opts: { force: boolean; dry: boolean }
         return itemUrl({
           index: i + 1,
           total,
-          categorie: src?.visual.titre || "Actu tech",
+          categorie: src?.visual.titre || "Actualité",
           texte: pt.texte,
           photo: (src ? images.get(src.id) : undefined) ?? images.get(recentes[i % Math.max(1, recentes.length)]?.id ?? ""),
           source: src?.source_name ?? undefined,
-          autres: recentes.filter((p) => p.id !== src?.id).slice(0, 4).map((p) => ({ photo: images.get(p.id), categorie: p.visual.titre || "Actu tech" })),
+          autres: recentes.filter((p) => p.id !== src?.id).slice(0, 4).map((p) => ({ photo: images.get(p.id), categorie: p.visual.titre || "Actualité" })),
         }, lienMarque);
       }),
       endUrl(lienMarque),
@@ -276,10 +276,10 @@ async function weeklyRecap(log: string[], opts: { force: boolean; dry: boolean }
     }
     const post = emptyPost({
       rubrique: "actu",
-      title: `Récap tech · ${periode}`,
+      title: `Récap de la semaine · ${periode}`,
       origin: "recap",
       platforms,
-      texts: { facebook: r.facebook, linkedin: r.linkedin, tiktok: "Le récap tech de la semaine #RécapTech", wp_title: r.titre, wp_body: "" },
+      texts: { facebook: r.facebook, linkedin: r.linkedin, tiktok: "Le récap de la semaine #Récap", wp_title: r.titre, wp_body: "" },
       visual: { titre: "Récap de la semaine", texte: r.titre, image, slides },
       status: "planifie",
       auto: false,

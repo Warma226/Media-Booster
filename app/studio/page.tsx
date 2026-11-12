@@ -24,7 +24,7 @@ const ENTREES: [Entree, string][] = [["aucune", "Aucune"], ["fondu", "Fondu"], [
 const BOUCLES: [Boucle, string][] = [["aucune", "Aucune"], ["flotter", "Flotter"], ["pulser", "Pulser"], ["balancer", "Balancer"], ["tourner", "Tourner"], ["defiler", "Défiler (bandeau)"], ["clignoter", "Clignoter"], ["trembler", "Trembler"]];
 const OMBRES: [Ombre, string][] = [["aucune", "Aucune"], ["douce", "Douce"], ["forte", "Forte"], ["neon", "Néon bleu"], ["verre", "Verre"]];
 const INFO_GENRE: Record<Genre, { taille: string; sous: string; ideal: string[] }> = {
-  visuel: { taille: "4:5 · 1:1", sous: "Une image pour le fil Facebook et LinkedIn", ideal: ["Actu", "Citation", "CyberBase", "Portrait"] },
+  visuel: { taille: "4:5 · 1:1", sous: "Une image pour le fil Facebook et LinkedIn", ideal: ["Actualité", "Citation", "Notion du jour", "Portrait"] },
   carrousel: { taille: "4:5 · 2 à 10 pages", sous: "Plusieurs pages à faire défiler", ideal: ["Réflexes", "Pas à pas", "Chiffres clés"] },
   video: { taille: "9:16 · 60 s max", sous: "Reel, story ou TikTok animé, avec voix off", ideal: ["Reel", "Story", "Narration"] },
 };
@@ -122,12 +122,9 @@ export default function Studio() {
   const [actus, setActus] = useState<string[]>([]);
   const [voixNom, setVoixNom] = useState("Charon");
   const [filtreModeles, setFiltreModeles] = useState<Genre | "tous">("tous");
-  const [dernierEp, setDernierEp] = useState<{ numero?: number; titre: string; statut?: string; audio?: string } | null>(null);
   const [voixStyle, setVoixStyle] = useState<StyleVoix>("narration");
   const [voixTexte, setVoixTexte] = useState<string | null>(null);
   useEffect(() => {
-    fetch("/api/minute", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "etat" }) })
-      .then((r) => (r.ok ? r.json() : null)).then((d: { episodes?: { numero?: number; titre: string; statut?: string; audio?: string }[] } | null) => { if (d?.episodes?.length) setDernierEp(d.episodes[0]); }).catch(() => {});
     listPosts().then((ps) => setActus(ps.filter((p) => p.rubrique === "actu" && p.status === "publie").slice(0, 8).map((p) => p.title || p.idea).filter(Boolean))).catch(() => {});
   }, []);
 
@@ -499,14 +496,6 @@ export default function Studio() {
               </div>
             </section>
 
-            <Link href="/minute-cyber" className="tv-sa-minute">
-              <span className="badge60">60s</span>
-              <span style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 2 }}>
-                <strong style={{ fontFamily: "var(--font-mont)", fontSize: 18 }}>La minute cyber</strong>
-                <span style={{ fontSize: 13, color: "#C9D3E3" }}>{dernierEp ? `Ép. ${dernierEp.numero ?? "?"} « ${dernierEp.titre} » : ${dernierEp.statut === "envoye" ? "envoyé au calendrier" : dernierEp.statut === "monte" ? "monté, à publier" : dernierEp.audio ? "voix prête, à monter" : "voix off à faire"}` : "L'assistant de la série vidéo : script, storyboard, voix off et montage."}</span>
-              </span>
-              <span className="go">{dernierEp && dernierEp.statut !== "envoye" ? "Continuer l'épisode" : "Ouvrir"}</span>
-            </Link>
 
             {actus.length ? (
               <section aria-labelledby="t-sa-actu" className="tv-carte" style={{ gap: 4 }}>
@@ -744,7 +733,7 @@ export default function Studio() {
                 ))}
               </div>
               <span className="tv-gris" style={{ fontSize: 12 }}>Montserrat pour les titres, Inter pour les textes. {elSel ? "Cliquez une couleur pour l'appliquer à l'élément choisi." : "Choisissez un élément pour lui appliquer une couleur."}</span>
-              <button type="button" className="btn small" style={{ alignSelf: "flex-start" }} onClick={() => { const els = elementsLogo(Math.round(FORMATS[doc.format].w * ZONE[doc.format].g) + 8, Math.round(FORMATS[doc.format].h * ZONE[doc.format].h) + 8, true); changer((d) => { d.pages[pageIdx].elements.push(...els); return d; }); }}>Ajouter le logo TUVOA</button>
+              <button type="button" className="btn small" style={{ alignSelf: "flex-start" }} onClick={() => { const els = elementsLogo(Math.round(FORMATS[doc.format].w * ZONE[doc.format].g) + 8, Math.round(FORMATS[doc.format].h * ZONE[doc.format].h) + 8, true); changer((d) => { d.pages[pageIdx].elements.push(...els); return d; }); }}>Ajouter mon logo</button>
             </section>
             {elSel ? (
               <section className="card" style={{ gap: 10 }}>

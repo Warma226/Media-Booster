@@ -93,7 +93,7 @@ export const linkedinPagesAutorisees = () => process.env.LINKEDIN_PAGES === "1";
 const liRetour = () => `${appUrl()}/api/connexions/linkedin/retour`;
 
 export function urlConnexionLinkedin(state: string): string {
-  const scopes = ["openid", "profile", "w_member_social", ...(linkedinPagesAutorisees() ? ["rw_organization_admin", "w_organization_social"] : [])];
+  const scopes = ["openid", "profile", "w_member_social", ...(linkedinPagesAutorisees() ? ["rw_organization_admin", "w_organization_social", "r_organization_social"] : [])];
   const p = new URLSearchParams({ response_type: "code", client_id: process.env.LINKEDIN_CLIENT_ID ?? "", redirect_uri: liRetour(), state, scope: scopes.join(" ") });
   return `https://www.linkedin.com/oauth/v2/authorization?${p.toString()}`;
 }

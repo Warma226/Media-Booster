@@ -13,10 +13,10 @@ export const PLATFORMS: { id: Platform; label: string; limit: number }[] = [
 export type RubriqueId = "actu" | "cyberbase" | "portrait" | "citation";
 // `heure` : rubrique publiée chaque jour à heure fixe (heure locale du téléphone).
 export const RUBRIQUES: { id: RubriqueId; label: string; hashtag: string; description: string; alwaysManual: boolean; heure?: number }[] = [
-  { id: "actu", label: "Actualité tech", hashtag: "#ActuTech", description: "Les infos du moment, résumées et sourcées.", alwaysManual: false },
-  { id: "cyberbase", label: "CyberBase", hashtag: "#CyberBase", description: "Comprendre les notions basiques de la tech. Une notion chaque jour à 7 h.", alwaysManual: false, heure: 7 },
-  { id: "portrait", label: "Portrait", hashtag: "#Portrait", description: "Les experts tech d'ici et d'ailleurs. Accord de la personne obligatoire.", alwaysManual: true },
-  { id: "citation", label: "Citation", hashtag: "#Citation", description: "Les phrases qui font la tech, d'ici et d'ailleurs. Une citation toutes les 2 heures. Citation vérifiable, auteur, source et photo obligatoires.", alwaysManual: true },
+  { id: "actu", label: "Actualité", hashtag: "#Actu", description: "Les infos du moment, résumées et sourcées.", alwaysManual: false },
+  { id: "cyberbase", label: "Notion du jour", hashtag: "#NotionDuJour", description: "Une notion expliquée simplement, chaque jour à heure fixe.", alwaysManual: false, heure: 7 },
+  { id: "portrait", label: "Portrait", hashtag: "#Portrait", description: "Une personne présentée à partir des infos qu'elle a validées. Accord obligatoire.", alwaysManual: true },
+  { id: "citation", label: "Citation", hashtag: "#Citation", description: "Une phrase vérifiable d'une personnalité, avec auteur, source et photo.", alwaysManual: true },
 ];
 
 export type Source = {

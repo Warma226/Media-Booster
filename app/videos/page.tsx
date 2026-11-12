@@ -1,5 +1,5 @@
 "use client";
-// Vidéos à reprendre : les dernières vidéos tech des chaînes suivies (Micode, France 24…). NOVA (Gemini) repère les
+// Vidéos à reprendre : les dernières vidéos des chaînes suivies. NOVA (Gemini) repère les
 // moments forts. La découpe 9:16 n'est ouverte que pour les vidéos CC BY ou les chaînes qui ont donné leur autorisation.
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -14,7 +14,7 @@ const ilya = (iso: string) => {
   return h < 1 ? "à l'instant" : h < 24 ? `il y a ${h} h` : h < 48 ? "hier" : `il y a ${Math.round(h / 24)} j`;
 };
 const COUL = ["#D97706", "#047857", "#7C3AED", "#0E9F8E"];
-const GENRES: [string, string][] = [["tout", "Tout"], ["actu", "Actu tech"], ["interview", "Interviews"], ["docu", "Documentaires"]];
+const GENRES: [string, string][] = [["tout", "Tout"], ["actu", "Actualité"], ["interview", "Interviews"], ["docu", "Documentaires"]];
 const GENRE_NOM: Record<Genre, string> = { actu: "Actu", interview: "Interview", docu: "Documentaire" };
 const LIC: Record<Licence, { nom: string; cls: string }> = { cc: { nom: "CC BY", cls: "vert" }, autorisee: { nom: "Autorisée", cls: "vert" }, reservee: { nom: "Droits réservés", cls: "ambre" } };
 
@@ -94,7 +94,7 @@ export default function VideosPage() {
           <div style={{ flex: "1 1 360px", display: "flex", flexDirection: "column", gap: 6 }}>
             <Link href="/veille" className="tv-gris" style={{ textDecoration: "none", fontWeight: 600 }}>← Veille</Link>
             <h1 className="tv-titre">Vidéos à reprendre</h1>
-            <span style={{ fontSize: 14, color: "#33425C" }}>Les dernières vidéos tech de vos chaînes suivies ({chaines.filter((c) => c.id).length}). NOVA repère les moments chocs des interviews et des documentaires.</span>
+            <span style={{ fontSize: 14, color: "#33425C" }}>Les dernières vidéos de vos chaînes suivies ({chaines.filter((c) => c.id).length}). NOVA repère les moments chocs des interviews et des documentaires.</span>
           </div>
           <div className="row" style={{ gap: 8 }}>
             {admin ? <button type="button" className="btn" onClick={() => setGerer((g) => !g)}>{gerer ? "Fermer" : "Chaînes suivies"}</button> : null}
@@ -118,12 +118,12 @@ export default function VideosPage() {
           <section className="tv-carte" style={{ gap: 12 }}>
             <div className="row" style={{ alignItems: "baseline", gap: 10, flexWrap: "wrap" }}>
               <h2 className="tv-h2" style={{ flex: 1 }}>Chaînes suivies</h2>
-              <span className="tv-gris" style={{ fontSize: 12 }}>« Actu générale » : seuls les sujets tech sont gardés.</span>
+              <span className="tv-gris" style={{ fontSize: 12 }}>« Actu générale » : seuls les sujets de votre ligne éditoriale sont gardés.</span>
             </div>
             <div className="tv-vid-chaines">
               {chaines.map((c) => (
                 <div key={c.handle} className="tv-vid-chaine" data-ko={Boolean(c.introuvable)}>
-                  <span style={{ flex: 1, minWidth: 0 }}><strong>{c.nom}</strong><small>{c.handle} · {c.type === "info" ? "actu générale" : c.type === "interview" ? "interviews" : "tech"}{c.introuvable ? " · introuvable" : ""}</small></span>
+                  <span style={{ flex: 1, minWidth: 0 }}><strong>{c.nom}</strong><small>{c.handle} · {c.type === "info" ? "actu générale" : c.type === "interview" ? "interviews" : "spécialisée"}{c.introuvable ? " · introuvable" : ""}</small></span>
                   <label title="Cochez seulement si la chaîne vous a autorisé par écrit à reprendre ses images"><input type="checkbox" checked={Boolean(c.autorisee)} disabled={busy === "chaine"} onChange={(e) => actionChaine("chaine-autoriser", c.handle, { autorisee: e.target.checked })} /> Autorisation obtenue</label>
                   <button type="button" className="btn link small" disabled={busy === "chaine"} onClick={() => actionChaine("chaine-retirer", c.handle)}>Retirer</button>
                 </div>
@@ -131,7 +131,7 @@ export default function VideosPage() {
             </div>
             <form className="row" style={{ gap: 8, flexWrap: "wrap" }} onSubmit={(e) => { e.preventDefault(); if (nouvelle.trim()) void actionChaine("chaine-ajouter", nouvelle, { type: nouvType }); }}>
               <input className="tv-vid-input" value={nouvelle} onChange={(e) => setNouvelle(e.target.value)} placeholder="@nomdelachaine ou lien YouTube" aria-label="Chaîne à ajouter" />
-              <select className="tv-chip" value={nouvType} onChange={(e) => setNouvType(e.target.value as "tech" | "info" | "interview")} aria-label="Type de chaîne"><option value="tech">Chaîne tech</option><option value="info">Actu générale</option><option value="interview">Interviews de personnalités</option></select>
+              <select className="tv-chip" value={nouvType} onChange={(e) => setNouvType(e.target.value as "tech" | "info" | "interview")} aria-label="Type de chaîne"><option value="tech">Chaîne spécialisée</option><option value="info">Actu générale</option><option value="interview">Interviews de personnalités</option></select>
               <button type="submit" className="btn primary" disabled={busy === "chaine" || !nouvelle.trim()}>Ajouter</button>
             </form>
           </section>

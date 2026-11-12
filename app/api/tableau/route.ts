@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { db, getSettings, isDemo } from "@/lib/store";
 import { statsStockage } from "@/lib/mediatheque";
+import { estAdminPlateforme } from "@/lib/plateforme";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 30;
@@ -37,16 +38,15 @@ export async function GET(req: Request) {
     const now = new Date();
     const debut = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()) - 6 * JOUR);
     const fin = new Date(debut.getTime() + 9 * JOUR);
-    const [p1, p2, reglages, minute, cm, recap, media] = await Promise.all([
+    const [p1, p2, reglages, cm, recap, media] = await Promise.all([
       db().from("posts").select("id,rubrique,origin,status,scheduled_at,created_at,source_name,title,photo:visual->>photo,results")
         .gte("scheduled_at", debut.toISOString()).lt("scheduled_at", fin.toISOString()).limit(2000),
       db().from("posts").select("id,rubrique,origin,status,scheduled_at,created_at,source_name,title,photo:visual->>photo,results")
         .is("scheduled_at", null).gte("created_at", debut.toISOString()).limit(2000),
       getSettings(),
-      db().from("settings").select("data").eq("id", 5).maybeSingle(),
       db().from("cm_journal").select("id", { count: "exact", head: true }).eq("traite", false),
       db().from("posts").select("scheduled_at,created_at,status").eq("origin", "recap").order("created_at", { ascending: false }).limit(1).maybeSingle(),
-      statsStockage().catch(() => null),
+      estAdminPlateforme().then((ok) => (ok ? statsStockage() : null)).catch(() => null),
     ]);
     if (p1.error) throw new Error(p1.error.message);
     const posts = [...((p1.data ?? []) as Ligne[]), ...((p2.data ?? []) as Ligne[])];
@@ -87,7 +87,6 @@ export async function GET(req: Request) {
     for (const p of posts) if (p.status === "publie" && p.source_name) src.set(p.source_name, (src.get(p.source_name) ?? 0) + 1);
     const sources = [...src.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5).map(([nom, n]) => ({ nom, n }));
 
-    const eps = ((minute.data?.data as { episodes?: { statut: string; numero?: number }[] } | null)?.episodes ?? []);
     return NextResponse.json({
       maintenant: now.toISOString(),
       autopilot: reglages.autopilot,
@@ -102,7 +101,6 @@ export async function GET(req: Request) {
       erreurs: erreurs.slice(0, 5),
       nbErreurs: erreurs.length,
       sources,
-      minute: { total: eps.length, montes: eps.filter((e) => e.statut !== "brouillon").length, brouillons: eps.filter((e) => e.statut === "brouillon").length, dernier: Math.max(0, ...eps.map((e) => e.numero ?? 0)) },
       grin: { aTraiter: cm.count ?? 0 },
       recap: recap.data ? { date: (recap.data as { scheduled_at: string | null; created_at: string }).scheduled_at ?? (recap.data as { created_at: string }).created_at, statut: (recap.data as { status: string }).status } : null,
       media,
