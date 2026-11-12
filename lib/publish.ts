@@ -1,39 +1,21 @@
-// Publication sur les canaux de Media Booster.
+// Publication sur les comptes reliés par le client (pages Facebook et LinkedIn, site WordPress, TikTok).
 import { categorieWp, type Platform } from "./config";
 import type { Post, PublishResult } from "./store";
 import { imageFor } from "./visual-url";
-import { publishPhotos, tiktokConfigured, tiktokUser } from "./tiktok";
+import { publishPhotos, tiktokConfigured, tiktokUser, tiktokRelie } from "./tiktok";
+import { FB_VERSION, identifiants, versionLinkedin, type Identifiants } from "./reseaux";
 
 type Publisher = (post: Post) => Promise<Omit<PublishResult, "at">>;
 
-// LinkedIn date ses versions d'API (AAAAMM) et retire les plus anciennes au bout d'un an environ :
-// on prend la version d'il y a deux mois, toujours disponible, sauf si LINKEDIN_VERSION est fixée.
-function linkedinVersion(): string {
-  if (process.env.LINKEDIN_VERSION) return process.env.LINKEDIN_VERSION;
-  const d = new Date();
-  d.setUTCDate(1);
-  d.setUTCMonth(d.getUTCMonth() - 2);
-  return `${d.getUTCFullYear()}${String(d.getUTCMonth() + 1).padStart(2, "0")}`;
-}
-
-export function connectionStatus(): Record<Platform, { configured: boolean; detail: string }> {
+// Statut des comptes reliés par le client (écran Connexions).
+export async function connectionStatus(): Promise<Record<Platform, { configured: boolean; detail: string }>> {
+  const { FB, LI, WP } = await identifiants();
+  const tt = tiktokConfigured() ? await tiktokRelie().catch(() => false) : false;
   return {
-    wordpress: {
-      configured: Boolean(process.env.WP_URL && process.env.WP_USER && process.env.WP_APP_PASSWORD),
-      detail: process.env.WP_URL ? process.env.WP_URL.replace(/^https?:\/\//, "") : "WP_URL, WP_USER, WP_APP_PASSWORD",
-    },
-    facebook: {
-      configured: Boolean(process.env.FB_PAGE_ID && process.env.FB_PAGE_TOKEN),
-      detail: process.env.FB_PAGE_ID ? `Page ${process.env.FB_PAGE_ID}` : "FB_PAGE_ID, FB_PAGE_TOKEN",
-    },
-    linkedin: {
-      configured: Boolean(process.env.LINKEDIN_WEBHOOK_URL || (process.env.LINKEDIN_TOKEN && process.env.LINKEDIN_AUTHOR)),
-      detail: process.env.LINKEDIN_WEBHOOK_URL ? "Votre page via Make" : process.env.LINKEDIN_AUTHOR ?? "LINKEDIN_WEBHOOK_URL (Make)",
-    },
-    tiktok: {
-      configured: tiktokConfigured(),
-      detail: tiktokConfigured() ? "Votre compte via Content Posting API" : "TIKTOK_CLIENT_KEY, TIKTOK_CLIENT_SECRET",
-    },
+    wordpress: { configured: WP.ok, detail: WP.ok ? WP.url.replace(/^https?:\/\//, "") : "Site non relié" },
+    facebook: { configured: FB.ok, detail: FB.ok ? FB.nom : "Page non reliée" },
+    linkedin: { configured: LI.ok, detail: LI.ok ? LI.nom : LI.expire ? "Connexion expirée : reconnectez LinkedIn" : "Non relié" },
+    tiktok: { configured: tt, detail: tt ? "Compte relié" : "Non relié" },
   };
 }
 
@@ -56,30 +38,29 @@ function escapeHtml(t: string) {
 }
 
 // ─── WordPress : article complet (catégories, étiquettes, extrait SEO, images légendées) ───
-function wpAuth() {
-  return "Basic " + Buffer.from(`${process.env.WP_USER}:${process.env.WP_APP_PASSWORD}`).toString("base64");
-}
-function wpBase() {
-  return (process.env.WP_URL ?? "").replace(/\/$/, "");
+function wpAuth(WP: Identifiants["WP"]) {
+  return "Basic " + Buffer.from(`${WP.user}:${WP.appPassword}`).toString("base64");
 }
 const norm = (t: string) => t.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
 
 // Identifiants des catégories (par nom, sans accents ni casse) : seules les catégories existantes sont utilisées.
 async function wpCategoryIds(names: string[]): Promise<number[]> {
+  const { WP } = await identifiants();
   if (!names.length) return [];
-  const res = await fetch(`${wpBase()}/wp-json/wp/v2/categories?per_page=100`, { headers: { Authorization: wpAuth() } });
+  const res = await fetch(`${WP.url}/wp-json/wp/v2/categories?per_page=100`, { headers: { Authorization: wpAuth(WP) } });
   if (!res.ok) return [];
   const all = (await res.json()) as { id: number; name: string; slug: string }[];
   return names.map((n) => all.find((c) => norm(c.name) === norm(n) || c.slug === norm(n).replace(/\s+/g, "-"))?.id).filter((x): x is number => typeof x === "number");
 }
 // Étiquettes : créées si elles n'existent pas encore.
 async function wpTagIds(names: string[]): Promise<number[]> {
+  const { WP } = await identifiants();
   const ids: number[] = [];
   for (const name of names.slice(0, 8)) {
-    const q = await fetch(`${wpBase()}/wp-json/wp/v2/tags?search=${encodeURIComponent(name)}&per_page=20`, { headers: { Authorization: wpAuth() } });
+    const q = await fetch(`${WP.url}/wp-json/wp/v2/tags?search=${encodeURIComponent(name)}&per_page=20`, { headers: { Authorization: wpAuth(WP) } });
     const found = q.ok ? ((await q.json()) as { id: number; name: string }[]).find((t) => norm(t.name) === norm(name)) : undefined;
     if (found) { ids.push(found.id); continue; }
-    const c = await fetch(`${wpBase()}/wp-json/wp/v2/tags`, { method: "POST", headers: { Authorization: wpAuth(), "Content-Type": "application/json" }, body: JSON.stringify({ name }) });
+    const c = await fetch(`${WP.url}/wp-json/wp/v2/tags`, { method: "POST", headers: { Authorization: wpAuth(WP), "Content-Type": "application/json" }, body: JSON.stringify({ name }) });
     if (c.ok) ids.push(((await c.json()) as { id: number }).id);
   }
   return ids;
@@ -97,19 +78,20 @@ async function optimise(bytes: ArrayBuffer, type: string): Promise<{ body: Array
 }
 
 async function wpMedia(url: string, name: string, legende: string, alt: string): Promise<{ id: number; src: string; width?: number; height?: number } | null> {
+  const { WP } = await identifiants();
   const r = await fetch(url, { headers: { "User-Agent": "MediaBooster/1.0" } });
   if (!r.ok) return null;
   const img = await optimise(await r.arrayBuffer(), (r.headers.get("content-type") ?? "image/jpeg").split(";")[0]);
-  const up = await fetch(`${wpBase()}/wp-json/wp/v2/media`, {
+  const up = await fetch(`${WP.url}/wp-json/wp/v2/media`, {
     method: "POST",
-    headers: { Authorization: wpAuth(), "Content-Type": img.type, "Content-Disposition": `attachment; filename="${name}.${img.ext}"` },
+    headers: { Authorization: wpAuth(WP), "Content-Type": img.type, "Content-Disposition": `attachment; filename="${name}.${img.ext}"` },
     body: img.body as BodyInit,
   });
   if (!up.ok) throw new Error(`WordPress (image) ${up.status} : ${(await up.text()).slice(0, 200)}`);
   const m = (await up.json()) as { id: number; source_url: string; media_details?: { width?: number; height?: number } };
-  await fetch(`${wpBase()}/wp-json/wp/v2/media/${m.id}`, {
+  await fetch(`${WP.url}/wp-json/wp/v2/media/${m.id}`, {
     method: "POST",
-    headers: { Authorization: wpAuth(), "Content-Type": "application/json" },
+    headers: { Authorization: wpAuth(WP), "Content-Type": "application/json" },
     body: JSON.stringify({ caption: legende, alt_text: alt, title: alt }),
   });
   return { id: m.id, src: m.source_url, width: m.media_details?.width ?? img.width, height: m.media_details?.height ?? img.height };
@@ -138,18 +120,19 @@ const figure = (m: { id: number; src: string; width?: number; height?: number },
 const slugify = (t: string) => norm(t).replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 70);
 
 const wordpress: Publisher = async (post) => {
+  const { WP } = await identifiants();
   const v = post.visual;
   const titre = post.texts.wp_title || post.title;
   // Article déjà en ligne : seules ses catégories et étiquettes sont corrigées (ni nouvelle image ni nouveau texte).
   if (v.wp_maj === "categories" && v.wp_slug) {
-    const f = await fetch(`${wpBase()}/wp-json/wp/v2/posts?slug=${encodeURIComponent(v.wp_slug)}&status=any&_fields=id,link`, { headers: { Authorization: wpAuth() } });
+    const f = await fetch(`${WP.url}/wp-json/wp/v2/posts?slug=${encodeURIComponent(v.wp_slug)}&status=any&_fields=id,link`, { headers: { Authorization: wpAuth(WP) } });
     const ex = f.ok ? ((await f.json()) as { id: number; link: string }[])[0] : undefined;
     if (ex) {
       const categories = await wpCategoryIds(v.wp_categories?.length ? v.wp_categories : [categorieWp(titre, post.texts.wp_body)]);
       const tags = await wpTagIds(v.wp_tags ?? []);
-      const r = await fetch(`${wpBase()}/wp-json/wp/v2/posts/${ex.id}`, {
+      const r = await fetch(`${WP.url}/wp-json/wp/v2/posts/${ex.id}`, {
         method: "POST",
-        headers: { Authorization: wpAuth(), "Content-Type": "application/json" },
+        headers: { Authorization: wpAuth(WP), "Content-Type": "application/json" },
         body: JSON.stringify({ categories, ...(tags.length ? { tags } : {}), ...(post.texts.wp_excerpt ? { excerpt: post.texts.wp_excerpt } : {}) }),
       });
       if (!r.ok) throw new Error(`WordPress ${r.status} : ${(await r.text()).slice(0, 200)}`);
@@ -187,11 +170,11 @@ const wordpress: Publisher = async (post) => {
   const excerpt = post.texts.wp_excerpt || "";
   // Un article déjà publié avec la même adresse est mis à jour au lieu d'être dupliqué.
   const wpSlug = v.wp_slug || slugify(titre);
-  const exist = await fetch(`${wpBase()}/wp-json/wp/v2/posts?slug=${encodeURIComponent(wpSlug)}&status=any&_fields=id`, { headers: { Authorization: wpAuth() } });
+  const exist = await fetch(`${WP.url}/wp-json/wp/v2/posts?slug=${encodeURIComponent(wpSlug)}&status=any&_fields=id`, { headers: { Authorization: wpAuth(WP) } });
   const existing = exist.ok ? ((await exist.json()) as { id: number }[])[0] : undefined;
-  const res = await fetch(`${wpBase()}/wp-json/wp/v2/posts${existing ? `/${existing.id}` : ""}`, {
+  const res = await fetch(`${WP.url}/wp-json/wp/v2/posts${existing ? `/${existing.id}` : ""}`, {
     method: "POST",
-    headers: { Authorization: wpAuth(), "Content-Type": "application/json" },
+    headers: { Authorization: wpAuth(WP), "Content-Type": "application/json" },
     // Post de test de connexion : envoyé en brouillon, jamais publié en ligne.
     body: JSON.stringify({
       title: titre,
@@ -212,11 +195,12 @@ const wordpress: Publisher = async (post) => {
 // Carrousel (plusieurs images à faire défiler) : chaque image est d'abord envoyée sans être publiée,
 // puis un seul post les regroupe avec le texte.
 async function facebookCarousel(post: Post, slides: string[]) {
-  const version = process.env.FB_GRAPH_VERSION || "v21.0";
-  const token = process.env.FB_PAGE_TOKEN ?? "";
+  const { FB } = await identifiants();
+  const version = FB_VERSION();
+  const token = FB.token;
   const ids: string[] = [];
   for (const url of slides.slice(0, 10)) {
-    const res = await fetch(`https://graph.facebook.com/${version}/${process.env.FB_PAGE_ID}/photos`, {
+    const res = await fetch(`https://graph.facebook.com/${version}/${FB.pageId}/photos`, {
       method: "POST",
       body: new URLSearchParams({ url, published: "false", access_token: token }),
     });
@@ -226,7 +210,7 @@ async function facebookCarousel(post: Post, slides: string[]) {
   }
   const body = new URLSearchParams({ message: post.texts.facebook, access_token: token });
   ids.forEach((id, i) => body.set(`attached_media[${i}]`, JSON.stringify({ media_fbid: id })));
-  const res = await fetch(`https://graph.facebook.com/${version}/${process.env.FB_PAGE_ID}/feed`, { method: "POST", body });
+  const res = await fetch(`https://graph.facebook.com/${version}/${FB.pageId}/feed`, { method: "POST", body });
   const json = (await res.json()) as { id?: string; error?: { message: string } };
   if (!res.ok || json.error) throw new Error(`Facebook : ${json.error?.message ?? res.status}`);
   return { ok: true, detail: `Carrousel de ${ids.length} images publié sur la Page`, url: json.id ? `https://www.facebook.com/${json.id}` : undefined };
@@ -234,24 +218,26 @@ async function facebookCarousel(post: Post, slides: string[]) {
 
 // Vidéo (créée dans le Studio) : Facebook la récupère à partir de son lien.
 async function facebookVideo(post: Post, url: string) {
-  const version = process.env.FB_GRAPH_VERSION || "v21.0";
-  const body = new URLSearchParams({ file_url: url, description: post.texts.facebook, access_token: process.env.FB_PAGE_TOKEN ?? "" });
-  const res = await fetch(`https://graph-video.facebook.com/${version}/${process.env.FB_PAGE_ID}/videos`, { method: "POST", body });
+  const { FB } = await identifiants();
+  const version = FB_VERSION();
+  const body = new URLSearchParams({ file_url: url, description: post.texts.facebook, access_token: FB.token });
+  const res = await fetch(`https://graph-video.facebook.com/${version}/${FB.pageId}/videos`, { method: "POST", body });
   const json = (await res.json()) as { id?: string; error?: { message: string } };
   if (!res.ok || json.error) throw new Error(`Facebook (vidéo) : ${json.error?.message ?? res.status}`);
-  return { ok: true, detail: "Vidéo publiée sur la Page", url: json.id ? `https://www.facebook.com/${process.env.FB_PAGE_ID}/videos/${json.id}` : undefined };
+  return { ok: true, detail: "Vidéo publiée sur la Page", url: json.id ? `https://www.facebook.com/${FB.pageId}/videos/${json.id}` : undefined };
 }
 
 const facebook: Publisher = async (post) => {
+  const { FB } = await identifiants();
   if (post.visual.video) return facebookVideo(post, post.visual.video);
   if (post.visual.slides && post.visual.slides.length > 1) return facebookCarousel(post, post.visual.slides);
-  const version = process.env.FB_GRAPH_VERSION || "v21.0";
+  const version = FB_VERSION();
   const body = new URLSearchParams({
     url: imageUrl(post, "facebook"),
     caption: post.texts.facebook,
-    access_token: process.env.FB_PAGE_TOKEN ?? "",
+    access_token: FB.token,
   });
-  const res = await fetch(`https://graph.facebook.com/${version}/${process.env.FB_PAGE_ID}/photos`, { method: "POST", body });
+  const res = await fetch(`https://graph.facebook.com/${version}/${FB.pageId}/photos`, { method: "POST", body });
   const json = (await res.json()) as { id?: string; post_id?: string; error?: { message: string } };
   if (!res.ok || json.error) throw new Error(`Facebook : ${json.error?.message ?? res.status}`);
   return { ok: true, detail: "Photo publiée sur la Page", url: json.post_id ? `https://www.facebook.com/${json.post_id}` : undefined };
@@ -269,29 +255,15 @@ export function linkedinPayload(post: Post, test = false) {
   };
 }
 
-const linkedinViaMake: Publisher = async (post) => {
-  const payload = linkedinPayload(post);
-  if (!payload.image_url) throw new Error("Aucun visuel : ajoute le lien de ton visuel dans l'éditeur.");
-  const res = await fetch(process.env.LINKEDIN_WEBHOOK_URL as string, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-    signal: AbortSignal.timeout(30000),
-  });
-  if (!res.ok) throw new Error(`Make a répondu ${res.status} : ${(await res.text()).slice(0, 200)}. Vérifie que le scénario est activé.`);
-  return { ok: true, detail: "Envoyé à Make pour publication sur la Page LinkedIn" };
-};
-
 const linkedin: Publisher = async (post) => {
-  // Page du média via Make (aucune validation LinkedIn nécessaire) si le webhook est configuré.
-  if (process.env.LINKEDIN_WEBHOOK_URL) return linkedinViaMake(post);
+  const { LI } = await identifiants();
   const headers = {
-    Authorization: `Bearer ${process.env.LINKEDIN_TOKEN}`,
-    "LinkedIn-Version": linkedinVersion(),
+    Authorization: `Bearer ${LI.token}`,
+    "LinkedIn-Version": versionLinkedin(),
     "X-Restli-Protocol-Version": "2.0.0",
     "Content-Type": "application/json",
   };
-  const author = process.env.LINKEDIN_AUTHOR as string;
+  const author = LI.auteur;
   // 1. Réserve l'emplacement de l'image
   const init = await fetch("https://api.linkedin.com/rest/images?action=initializeUpload", {
     method: "POST",
@@ -331,7 +303,7 @@ const tiktok: Publisher = async (post) => {
 const PUBLISHERS: Record<Platform, Publisher> = { wordpress, facebook, linkedin, tiktok };
 
 export async function publishPost(post: Post): Promise<Post> {
-  const status = connectionStatus();
+  const status = await connectionStatus();
   const results = { ...post.results };
   for (const platform of post.platforms) {
     if (results[platform]?.ok) continue; // déjà publié
@@ -355,20 +327,22 @@ export async function publishPost(post: Post): Promise<Post> {
 export type ConnectionTest = { ok: boolean; detail: string };
 
 async function testWordpress(): Promise<ConnectionTest> {
-  const base = (process.env.WP_URL ?? "").replace(/\/$/, "");
-  const auth = "Basic " + Buffer.from(`${process.env.WP_USER}:${process.env.WP_APP_PASSWORD}`).toString("base64");
+  const { WP } = await identifiants();
+  const base = WP.url;
+  const auth = wpAuth(WP);
   const res = await fetch(`${base}/wp-json/wp/v2/users/me?context=edit`, { headers: { Authorization: auth }, signal: AbortSignal.timeout(15000) });
   if (res.status === 401 || res.status === 403) return { ok: false, detail: "Identifiant ou mot de passe d'application refusé par WordPress." };
-  if (res.status === 404) return { ok: false, detail: "API WordPress introuvable : vérifie WP_URL (adresse exacte du site)." };
+  if (res.status === 404) return { ok: false, detail: "API WordPress introuvable : vérifiez l'adresse exacte du site." };
   if (!res.ok) return { ok: false, detail: `WordPress a répondu ${res.status}.` };
   const me = (await res.json()) as { name?: string; capabilities?: Record<string, boolean> };
   if (me.capabilities && !me.capabilities.publish_posts) return { ok: false, detail: `Connecté en tant que ${me.name}, mais ce compte ne peut pas publier d'articles.` };
-  return { ok: true, detail: `Connecté en tant que ${me.name ?? process.env.WP_USER}, peut publier.` };
+  return { ok: true, detail: `Connecté en tant que ${me.name ?? WP.user}, peut publier.` };
 }
 
 async function testFacebook(): Promise<ConnectionTest> {
-  const version = process.env.FB_GRAPH_VERSION || "v21.0";
-  const url = `https://graph.facebook.com/${version}/${process.env.FB_PAGE_ID}?fields=name&access_token=${encodeURIComponent(process.env.FB_PAGE_TOKEN ?? "")}`;
+  const { FB } = await identifiants();
+  const version = FB_VERSION();
+  const url = `https://graph.facebook.com/${version}/${FB.pageId}?fields=name&access_token=${encodeURIComponent(FB.token)}`;
   const res = await fetch(url, { signal: AbortSignal.timeout(15000) });
   const json = (await res.json().catch(() => ({}))) as { name?: string; error?: { message?: string } };
   if (!res.ok || json.error) return { ok: false, detail: `Facebook : ${json.error?.message ?? res.status}` };
@@ -376,33 +350,15 @@ async function testFacebook(): Promise<ConnectionTest> {
 }
 
 async function testLinkedin(): Promise<ConnectionTest> {
-  const hook = process.env.LINKEDIN_WEBHOOK_URL;
-  if (hook) {
-    let host = "";
-    try {
-      host = new URL(hook).hostname;
-    } catch {
-      return { ok: false, detail: "LINKEDIN_WEBHOOK_URL n'est pas une adresse valide." };
-    }
-    if (!/(^|\.)make\.com$/.test(host)) return { ok: false, detail: "LINKEDIN_WEBHOOK_URL doit être l'adresse du webhook Make (…make.com)." };
-    return { ok: true, detail: "Webhook Make configuré. Pour ne rien publier, il n'est pas appelé pendant le test." };
-  }
-  const author = process.env.LINKEDIN_AUTHOR ?? "";
-  const id = author.match(/^urn:li:organization:(\d+)$/)?.[1];
-  if (!id) return { ok: false, detail: "LINKEDIN_AUTHOR doit avoir la forme urn:li:organization:123456." };
-  const res = await fetch(`https://api.linkedin.com/rest/organizations/${id}`, {
-    headers: { Authorization: `Bearer ${process.env.LINKEDIN_TOKEN}`, "LinkedIn-Version": linkedinVersion(), "X-Restli-Protocol-Version": "2.0.0" },
-    signal: AbortSignal.timeout(15000),
-  });
-  if (res.status === 401) return { ok: false, detail: "Jeton LinkedIn refusé ou expiré : génère-en un nouveau." };
-  if (res.status === 403) return { ok: false, detail: "Jeton valide, mais sans droit sur cette Page (il faut être administrateur et avoir l'accès Community Management)." };
-  if (!res.ok) return { ok: false, detail: `LinkedIn a répondu ${res.status} : ${(await res.text()).slice(0, 160)}` };
-  const org = (await res.json()) as { localizedName?: string };
-  return { ok: true, detail: `Page « ${org.localizedName ?? id} » accessible.` };
+  const { LI } = await identifiants();
+  const res = await fetch("https://api.linkedin.com/v2/userinfo", { headers: { Authorization: `Bearer ${LI.token}` }, signal: AbortSignal.timeout(15000) });
+  if (res.status === 401) return { ok: false, detail: "Connexion LinkedIn expirée : reconnectez LinkedIn." };
+  if (!res.ok) return { ok: false, detail: `LinkedIn a répondu ${res.status}.` };
+  return { ok: true, detail: `Publication au nom de ${LI.nom}.` };
 }
 
 export async function testConnections(): Promise<Record<Platform, ConnectionTest>> {
-  const status = connectionStatus();
+  const status = await connectionStatus();
   const run = async (p: Platform, fn: () => Promise<ConnectionTest>): Promise<ConnectionTest> => {
     if (!status[p].configured) return { ok: false, detail: "Pas encore relié." };
     try {

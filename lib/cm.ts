@@ -8,6 +8,8 @@ import { aiJson, aiConfigured } from "./claude";
 import type { Post } from "./store";
 import { signParams } from "./sign";
 import { marqueServeur } from "./marque-serveur";
+import { FB_VERSION, identifiants } from "./reseaux";
+import { espaceId } from "./espace";
 import type { MarqueComplete } from "@/lib/marque";
 
 export type CmCrise = { active: boolean; depuis: string; autopilotAvant: boolean; motif: string };
@@ -53,14 +55,25 @@ export async function cmSauverReglages(patch: Partial<CmReglages>): Promise<CmRe
 }
 
 // ─── Graph API Facebook ──────────────────────────────────────────────
-const V = () => process.env.FB_GRAPH_VERSION || "v21.0";
-const PAGE = () => process.env.FB_PAGE_ID ?? "";
-export const fbConfigure = () => Boolean(process.env.FB_PAGE_ID && process.env.FB_PAGE_TOKEN);
+const V = () => FB_VERSION();
+// Page Facebook reliée par le client (écran Connexions), gardée 30 s pour ne pas relire la base à chaque appel.
+const cachePage = new Map<string, { v: { pageId: string; token: string; ok: boolean }; at: number }>();
+async function pageFb() {
+  const e = await espaceId();
+  const c = cachePage.get(e);
+  if (c && Date.now() - c.at < 30000) return c.v;
+  const { FB } = await identifiants();
+  const v = { pageId: FB.pageId, token: FB.token, ok: FB.ok };
+  cachePage.set(e, { v, at: Date.now() });
+  if (cachePage.size > 500) cachePage.clear();
+  return v;
+}
+export const fbConfigure = async () => (await pageFb()).ok;
 
 async function graph<T>(path: string, params: Record<string, string> = {}, body?: Record<string, unknown>, method?: "DELETE"): Promise<T> {
   const u = new URL(`https://graph.facebook.com/${V()}/${path}`);
   for (const [k, v] of Object.entries(params)) u.searchParams.set(k, v);
-  u.searchParams.set("access_token", process.env.FB_PAGE_TOKEN ?? "");
+  u.searchParams.set("access_token", (await pageFb()).token);
   const signal = AbortSignal.timeout(15000); // jamais plus de 15 s par appel Facebook
   const init: RequestInit = method
     ? { method, signal }
@@ -97,19 +110,20 @@ const jourIso = (d = new Date()) => d.toISOString().slice(0, 10);
 
 // ─── Diagnostic : ce que le jeton de Page permet ─────────────────────
 export async function cmDiagnostic(): Promise<{ id: string; label: string; ok: boolean; detail: string }[]> {
+  const PID = (await pageFb()).pageId;
   const M = await marqueServeur();
   const out: { id: string; label: string; ok: boolean; detail: string }[] = [];
   const essai = async (id: string, label: string, f: () => Promise<string>) => {
     try { out.push({ id, label, ok: true, detail: await f() }); } catch (e) { out.push({ id, label, ok: false, detail: (e as Error).message }); }
   };
-  if (!fbConfigure()) return [{ id: "fb", label: "Page Facebook", ok: false, detail: "FB_PAGE_ID et FB_PAGE_TOKEN manquants dans Vercel." }];
+  if (!(await fbConfigure())) return [{ id: "fb", label: "Page Facebook", ok: false, detail: "Aucune page Facebook reliée : ouvrez Connexions." }];
   let dernier: string | undefined;
   await essai("page", "Lire la Page et ses abonnés", async () => {
-    const p = await graph<{ name: string; followers_count?: number }>(PAGE(), { fields: "name,followers_count" });
+    const p = await graph<{ name: string; followers_count?: number }>(PID, { fields: "name,followers_count" });
     return `${p.name}${p.followers_count != null ? ` · ${p.followers_count} abonnés` : ""}`;
   });
   await essai("posts", "Lire les publications", async () => {
-    const r = await graph<{ data: FbPost[] }>(`${PAGE()}/posts`, { fields: "id", limit: "1" });
+    const r = await graph<{ data: FbPost[] }>(`${PID}/posts`, { fields: "id", limit: "1" });
     dernier = r.data[0]?.id;
     return `${r.data.length ? "OK" : "Aucune publication"}`;
   });
@@ -119,14 +133,14 @@ export async function cmDiagnostic(): Promise<{ id: string; label: string; ok: b
     return r.data.length ? "OK" : "OK (aucun commentaire sur la dernière publication)";
   });
   await essai("messages", "Lire les messages privés", async () => {
-    const r = await graph<{ data: FbConv[] }>(`${PAGE()}/conversations`, { fields: "id", limit: "1" });
+    const r = await graph<{ data: FbConv[] }>(`${PID}/conversations`, { fields: "id", limit: "1" });
     return r.data.length ? "OK" : "OK (aucune conversation)";
   });
   await essai("mentions", `Voir les mentions de ${M.nom}`, async () => {
-    const r = await graph<{ data: FbPost[] }>(`${PAGE()}/tagged`, { fields: "id", limit: "1" });
+    const r = await graph<{ data: FbPost[] }>(`${PID}/tagged`, { fields: "id", limit: "1" });
     return r.data.length ? "OK" : "OK (aucune mention récente)";
   });
-  out.push({ id: "ia", label: "IA de rédaction", ok: aiConfigured(), detail: aiConfigured() ? "OK" : "GEMINI_API_KEY ou ANTHROPIC_API_KEY manquante" });
+  out.push({ id: "ia", label: "IA de rédaction", ok: aiConfigured(), detail: aiConfigured() ? "OK" : "Rédaction par l'IA momentanément indisponible" });
   return out;
 }
 
@@ -139,8 +153,9 @@ async function dejaTraites(ids: string[]): Promise<Set<string>> {
 }
 
 async function collecter(log: string[]): Promise<Candidat[]> {
+  const PID = (await pageFb()).pageId;
   const M = await marqueServeur();
-  const page = PAGE();
+  const page = PID;
   const out: Candidat[] = [];
   const depuis = Date.now() - 72 * 3.6e6; // éléments de moins de 3 jours seulement
   // 1. Commentaires des publications des 7 derniers jours (lus en parallèle)
@@ -253,6 +268,7 @@ async function decider(cands: Candidat[]): Promise<Map<string, Decision>> {
 
 // ─── Actions ─────────────────────────────────────────────────────────
 async function agir(c: Candidat, d: Decision, crise: boolean, propose = false): Promise<{ action: string; reponse: string | null; raison: string; replyId: string | null }> {
+  const PID = (await pageFb()).pageId;
   let action: string = d.action;
   // Mode « je valide » : NOVA prépare la réponse sans rien envoyer (le masquage du spam continue).
   if (propose && (action === "repondre" || action === "signaler" || action === "aimer")) {
@@ -266,7 +282,7 @@ async function agir(c: Candidat, d: Decision, crise: boolean, propose = false): 
   if (crise && (action === "repondre" || action === "signaler")) { action = "signaler"; reponse = ""; raison = `Mode crise : réponse gardée pour toi. ${raison}`; }
   let replyId: string | null = null;
   if ((action === "repondre" || action === "signaler") && reponse) {
-    if (c.canal === "message") await graph(`${PAGE()}/messages`, {}, { recipient: { id: c.auteurId }, messaging_type: "RESPONSE", message: { text: reponse } });
+    if (c.canal === "message") await graph(`${PID}/messages`, {}, { recipient: { id: c.auteurId }, messaging_type: "RESPONSE", message: { text: reponse } });
     else replyId = (await graph<{ id?: string }>(`${c.external_id}/comments`, {}, { message: reponse })).id ?? null;
   } else if (action === "repondre") action = "ignorer";
   if (action === "aimer") await graph(`${c.external_id}/likes`, {}, {});
@@ -360,6 +376,7 @@ async function consignes(r: CmReglages, log: string[]) {
 // et supprime les doublons éventuels (on garde le plus ancien).
 const PHRASE_LIEN = "L'article complet est à lire sur notre site";
 async function lienArticles(log: string[]) {
+  const PID = (await pageFb()).pageId;
   const M = await marqueServeur();
   const since = new Date(Date.now() - 48 * 3.6e6).toISOString();
   const { data } = await db().from("posts").select("id,results,texts").eq("status", "publie").gte("scheduled_at", since).limit(40);
@@ -369,7 +386,7 @@ async function lienArticles(log: string[]) {
     if (!fb || !wp || !p.results.facebook?.ok) continue;
     const cle = `lien-${p.id}`;
     const existants = (await graph<{ data: FbComment[] }>(`${fb}/comments`, { fields: "id,message,from{id},created_time", order: "chronological", limit: "100", filter: "toplevel" })).data
-      .filter((c) => c.from?.id === PAGE() && (c.message ?? "").includes(PHRASE_LIEN));
+      .filter((c) => c.from?.id === PID && (c.message ?? "").includes(PHRASE_LIEN));
     for (const doublon of existants.slice(1)) {
       await graph(doublon.id, {}, undefined, "DELETE");
       log.push(`Lien en double retiré : ${p.texts.wp_title}`);
@@ -446,11 +463,13 @@ export async function cmFinCrise(): Promise<CmReglages> {
 
 // ─── Le grin du jeudi et les piliers du grin ─────────────────────────
 async function publierSurPage(message: string): Promise<{ id: string; lien: string }> {
-  const r = await graph<{ id: string }>(`${PAGE()}/feed`, {}, { message });
+  const PID = (await pageFb()).pageId;
+  const r = await graph<{ id: string }>(`${PID}/feed`, {}, { message });
   return { id: r.id, lien: `https://www.facebook.com/${r.id}` };
 }
 
 async function rendezVous(r: CmReglages, log: string[]) {
+  const PID = (await pageFb()).pageId;
   const M = await marqueServeur();
   const now = new Date();
   const jour = now.getUTCDay(); // 4 = jeudi, 5 = vendredi
@@ -478,7 +497,7 @@ async function rendezVous(r: CmReglages, log: string[]) {
     const { data } = await db().from("cm_journal").select("fil,texte").eq("external_id", `grin-${hier}`).maybeSingle();
     if (data?.fil && !(await dejaTraites([cle])).size) {
       const c = await graph<{ data: FbComment[] }>(`${data.fil}/comments`, { fields: "message,from{id,name}", limit: "100", filter: "toplevel" }).catch(() => ({ data: [] as FbComment[] }));
-      const avis = c.data.filter((x) => x.from && x.from.id !== PAGE() && (x.message ?? "").length > 25).map((x) => ({ auteur: prenomInitiale(x.from?.name ?? "Abonné"), texte: (x.message ?? "").slice(0, 400) }));
+      const avis = c.data.filter((x) => x.from && x.from.id !== PID && (x.message ?? "").length > 25).map((x) => ({ auteur: prenomInitiale(x.from?.name ?? "Abonné"), texte: (x.message ?? "").slice(0, 400) }));
       if (avis.length < 3) {
         await noter({ canal: "grin", external_id: cle, auteur: "NOVA", action: "ignore", raison: `Synthèse non publiée : ${avis.length} avis seulement` });
       } else {
@@ -519,7 +538,7 @@ async function rendezVous(r: CmReglages, log: string[]) {
 export async function cmPassage(opts: { force?: boolean } = {}): Promise<string[]> {
   const r = await cmReglages();
   if (!r.actif && !opts.force) return ["Agent en pause."];
-  if (!fbConfigure()) return ["Page Facebook non reliée."];
+  if (!(await fbConfigure())) return ["Page Facebook non reliée."];
   if (!aiConfigured()) return ["IA non configurée."];
   const { data: verrou } = await db().from("settings").select("data").eq("id", 4).maybeSingle();
   const debut = (verrou?.data as { debut?: string | null } | null)?.debut;
@@ -584,6 +603,7 @@ async function passage(r: CmReglages, opts: { force?: boolean }): Promise<string
 
 // ─── Rapport du soir ─────────────────────────────────────────────────
 export async function cmRapport(): Promise<CmRapport> {
+  const PID = (await pageFb()).pageId;
   const M = await marqueServeur();
   const jour = jourIso();
   const since = new Date(Date.now() - 24 * 3.6e6).toISOString();
@@ -597,14 +617,14 @@ export async function cmRapport(): Promise<CmRapport> {
   }
 
   let abonnes: number | null = null;
-  try { abonnes = (await graph<{ followers_count?: number }>(PAGE(), { fields: "followers_count" })).followers_count ?? null; } catch { /* autorisation absente */ }
+  try { abonnes = (await graph<{ followers_count?: number }>(PID, { fields: "followers_count" })).followers_count ?? null; } catch { /* autorisation absente */ }
   const { data: veille } = await db().from("cm_rapports").select("contenu").lt("jour", jour).order("jour", { ascending: false }).limit(1).maybeSingle();
   const abonnesVeille = (veille?.contenu as CmRapport["contenu"] | undefined)?.abonnes ?? null;
 
   type P = { id: string; message?: string; created_time: string; permalink_url?: string; shares?: { count: number }; reactions?: { summary: { total_count: number } }; comments?: { summary: { total_count: number } } };
   let posts: P[] = [];
   try {
-    posts = (await graph<{ data: P[] }>(`${PAGE()}/posts`, { fields: "id,message,created_time,permalink_url,shares,reactions.summary(total_count).limit(0),comments.summary(total_count).limit(0)", limit: "30" })).data;
+    posts = (await graph<{ data: P[] }>(`${PID}/posts`, { fields: "id,message,created_time,permalink_url,shares,reactions.summary(total_count).limit(0),comments.summary(total_count).limit(0)", limit: "30" })).data;
   } catch { /* autorisation absente */ }
   const score = (p: P) => (p.reactions?.summary.total_count ?? 0) + 2 * (p.comments?.summary.total_count ?? 0) + 3 * (p.shares?.count ?? 0);
   const parHeure: Record<number, number[]> = {};
@@ -672,13 +692,14 @@ async function ligne(id: string): Promise<CmLigne> {
   return data as CmLigne;
 }
 export async function cmRepondre(id: string, texte: string): Promise<string> {
+  const PID = (await pageFb()).pageId;
   const l = await ligne(id);
   const t = texte.trim();
   if (!t) throw new Error("La réponse est vide.");
   let replyId: string | null = null;
   if (l.canal === "message") {
     if (!l.auteur_id) throw new Error("Destinataire inconnu : répondez depuis Messenger (lien « Voir sur Facebook »).");
-    await graph(`${PAGE()}/messages`, {}, { recipient: { id: l.auteur_id }, messaging_type: "RESPONSE", message: { text: t } });
+    await graph(`${PID}/messages`, {}, { recipient: { id: l.auteur_id }, messaging_type: "RESPONSE", message: { text: t } });
   } else {
     replyId = (await graph<{ id?: string }>(`${l.external_id}/comments`, {}, { message: t })).id ?? null;
   }
@@ -729,8 +750,8 @@ export async function cmDebutCrise(motif: string): Promise<CmReglages> {
 
 // ─── Jeton de la Page : expiration et autorisations (sans jamais renvoyer le jeton) ───
 export async function cmJeton(): Promise<{ expire: string | null; accesDonnees: string | null; autorisations: string[] } | null> {
-  if (!fbConfigure()) return null;
-  const t = process.env.FB_PAGE_TOKEN ?? "";
+  if (!(await fbConfigure())) return null;
+  const t = (await pageFb()).token;
   const r = await graph<{ data?: { expires_at?: number; data_access_expires_at?: number; scopes?: string[] } }>("debug_token", { input_token: t });
   const d = r.data ?? {};
   const iso = (s?: number) => (s && s > 0 ? new Date(s * 1000).toISOString() : null);

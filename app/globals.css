@@ -1160,3 +1160,27 @@ button.tv-etape-fixe:hover:not([aria-current="step"]) { background: rgba(15,23,4
 .mb-bandeau-config > span:first-child span { font-size: 13.5px; color: #065F46; }
 .mb-bandeau-config > span:last-child { font-size: 24px; color: var(--emeraude); }
 .mb-bandeau-config:hover { color: var(--encre); border-color: var(--emeraude); }
+
+/* Écran Connexions */
+.mb-cnx { gap: 14px; }
+.mb-cnx-carte { gap: 12px; padding: 16px; }
+.mb-cnx-carte > header { display: flex; align-items: center; gap: 12px; }
+.mb-cnx-carte > header > span:last-child { display: flex; flex-direction: column; gap: 2px; }
+.mb-cnx-carte > header strong { font-size: 16px; }
+.mb-cnx-carte > header small { font-size: 13px; color: #57534E; }
+.mb-cnx-logo { flex-shrink: 0; width: 40px; height: 40px; border-radius: 12px; color: #fff; font-weight: 800; font-size: 17px; display: inline-flex; align-items: center; justify-content: center; font-family: var(--font-mont), sans-serif; }
+.mb-cnx-btn { display: flex; align-items: center; justify-content: center; height: 48px; border-radius: 12px; font-weight: 700; font-size: 15px; text-decoration: none; color: #fff; border: 0; cursor: pointer; }
+.mb-cnx-btn:hover { color: #fff; filter: brightness(1.06); }
+.mb-cnx-btn.fb { background: #1877F2; } .mb-cnx-btn.li { background: #0A66C2; } .mb-cnx-btn.tt { background: #111; } .mb-cnx-btn.wp { background: #21759B; }
+.mb-cnx-liste { display: flex; flex-direction: column; gap: 8px; }
+.mb-cnx-page { display: flex; align-items: center; gap: 12px; width: 100%; padding: 10px 12px; border: 1px solid #E7E5DE; border-radius: 12px; background: #fff; text-align: left; cursor: pointer; font: inherit; color: var(--encre); }
+.mb-cnx-page img, .mb-cnx-ini { flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+.mb-cnx-ini { background: var(--sable-2); display: inline-flex; align-items: center; justify-content: center; font-weight: 800; }
+.mb-cnx-page > span:nth-of-type(2), .mb-cnx-page > span:nth-child(2) { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.mb-cnx-page small { color: #78716C; font-size: 12.5px; }
+.mb-cnx-coche { flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%; border: 2px solid #D6D3CB; }
+.mb-cnx-page[aria-checked="true"] { border-color: var(--emeraude); background: var(--emeraude-pale); }
+.mb-cnx-page[aria-checked="true"] .mb-cnx-coche { border-color: var(--emeraude); background: var(--emeraude); box-shadow: inset 0 0 0 4px #fff; }
+.mb-cnx-actions { gap: 8px; flex-wrap: wrap; }
+.mb-whatsapp { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 48px; padding: 0 16px; border: 0; border-radius: 12px; background: #25D366; color: #06331A; font-weight: 700; font-size: 15px; cursor: pointer; }
+.mb-whatsapp:disabled { opacity: .7; }

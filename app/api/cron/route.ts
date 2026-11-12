@@ -75,7 +75,7 @@ async function run(log: string[], opts: { force: boolean; now: boolean } = { for
   if (aiConfigured() && rubriquesActives(profil.rubriques).some((r) => r.id === "actu")) {
     const triggers = allTriggers(settings.triggers).filter((t) => isOn(settings.triggersEnabled, t.id, t.enabledByDefault));
     const sources = allSources(settings.customSources).filter((x) => isOn(settings.sourcesEnabled, x.id, x.enabledByDefault));
-    const conn = connectionStatus();
+    const conn = await connectionStatus();
     const now = new Date();
     const hour = now.getUTCHours();
     const recent = await recentAutoPosts(48);
@@ -217,7 +217,7 @@ async function weeklyRecap(log: string[], opts: { force: boolean; dry: boolean }
     log.push(`Récap de la semaine : pas assez d'actus publiées (${week.length}).`);
     return null;
   }
-  const conn = connectionStatus();
+  const conn = await connectionStatus();
   const platforms = (["facebook", "linkedin"] as Platform[]).filter((p) => conn[p].configured);
   const fmt = (d: Date) => d.toLocaleDateString("fr-FR", { day: "numeric", month: "long", timeZone: "UTC" });
   const periode = `semaine du ${fmt(monday)} au ${fmt(now)}`;

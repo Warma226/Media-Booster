@@ -12,7 +12,7 @@ export async function GET() {
     demo: isDemo(),
     ai: aiProvider() !== null,
     aiProvider: aiProvider(),
-    connections: connectionStatus(),
+    connections: await connectionStatus(),
   });
 }
 

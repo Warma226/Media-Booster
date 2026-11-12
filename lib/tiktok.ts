@@ -21,6 +21,13 @@ async function loadTokens(): Promise<Tokens | null> {
   const { data } = await db().from("settings").select("data").eq("id", 2).maybeSingle();
   return (data?.data as Tokens | undefined) ?? null;
 }
+/** Le compte TikTok du client est-il relié ? */
+export async function tiktokRelie(): Promise<boolean> {
+  return Boolean((await loadTokens())?.refresh_token);
+}
+export async function delierTiktok() {
+  await db().from("settings").delete().eq("id", 2);
+}
 async function saveTokens(t: Tokens) {
   const { error } = await db().from("settings").upsert({ id: 2, data: t });
   if (error) throw new Error(error.message);

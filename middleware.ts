@@ -10,7 +10,7 @@ import { apiAutorisee, pageAutorisee } from "@/lib/roles";
 import { accesOuvert, PAGES_SANS_ABONNEMENT } from "@/lib/abonnement";
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|icon.png|apple-icon.png|manifest.webmanifest|sw.js|icons/|hors-ligne|api/cron|api/cm-cron|api/visuel|api/login|api/inscription|api/invitation|api/abonnement/notification|invitation|inscription|studio/|recap/|cyberbase/|citations/|wp/|api/wp-categories|api/media|cgu|confidentialite|tiktok).*)"],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|icon.png|apple-icon.png|manifest.webmanifest|sw.js|icons/|hors-ligne|api/cron|api/cm-cron|api/visuel|api/login|api/inscription|api/invitation|api/abonnement/notification|invitation|inscription|studio/|recap/|cyberbase/|citations/|wp/|api/media|cgu|confidentialite|tiktok).*)"],
 };
 
 type EtatSession = { ouverte: boolean; acces: boolean };

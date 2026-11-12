@@ -105,7 +105,7 @@ export default function Dashboard() {
   if (aValider) alertes.push({ type: "À VALIDER", tag: ["#D1FAE5", "#065F46"], txt: `${pl(aValider, "post")} ${aValider > 1 ? "attendent" : "attend"} ton feu vert.`, cta: "Valider", href: "/calendrier?filtre=a_valider" });
   if (d?.grin.aTraiter) alertes.push({ type: "LE GRIN", tag: ["#FDE68A", "#7A4A00"], txt: `${pl(d.grin.aTraiter, "message")} de la communauté ${d.grin.aTraiter > 1 ? "attendent" : "attend"} une réponse.`, cta: "Ouvrir le Grin", href: "/communaute" });
   if (info && !auto) alertes.push({ type: "RÉGLAGE", tag: ["rgba(255,255,255,0.15)", "#fff"], txt: "Le pilote automatique est en pause : rien ne part sans toi.", cta: "Le réactiver", action: basculer });
-  if (info && !info.ai) alertes.push({ type: "RÉGLAGE", tag: ["rgba(255,255,255,0.15)", "#fff"], txt: "Rédaction par l'IA inactive : ajoute la clé GEMINI_API_KEY dans Vercel.", cta: "Ouvrir les connexions", href: "/connexions" });
+  if (info && !info.ai) alertes.push({ type: "RÉGLAGE", tag: ["rgba(255,255,255,0.15)", "#fff"], txt: "Rédaction par l'IA momentanément indisponible : les brouillons restent possibles.", cta: "Ouvrir les connexions", href: "/connexions" });
   const vAl = useVoirPlus(alertes, 3, alertes.length);
   const bulle = !d ? "Je regarde ce qui se passe…" : alertes.length === 0 ? "Tout est en ordre. Je garde un œil sur la Page." : alertes.length === 1 ? "Une seule chose pour vous. Rien de grave." : `${["", "", "Deux", "Trois", "Quatre", "Cinq", "Six"][alertes.length] ?? alertes.length} choses pour vous. La première est facile, promis.`;
 

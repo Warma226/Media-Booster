@@ -2,6 +2,7 @@
 // 1. Supabase Storage (seau public « visuels », créé automatiquement) ; 2. sinon la médiathèque WordPress.
 import { db, isDemo } from "./store";
 import { espaceId } from "./espace";
+import { identifiants } from "./reseaux";
 
 const BUCKET = "visuels";
 let bucketReady = false;
@@ -22,8 +23,9 @@ async function supabaseUpload(bytes: ArrayBuffer, type: string, name: string): P
 }
 
 async function wordpressUpload(bytes: ArrayBuffer, type: string, name: string): Promise<string> {
-  const base = (process.env.WP_URL ?? "").replace(/\/$/, "");
-  const auth = "Basic " + Buffer.from(`${process.env.WP_USER}:${process.env.WP_APP_PASSWORD}`).toString("base64");
+  const { WP } = await identifiants();
+  const base = WP.url;
+  const auth = "Basic " + Buffer.from(`${WP.user}:${WP.appPassword}`).toString("base64");
   const res = await fetch(`${base}/wp-json/wp/v2/media`, {
     method: "POST",
     headers: { Authorization: auth, "Content-Type": type, "Content-Disposition": `attachment; filename="${name.split("/").pop()}"` },
@@ -53,13 +55,13 @@ export async function enregistrerFichier(bytes: ArrayBuffer, type: string, ext: 
 }
 
 export function uploadAvailable(): boolean {
-  return !isDemo() || Boolean(process.env.WP_URL && process.env.WP_USER && process.env.WP_APP_PASSWORD);
+  return !isDemo();
 }
 
 export async function storeImage(bytes: ArrayBuffer, type: string): Promise<string> {
   const ext = type === "image/jpeg" ? "jpg" : type === "image/webp" ? "webp" : "png";
   const name = `${await espaceId()}/${new Date().toISOString().slice(0, 7)}/mb-${crypto.randomUUID().slice(0, 8)}.${ext}`;
   if (!isDemo()) return supabaseUpload(bytes, type, name);
-  if (process.env.WP_URL && process.env.WP_USER && process.env.WP_APP_PASSWORD) return wordpressUpload(bytes, type, name);
+  if ((await identifiants()).WP.ok) return wordpressUpload(bytes, type, name);
   throw new Error("Pour importer une image, branche Supabase ou WordPress (voir Connexions). En attendant, colle le lien de l'image.");
 }

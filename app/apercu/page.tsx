@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { TopBar, Trait } from "@/components/BottomNav";
+import { PartageWhatsApp } from "@/components/PartageWhatsApp";
 import { RUB, creneauLibre } from "@/components/Atelier";
 import { PLATFORMS, type Platform } from "@/lib/config";
 import { FORMATS, formatFor } from "@/lib/formats";
@@ -308,6 +309,8 @@ function Apercu() {
             ) : (
               <Link href="/creer" className="tv-btn-nuit" style={{ justifyContent: "center" }}>CRÉER UNE AUTRE PUBLICATION</Link>
             )}
+
+            <PartageWhatsApp texte={current.texts.facebook || current.texts.commun || current.title} image={current.visuals?.facebook || Object.values(current.visuals ?? {})[0]} titre={current.title} />
 
             <section className="tv-carte-side" style={{ gap: 10 }}>
               {current.source_url ? (

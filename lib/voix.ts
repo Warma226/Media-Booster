@@ -12,7 +12,7 @@ const TONS: Record<StyleVoix, string> = {
 // Modèles essayés du plus récent au plus ancien : un modèle sans offre gratuite ou saturé laisse la place au suivant.
 export async function synthese(texte: string, voix: string, style: StyleVoix = "narration"): Promise<{ url: string; duree: number }> {
   const cle = process.env.GEMINI_API_KEY;
-  if (!cle) throw new Error("La voix de synthèse demande une clé GEMINI_API_KEY dans Vercel. En attendant, enregistre ta voix ou importe un fichier audio.");
+  if (!cle) throw new Error("La voix de synthèse est momentanément indisponible. En attendant, enregistrez votre voix ou importez un fichier audio.");
   const modeles = [process.env.GEMINI_TTS_MODEL, "gemini-3.8-flash-tts", "gemini-3.8-flash-lite-tts", "gemini-3.1-flash-tts-preview", "gemini-2.5-flash-preview-tts"].filter(Boolean) as string[];
   let derniere = "";
   // Le ton est donné à part (instruction système) : seul le texte des scènes est envoyé à lire, la voix ne prononce jamais la consigne.
