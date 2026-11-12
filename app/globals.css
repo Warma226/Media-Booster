@@ -1377,3 +1377,167 @@ a.mb-rx-ligne:focus-visible { outline: 3px solid var(--bleu); outline-offset: 2p
 .mb-rx-hausse { font-style: normal; font-weight: 800; color: #15803d; margin-left: 3px; animation: mb-rx-monte 1.2s ease-out; }
 @keyframes mb-rx-monte { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { .mb-rx-point, .mb-rx-hausse { animation: none; } }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   REFONTE « salle de rédaction calme »
+   Fond sauge très clair, une seule couleur de marque (émeraude), filets fins plutôt
+   qu'ombres, titres moins lourds, aucun bloc sombre sauf l'encart NOVA et le sujet du jour
+   (émeraude profond, sans dégradé). Cette couche vient en dernier : elle prime sur l'ancienne.
+   ═══════════════════════════════════════════════════════════════════════════ */
+:root {
+  --fond: #F4F6F5;
+  --surface: #FFFFFF;
+  --ligne: #E3E8E5;
+  --ligne-forte: #CFD8D3;
+  --encre: #13231D;
+  --texte-2: #5A6A63;
+  --texte-3: #3E4D47;
+  --emeraude: #047857;
+  --emeraude-fonce: #065F46;
+  --emeraude-pale: #EAF4EF;
+  --profond: #0E3A2D;
+  --ambre: #A9520A;
+  --ambre-pale: #FBF2E6;
+  --rouge: #B42318;
+  --rouge-pale: #FDEEEC;
+  /* anciens noms, réalignés sur la nouvelle base */
+  --sable: var(--fond); --sable-2: #ECF0EE; --nuit: var(--encre); --bleu-nuit: var(--emeraude-fonce);
+  --gris-t: var(--texte-2); --gris-1: #F0F3F1; --gris-2: var(--ligne); --gris-3: var(--ligne-forte);
+  --bleu-pale: var(--emeraude-pale); --orange: #C26A12; --noir: var(--encre);
+  --verre: var(--surface); --verre-bord: var(--ligne);
+  --rayon: 14px; --rayon-ctl: 10px;
+}
+body { background: var(--fond); color: var(--encre); font-size: 15px; line-height: 1.55; -webkit-font-smoothing: antialiased; }
+h1, h2, h3 { font-weight: 700; letter-spacing: -0.015em; color: var(--encre); }
+h1 { font-size: 26px; line-height: 1.2; }
+.muted { color: var(--texte-2); }
+
+/* Contrôles */
+.btn { border-radius: var(--rayon-ctl); font-weight: 600; letter-spacing: 0; }
+.btn.primary { background: var(--emeraude); border-color: var(--emeraude); }
+.btn.primary:hover { background: var(--emeraude-fonce); border-color: var(--emeraude-fonce); }
+.btn:not(.primary):not(.link) { background: var(--surface); border-color: var(--ligne-forte); color: var(--encre); }
+input[type="text"], input[type="password"], input[type="url"], input[type="email"], input[type="tel"], input[type="datetime-local"], input[type="date"], input[type="time"], textarea, select {
+  border-radius: var(--rayon-ctl); border-color: var(--ligne-forte); background: var(--surface);
+}
+.card { border-color: var(--ligne); border-radius: var(--rayon); box-shadow: none; }
+.notice { border-radius: var(--rayon-ctl); }
+.switch { background: var(--ligne-forte); }
+.switch[aria-checked="true"], .switch.on { background: var(--emeraude); }
+.badge { border-radius: 999px; padding: 3px 9px; font-weight: 600; }
+
+/* Titres de l'ancienne interface : plus calmes */
+.tv-titre { font-size: 28px !important; font-weight: 700; letter-spacing: -0.02em; line-height: 1.15; }
+.tv-h2 { font-weight: 700; font-size: 18px; color: var(--encre); }
+.tv-gris { color: var(--texte-2); }
+.topbar .title { font-weight: 700; font-size: 20px; }
+/* Étiquettes : plus de capitales espacées */
+.tv-kicker { display: inline-block; font-size: 13px; font-weight: 600; letter-spacing: 0; text-transform: lowercase; }
+.tv-kicker::first-letter { text-transform: uppercase; }
+
+/* Surfaces : blanc et filet fin, sans ombre portée */
+.tv-verre, .tv-carte, .tv-carte-side, .tv-une article, .tv-rub, .tv-atelier-lien {
+  background: var(--surface); border: 1px solid var(--ligne); box-shadow: none; border-radius: 16px;
+}
+.tv-rub:hover { transform: none; box-shadow: none; border-color: var(--ligne-forte); }
+.tv-atelier-lien:hover { background: var(--surface); border-color: var(--ligne-forte); }
+.tv-atelier-lien .ico { background: var(--emeraude-pale); color: var(--emeraude); }
+.tv-une-stats, .tv-rub-bar { background: var(--gris-1); border-radius: 12px; }
+.tv-rub.alerte { border-color: #EDB8B2; }
+
+/* Pastilles de rubrique : teinte douce et pictogramme (plus d'icônes brillantes) */
+.tv-tuile::before, .tv-tuile::after { display: none; }
+.mb-pastille { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; border-radius: 12px; }
+
+/* Puces et filtres */
+.tv-chip { height: 36px; border-radius: 999px; border: 1px solid var(--ligne-forte); background: var(--surface); color: var(--texte-3); font-weight: 600; }
+.tv-chip[aria-selected="true"], .tv-chip[aria-pressed="true"], .tv-chip[aria-checked="true"] { background: var(--emeraude-pale); border-color: var(--emeraude); color: var(--emeraude-fonce); }
+.tv-pill { font-weight: 600; background: var(--gris-1); color: var(--texte-3); }
+.tv-pill.bleu { background: var(--emeraude-pale); color: var(--emeraude-fonce); }
+.tv-pill.orange { background: var(--ambre-pale); color: var(--ambre); }
+.tv-pill.rouge { background: var(--rouge-pale); color: var(--rouge); }
+
+/* Boutons ronds et recherche */
+.tv-rond { background: var(--surface); border: 1px solid var(--ligne); color: var(--encre); }
+.tv-rond .pastille { background: var(--orange); border-color: var(--surface); }
+.tv-recherche { background: var(--surface); border: 1px solid var(--ligne); border-radius: 12px; }
+.tv-btn-nuit { background: var(--emeraude); border-radius: var(--rayon-ctl); letter-spacing: 0; text-transform: none; font-weight: 600; box-shadow: none; }
+.tv-btn-nuit:hover { background: var(--emeraude-fonce); }
+
+/* Encarts forts : un seul ton profond, sans dégradé ni halo */
+.tv-voa, .tv-sujet { background: var(--profond); box-shadow: none; border-radius: 18px; }
+.tv-sujet::after { display: none; }
+.tv-voa-alerte { background: rgba(255,255,255,0.07); border-radius: 12px; }
+.tv-voa-alerte a { color: #BFE8D6; }
+
+/* Téléphone : en-tête clair au lieu du bandeau sombre */
+.tv-hero-mobile { background: var(--fond); color: var(--encre); border-radius: 0; padding: 16px 16px 8px; }
+.tv-hero-mobile .tv-rond { background: var(--surface); border: 1px solid var(--ligne); color: var(--encre); width: 40px; height: 40px; }
+.tv-hero-mobile .tv-rond .pastille { border-color: var(--surface); }
+.tv-pilote-mobile { background: var(--surface); border: 1px solid var(--ligne); color: var(--encre); border-radius: 14px; }
+
+/* Barre d'onglets du téléphone : posée en bas, nette */
+.tv-tabs {
+  left: 0; right: 0; transform: none; bottom: 0; width: 100%; max-width: none; height: calc(64px + env(safe-area-inset-bottom));
+  padding: 6px 8px env(safe-area-inset-bottom); border-radius: 0; border: 0; border-top: 1px solid var(--ligne);
+  background: rgba(255,255,255,0.97); box-shadow: none; backdrop-filter: none;
+}
+.tv-tabs a { color: var(--texte-2); font-size: 11.5px; font-weight: 600; border-radius: 12px; }
+.tv-tabs a svg { padding: 3px 14px; box-sizing: content-box; border-radius: 999px; }
+.tv-tabs a[aria-current="page"] { background: none; color: var(--emeraude-fonce); }
+.tv-tabs a[aria-current="page"] svg { background: var(--emeraude-pale); }
+
+/* Ordinateur : menu latéral clair */
+@media (min-width: 1024px) {
+  .tv-side { background: var(--surface); color: var(--encre); border-right: 1px solid var(--ligne); padding: 22px 14px 16px; }
+  .tv-side-brand { flex-direction: row; align-items: center; justify-content: flex-start; gap: 10px; padding: 0 8px 18px; margin-bottom: 10px; border-bottom: 1px solid var(--ligne); color: var(--encre); }
+  .tv-side-studio { display: none; }
+  .tv-side-nom { font-family: var(--font-mont), var(--font-inter), sans-serif; font-weight: 700; font-size: 16px; letter-spacing: -0.01em; color: var(--encre); }
+  .tv-side-item { color: var(--texte-3); font-size: 14.5px; padding: 4px 8px; border-radius: 10px; }
+  .tv-side-item:hover { color: var(--encre); background: var(--gris-1); }
+  .tv-side-ico { width: 32px; height: 32px; border-radius: 8px; background: none; color: var(--texte-2); }
+  .tv-side-item[aria-current="page"] { color: var(--emeraude-fonce); font-weight: 600; background: var(--emeraude-pale); }
+  .tv-side-item[aria-current="page"] .tv-side-ico { background: none; color: var(--emeraude); }
+  .tv-side-badge { background: var(--orange); }
+  .tv-side-media { border-top: 1px solid var(--ligne); }
+  .tv-side-compte { color: var(--encre) !important; }
+  .tv-side-compte small { color: var(--texte-2) !important; }
+  .tv-side-compte .av { background: var(--emeraude-pale) !important; color: var(--emeraude-fonce) !important; }
+}
+.tv-side-marque { width: 32px; height: 32px; border-radius: 9px; background: var(--emeraude); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+@media (min-width: 1024px) {
+  .tv-side-compte { border-top: 1px solid var(--ligne) !important; border-radius: 10px; }
+  .tv-side-compte:hover, .tv-side-compte[aria-current="page"] { background: var(--gris-1) !important; }
+}
+/* Veille, Créer et listes : mêmes surfaces sobres */
+.tv-actu, .tv-hub-carte { background: var(--surface); border: 1px solid var(--ligne); box-shadow: none; border-radius: 16px; }
+.tv-hub-carte:hover { border-color: var(--ligne-forte); box-shadow: none; transform: none; }
+.tv-actu[data-reprise="publie"] { background: var(--gris-1); }
+.tv-tag { letter-spacing: 0; font-weight: 600; border-radius: 999px; }
+.tv-actions .btn { border-radius: var(--rayon-ctl); }
+.tv-reprise { background: var(--emeraude-pale); color: var(--texte-3); }
+.tv-tagbtn { border-color: var(--ligne-forte); color: var(--texte-3); }
+.tv-tagbtn[aria-pressed="true"] { background: var(--emeraude-pale); color: var(--emeraude-fonce); }
+
+/* ─── Commentaires (assistante NOVA) ─── */
+.mb-cm { display: flex; flex-direction: column; gap: 18px; padding-bottom: 40px; }
+.mb-cm-vide { gap: 12px; padding: 20px; }
+.mb-cm-vide h2, .mb-cm-bloc h2 { font-size: 18px; }
+.mb-cm-bloc { display: flex; flex-direction: column; gap: 12px; }
+.mb-cm-bloc h2 { display: flex; align-items: center; gap: 8px; }
+.mb-cm-nb { min-width: 22px; height: 22px; padding: 0 7px; border-radius: 11px; background: var(--emeraude); color: #fff; font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; }
+.mb-cm-calme { margin: 0; padding: 18px; border-radius: 14px; background: var(--emeraude-pale); color: var(--emeraude-fonce); }
+.mb-cm-liste { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+.mb-cm-echange { background: var(--surface); border: 1px solid var(--ligne); border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+.mb-cm-tete { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; }
+.mb-cm-tete small { color: var(--texte-2); font-size: 12.5px; }
+.mb-cm-texte { margin: 0; padding: 10px 12px; border-left: 3px solid var(--ligne-forte); background: var(--gris-1); border-radius: 0 10px 10px 0; color: var(--texte-3); line-height: 1.5; overflow-wrap: anywhere; }
+.mb-cm-lien { font-size: 13px; font-weight: 600; color: var(--emeraude); text-decoration: none; align-self: flex-start; }
+.mb-cm-reponse { display: flex; flex-direction: column; gap: 6px; font-size: 13px; font-weight: 600; color: var(--texte-2); }
+.mb-cm-reponse textarea { font-size: 15px; font-weight: 400; color: var(--encre); line-height: 1.5; }
+.mb-cm-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.mb-cm-pause { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 4px 0; font-weight: 600; }
+.mb-cm-journal { list-style: none; margin: 0; padding: 0; }
+.mb-cm-journal li { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--gris-1); font-size: 14px; }
+.mb-cm-journal li > span { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.mb-cm-journal small { color: var(--texte-2); font-size: 12.5px; overflow-wrap: anywhere; }

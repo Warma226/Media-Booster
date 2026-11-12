@@ -22,13 +22,13 @@ export function SourceLogo({ name, domain, url, size = 40, radius, couleur = "#0
   const a11y = label ? { role: "img" as const, "aria-label": name, title: name } : { "aria-hidden": true as const, title: name };
   if (rate) {
     return (
-      <span {...a11y} style={{ ...commun, background: `linear-gradient(145deg, ${couleur}, #0F172A)`, color: "#fff", fontFamily: "var(--font-mont), sans-serif", fontWeight: 800, fontSize: Math.max(9, Math.round(size * 0.28)) }}>
+      <span {...a11y} style={{ ...commun, background: `color-mix(in srgb, ${couleur} 14%, white)`, color: `color-mix(in srgb, ${couleur} 80%, black)`, fontFamily: "var(--font-mont), sans-serif", fontWeight: 700, fontSize: Math.max(9, Math.round(size * 0.28)) }}>
         {initiales(name)}
       </span>
     );
   }
   return (
-    <span {...a11y} style={{ ...commun, background: "#fff", border: "1px solid #E3E9F3", boxSizing: "border-box" }}>
+    <span {...a11y} style={{ ...commun, background: "#fff", border: "1px solid var(--ligne)", boxSizing: "border-box" }}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={`/api/logo?d=${encodeURIComponent(d)}`} alt="" width={size} height={size} loading="lazy" onError={() => setRate(true)}
         style={{ width: "78%", height: "78%", objectFit: "contain", display: "block" }} />

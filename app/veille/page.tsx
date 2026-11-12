@@ -165,7 +165,6 @@ export default function Veille() {
             <button type="button" className="tv-rond" style={{ width: "auto", padding: "0 18px", borderRadius: 16, gap: 8, fontSize: 14, fontWeight: 700 }} onClick={load} disabled={items === null}>
               <Trait d="M21 12a9 9 0 1 1-2.6-6.4M21 4v5h-5" size={18} stroke={2} />{items === null ? "Lecture…" : "Actualiser"}
             </button>
-            <Link href="/videos" className="tv-rond" style={{ width: "auto", padding: "0 18px", borderRadius: 16, gap: 8, fontSize: 14, fontWeight: 700, textDecoration: "none" }}><Trait d="M23 7l-7 5 7 5V7zM1 5h15v14H1z" size={18} stroke={2} />Vidéos à reprendre</Link>
             <Link href="/sources" className="tv-btn-nuit" style={{ height: 48, padding: "0 20px", letterSpacing: 0 }}>Gérer les sources</Link>
           </div>
         </div>
@@ -199,7 +198,7 @@ export default function Veille() {
             {sujet ? (
               <article className="tv-sujet">
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 8, alignItems: "center", position: "relative" }}>
-                  <span className="tv-tag" style={{ background: "#D97706", color: "#fff", fontSize: 12 }}>SUJET DU JOUR</span>
+                  <span className="tv-tag" style={{ background: "rgba(255,255,255,0.14)", color: "#fff", fontSize: 12 }}>Sujet du jour</span>
                   {sujet.topics.length ? <span className="tv-tag" style={{ background: "rgba(255,255,255,0.12)", color: "#fff", letterSpacing: 0, fontWeight: 700, fontSize: 12 }}>{sujet.topics.map((t) => THEMES.find((x) => x.id === t)?.label).filter(Boolean).slice(0, 2).join(" · ")}</span> : null}
                   <span style={{ fontSize: 13, color: "#CBD5E1" }}>{sujet.sameStoryCount > 1 ? `repris par ${sujet.sameStoryCount} sources` : `pertinence ${sujet.score}`}</span>
                 </div>
@@ -271,12 +270,12 @@ export default function Veille() {
 
           {/* Colonne droite */}
           <aside className="tv-veille-side">
-            <section aria-labelledby="voa-veille" className="tv-carte-side" style={{ background: "#0F172A", color: "#fff", flexDirection: "row", alignItems: "center", border: 0 }}>
+            <section aria-labelledby="voa-veille" className="tv-carte-side" style={{ background: "var(--profond)", color: "#fff", flexDirection: "row", alignItems: "center", border: 0 }}>
               <span style={{ flexShrink: 0 }}><Voa humeur={items === null ? "ecoute" : "parle"} taille={70} /></span>
               <div style={{ display: "flex", flexDirection: "column", gap: 6, minWidth: 0 }}>
-                <h2 id="voa-veille" style={{ fontSize: 15, fontWeight: 800, color: "#fff" }}>L'avis de NOVA</h2>
-                <span style={{ fontSize: 14, lineHeight: 1.45, color: "#DCE5F7" }}>{avis}</span>
-                {sujet ? <Link href={lienCreer(sujet)} style={{ fontSize: 13, fontWeight: 700, color: "#FCD34D", textDecoration: "none" }}>Oui, prépare-le →</Link> : null}
+                <h2 id="voa-veille" style={{ fontSize: 15, fontWeight: 700, color: "#fff" }}>L'avis de NOVA</h2>
+                <span style={{ fontSize: 14, lineHeight: 1.45, color: "#D5E9E0" }}>{avis}</span>
+                {sujet ? <Link href={lienCreer(sujet)} style={{ fontSize: 13, fontWeight: 700, color: "#BFE8D6", textDecoration: "none" }}>Oui, prépare-le →</Link> : null}
               </div>
             </section>
 
@@ -296,10 +295,10 @@ export default function Veille() {
             <section aria-labelledby="garde" className="tv-carte-side">
               <h2 id="garde" className="tv-h2" style={{ fontSize: 18 }}>Garde-fous</h2>
               <span style={{ fontSize: 14, lineHeight: 1.5, color: "#33425C" }}>
-                Les sujets sensibles sont mis de côté et attendent votre validation{sensibles ? ` (${sensibles} en ce moment)` : ""}. Les lancements de smartphones passent après le reste.
+                Les sujets sensibles sont mis de côté et attendent votre validation{sensibles ? ` (${sensibles} en ce moment)` : ""}.
                 {compte ? (compte.autopilot ? " Le pilote automatique publie les actus validées par les déclencheurs." : " Pilote automatique en pause : rien ne part sans vous.") : ""}
               </span>
-              <Link href="/declencheurs" style={{ fontSize: 14, fontWeight: 600, textDecoration: "none" }}>Régler les déclencheurs →</Link>
+              <Link href="/declencheurs" style={{ fontSize: 14, fontWeight: 600, textDecoration: "none" }}>Mes règles de publication →</Link>
             </section>
           </aside>
         </div>

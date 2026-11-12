@@ -52,7 +52,7 @@ const MENU: { href: string; label: string; d: string; badge?: "grin" }[] = [
   { href: "/creer", label: "Créer", d: NAV_ICONS.creer },
   { href: "/calendrier", label: "Calendrier", d: NAV_ICONS.cal },
   { href: "/studio", label: "Studio", d: NAV_ICONS.studio },
-  { href: "/communaute", label: "Commentaires · NOVA", d: NAV_ICONS.grin, badge: "grin" },
+  { href: "/communaute", label: "Commentaires", d: NAV_ICONS.grin, badge: "grin" },
   { href: "/reactions", label: "Réactions", d: NAV_ICONS.grin },
   { href: "/connexions", label: "Mes pages", d: NAV_ICONS.cnx },
   { href: "/demarrage", label: "Mon média", d: NAV_ICONS.eclair },
@@ -92,8 +92,8 @@ export function BottomNav() {
     <>
       <nav className="tv-side" aria-label="Navigation principale">
         <Link href="/" className="tv-side-brand" aria-label="Media Booster, tableau de bord">
-          <LogoTuile />
-          <span className="tv-side-studio">STUDIO</span>
+          <span className="tv-side-marque" aria-hidden="true"><SigneBoost size={18} /></span>
+          <span className="tv-side-nom">Media Booster</span>
         </Link>
         <div className="tv-side-items">
           {MENU.filter((it) => voit(it.href)).map((it) => (

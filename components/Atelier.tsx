@@ -9,16 +9,16 @@ import { useProfil } from "./Profil";
 import { infoRubrique } from "@/lib/marque";
 
 export const RUB: Record<RubriqueId, { nom: string; titre: string; c: [string, string]; d: string; pastille: [string, string] }> = {
-  actu: { nom: "Actualité", titre: "Nouvelle actualité", c: ["#60A5FA", "#065F46"], d: "M4 5h16v14H4zM8 9h8M8 13h5", pastille: ["#D1FAE5", "#065F46"] },
-  citation: { nom: "Citation", titre: "Nouvelle citation", c: ["#FCD34D", "#B45309"], d: "M7 7h4v6H5V9a2 2 0 0 1 2-2zM15 7h4v6h-6V9a2 2 0 0 1 2-2zM5 13c0 2 1 3 3 4M13 13c0 2 1 3 3 4", pastille: ["#FEF3C7", "#92400E"] },
-  cyberbase: { nom: "#CyberBase", titre: "Nouvelle #CyberBase", c: ["#5EEAD4", "#0E9F8E"], d: "M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z", pastille: ["#D5F5F0", "#0B6B60"] },
-  portrait: { nom: "Portrait", titre: "Nouveau portrait", c: ["#FDBA74", "#D97706"], d: "M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21a8 8 0 0 1 16 0", pastille: ["#FEF3C7", "#9A3412"] },
+  actu: { nom: "Actualité", titre: "Nouvelle actualité", c: ["#047857", "#047857"], d: "M4 5h16v14H4zM8 9h8M8 13h5", pastille: ["#D1FAE5", "#065F46"] },
+  citation: { nom: "Citation", titre: "Nouvelle citation", c: ["#A9520A", "#A9520A"], d: "M7 7h4v6H5V9a2 2 0 0 1 2-2zM15 7h4v6h-6V9a2 2 0 0 1 2-2zM5 13c0 2 1 3 3 4M13 13c0 2 1 3 3 4", pastille: ["#FEF3C7", "#92400E"] },
+  cyberbase: { nom: "Notion du jour", titre: "Nouvelle notion du jour", c: ["#0F766E", "#0F766E"], d: "M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z", pastille: ["#D5F5F0", "#0B6B60"] },
+  portrait: { nom: "Portrait", titre: "Nouveau portrait", c: ["#8A5A44", "#8A5A44"], d: "M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21a8 8 0 0 1 16 0", pastille: ["#FEF3C7", "#9A3412"] },
 };
 
 export function Tuile({ rub, taille = 52 }: { rub: RubriqueId; taille?: number }) {
   const r = RUB[rub];
   return (
-    <span aria-hidden="true" style={{ width: taille, height: taille, borderRadius: Math.round(taille * 0.29), flexShrink: 0, display: "inline-flex", alignItems: "center", justifyContent: "center", background: `linear-gradient(145deg, ${r.c[0]}, ${r.c[1]})`, color: "#fff" }}>
+    <span aria-hidden="true" style={{ width: taille, height: taille, borderRadius: Math.round(taille * 0.29), flexShrink: 0, display: "inline-flex", alignItems: "center", justifyContent: "center", background: `color-mix(in srgb, ${r.c[1]} 13%, white)`, color: r.c[1] }}>
       <Trait d={r.d} size={Math.round(taille * 0.5)} stroke={2} />
     </span>
   );

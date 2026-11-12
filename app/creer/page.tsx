@@ -15,7 +15,7 @@ import { rubriquesActives } from "@/lib/marque";
 
 const DESC: Record<RubriqueId, [string, string]> = {
   actu: ["Une info de la veille, un lien ou votre idée, résumée et sourcée par l'IA.", "Pilote automatique possible"],
-  citation: ["Une phrase vérifiable d'une personnalité, avec sa photo.", "Toutes les 2 h"],
+  citation: ["Une phrase vérifiable d'une personnalité, avec sa photo.", "Planifiée"],
   cyberbase: ["Une notion expliquée simplement, une par jour.", "Chaque jour à heure fixe"],
   portrait: ["Une personne présentée à partir des infos qu'elle a validées.", "Sur accord de la personne"],
 };
@@ -95,15 +95,15 @@ function Choix() {
             const [txt, c] = etat(r);
             return (
               <Link key={r} href={`/creer/${r}`} className="tv-hub-carte">
-                <Tuile rub={r} taille={88} />
+                <Tuile rub={r} taille={56} />
                 <span style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 8 }}>
-                  <strong style={{ fontFamily: "var(--font-mont)", fontSize: 24, fontWeight: 800, letterSpacing: "-0.02em" }}>{ru.nom} <small style={{ fontSize: 14, color: "#047857" }}>{ru.hashtag}</small></strong>
+                  <strong style={{ fontFamily: "var(--font-mont)", fontSize: 20, fontWeight: 700, letterSpacing: "-0.015em" }}>{ru.nom} <small style={{ fontSize: 14, color: "#047857" }}>{ru.hashtag}</small></strong>
                   <span style={{ fontSize: 15, lineHeight: 1.5, color: "#33425C" }}>{ru.description || DESC[r][0]}</span>
                   <span className="row" style={{ flexWrap: "wrap", gap: 8, fontSize: 13 }}>
                     <span className="tv-pill">{DESC[r][1]}</span>
                     <span style={{ color: c, fontWeight: 700 }}>{txt}</span>
                   </span>
-                  <span style={{ marginTop: 2, fontSize: 14, fontWeight: 800, color: "#047857" }}>Ouvrir l'atelier {ru.nom} →</span>
+                  <span style={{ marginTop: 2, fontSize: 14, fontWeight: 600, color: "#047857" }}>Ouvrir l'atelier {ru.nom} →</span>
                 </span>
               </Link>
             );
