@@ -318,7 +318,7 @@ export default function Dashboard() {
                 return (
                   <Link key={r.nom} href={r.href} className={`tv-rub${r.ok ? "" : " alerte"}`}>
                     <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-                      <Pastille couleur={r.c[1]} picto={r.id || r.picto} taille={44} />
+                      <Pastille couleur={r.c[1]} picto={r.id || r.picto || "actu"} taille={44} />
                       <span style={{ display: "flex", flexDirection: "column", gap: 2, minWidth: 0 }}>
                         <span style={{ fontSize: 12, color: "#5B6B86" }}>{r.meta}</span>
                         <strong style={{ fontFamily: "var(--font-mont)", fontSize: 16, fontWeight: 700, color: "var(--encre)" }}>{r.nom}</strong>
