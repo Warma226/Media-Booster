@@ -16,7 +16,7 @@ export type VisualData = {
   source?: string;
 };
 
-const BLEU = "#5B3DF5";
+const BLEU = "#047857";
 
 function Lambda({ size, color }: { size: number; color: string }) {
   return (
@@ -117,7 +117,7 @@ function citation(d: VisualData, w: number, h: number) {
         </div>
         <div style={{ display: "flex", flexWrap: "wrap", width: 960 * s, fontSize: size * s, fontWeight: 500, color: "#FFFFFF", lineHeight: 1.2 }}>
           {mots.map((m, i) => (
-            <span key={i} style={{ marginRight: size * 0.26 * s, color: m.fort ? "#A08BFF" : "#FFFFFF" }}>{m.mot}</span>
+            <span key={i} style={{ marginRight: size * 0.26 * s, color: m.fort ? "#34D399" : "#FFFFFF" }}>{m.mot}</span>
           ))}
         </div>
         <div style={{ display: "flex", alignItems: "flex-start", marginTop: 34 * s }}>
@@ -149,7 +149,7 @@ function actu(d: VisualData, w: number, h: number) {
   const info = fit(d.texte || d.titre || "Titre de l'actu", 230);
   const size = autoSize(info, [[90, 54], [150, 48], [200, 44], [999, 40]]);
   return (
-    <div style={{ width: w, height: h, display: "flex", position: "relative", backgroundImage: "linear-gradient(160deg, #1D3A7A 0%, #150E33 55%, #000000 100%)", fontFamily: "Archivo" }}>
+    <div style={{ width: w, height: h, display: "flex", position: "relative", backgroundImage: "linear-gradient(160deg, #1D3A7A 0%, #0F172A 55%, #000000 100%)", fontFamily: "Archivo" }}>
       {d.photo ? <img src={d.photo} alt="" width={w} height={h} style={{ position: "absolute", left: 0, top: 0, width: w, height: h, objectFit: "cover" }} /> : null}
       <div style={{ position: "absolute", left: 0, top: 0, width: w, height: h, display: "flex", backgroundImage: "linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 46%, rgba(0,0,0,0.82) 66%, #000000 84%)" }} />
       <div style={at(st, 838, 30, { width: 194 * s, height: 194 * s, alignItems: "center", justifyContent: "center", background: "#FFFFFF", borderRadius: `0 0 0 ${100 * s}px` })}>

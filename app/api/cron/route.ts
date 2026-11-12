@@ -1,6 +1,8 @@
 // Tâche planifiée (appelée toutes les 15 min par Supabase pg_cron) :
 // 1. autopilote : choisit la meilleure actu, la rédige et la planifie ; 2. publie les posts planifiés arrivés à échéance.
 import { NextResponse } from "next/server";
+import { avecEspace } from "@/lib/espace";
+import { espacesActifs } from "@/lib/comptes";
 import { fetchVeille, fetchArticle, similar } from "@/lib/veille";
 import { generatePost, generateRecap, aiConfigured, sameStoryAs } from "@/lib/claude";
 import { publishPost, connectionStatus } from "@/lib/publish";
@@ -21,15 +23,27 @@ function authorized(req: Request) {
 
 export async function GET(req: Request) {
   if (!authorized(req)) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
-  const log: string[] = [];
   const q = new URL(req.url).searchParams;
-  try {
-    if (q.get("recap") === "1") return NextResponse.json({ ok: true, log, recap: await weeklyRecap(log, { force: true, dry: q.get("dry") === "1" }) });
-    return await run(log, { force: q.get("force") === "1", now: q.get("now") === "1" });
-  } catch (e) {
-    console.error("cron", e);
-    return NextResponse.json({ ok: false, error: (e as Error).message, stack: (e as Error).stack?.split("\n").slice(0, 4), log }, { status: 500 });
+  const seul = q.get("espace"); // pour tester un seul espace : ?espace=<id>
+  const debut = Date.now();
+  const bilan: { espace: string; nom: string; ok: boolean; log: string[]; error?: string }[] = [];
+  // Chaque client passe à son tour, avec ses propres réglages, sources et comptes reliés.
+  for (const e of await espacesActifs()) {
+    if (seul && e.id !== seul) continue;
+    if (Date.now() - debut > 240_000) { bilan.push({ espace: e.id, nom: e.nom, ok: false, log: [], error: "Reporté au prochain passage (temps écoulé)." }); continue; }
+    const log: string[] = [];
+    try {
+      await avecEspace(e.id, async () => {
+        if (q.get("recap") === "1") await weeklyRecap(log, { force: true, dry: q.get("dry") === "1" });
+        else await run(log, { force: q.get("force") === "1", now: q.get("now") === "1" });
+      });
+      bilan.push({ espace: e.id, nom: e.nom, ok: true, log });
+    } catch (err) {
+      console.error("cron", e.id, err);
+      bilan.push({ espace: e.id, nom: e.nom, ok: false, log, error: (err as Error).message });
+    }
   }
+  return NextResponse.json({ ok: bilan.every((b) => b.ok), espaces: bilan.length, bilan, at: new Date().toISOString() });
 }
 
 // force : ignore l'écart entre deux posts et la plage horaire ; now : publie tout de suite (sans délai d'annulation).

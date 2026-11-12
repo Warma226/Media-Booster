@@ -4,7 +4,7 @@
 import { LogoMark } from "./visual";
 import { MEDIA_COURT, MEDIA_NOM, MEDIA_SIGNATURE } from "@/lib/brand";
 
-const BLEU = "#5B3DF5";
+const BLEU = "#047857";
 const M = "Montserrat";
 const W = 1080;
 const H = 1350;
@@ -93,7 +93,7 @@ function item(d: { index: number; total: number; categorie: string; texte: strin
   return (
     <div style={{ width: W, height: H, display: "flex", position: "relative", overflow: "hidden", fontFamily: M, background: "#0A0F1F" }}>
       {d.photo ? <img src={d.photo} alt="" width={W} height={H} style={{ position: "absolute", left: 0, top: 0, width: W, height: H, objectFit: "cover" }} /> : null}
-      {!d.photo ? <div style={{ position: "absolute", left: 0, top: 0, width: W, height: H, display: "flex", backgroundImage: "radial-gradient(ellipse at 60% 40%, #1D3A7A 0%, #150E33 60%, #050812 100%)" }} /> : null}
+      {!d.photo ? <div style={{ position: "absolute", left: 0, top: 0, width: W, height: H, display: "flex", backgroundImage: "radial-gradient(ellipse at 60% 40%, #1D3A7A 0%, #0F172A 60%, #050812 100%)" }} /> : null}
       <Assombri />
       {/* Logo */}
       <div style={{ position: "absolute", left: 0, top: 66, width: W, display: "flex", justifyContent: "center" }}>
@@ -164,11 +164,11 @@ function fin(base: string) {
 
 function Vignette({ photo, categorie, w, h }: { photo?: string; categorie?: string; w: number; h: number }) {
   return (
-    <div style={{ display: "flex", position: "relative", width: w, height: h, overflow: "hidden", borderRadius: 6, background: "#3B1F8A", boxShadow: "0 4px 10px rgba(0,0,0,0.25)" }}>
+    <div style={{ display: "flex", position: "relative", width: w, height: h, overflow: "hidden", borderRadius: 6, background: "#065F46", boxShadow: "0 4px 10px rgba(0,0,0,0.25)" }}>
       {photo ? (
         <img src={photo} alt="" width={w} height={h} style={{ position: "absolute", left: 0, top: 0, width: w, height: h, objectFit: "cover" }} />
       ) : (
-        <div style={{ position: "absolute", left: 0, top: 0, width: w, height: h, display: "flex", alignItems: "center", justifyContent: "center", backgroundImage: "linear-gradient(160deg, #1D3A7A 0%, #150E33 100%)" }}>
+        <div style={{ position: "absolute", left: 0, top: 0, width: w, height: h, display: "flex", alignItems: "center", justifyContent: "center", backgroundImage: "linear-gradient(160deg, #1D3A7A 0%, #0F172A 100%)" }}>
           <LogoMark size={24} color="#FFFFFF" />
         </div>
       )}

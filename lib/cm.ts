@@ -271,7 +271,7 @@ async function agir(c: Candidat, d: Decision, crise: boolean, propose = false): 
 
 type Note = Partial<Omit<CmLigne, "id" | "created_at">> & Pick<CmLigne, "canal" | "external_id" | "action">;
 async function noter(l: Note) {
-  const { error } = await db().from("cm_journal").upsert({ ...l, traite: l.traite ?? l.action !== "signale" }, { onConflict: "external_id" });
+  const { error } = await db().from("cm_journal").upsert({ ...l, traite: l.traite ?? l.action !== "signale" }, { onConflict: "espace_id,external_id" });
   if (error) throw new Error(`Journal non enregistré : ${error.message}`);
 }
 

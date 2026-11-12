@@ -23,7 +23,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover", // utilise tout l'écran (encoche comprise) ; les marges de sécurité sont gérées en CSS
-  themeColor: "#EEF2F8", // même teinte que le fond de l'app : la barre du téléphone se fond dans l'écran
+  themeColor: "#F7F6F2", // même teinte que le fond de l'app : la barre du téléphone se fond dans l'écran
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

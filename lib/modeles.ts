@@ -6,7 +6,7 @@ import { MEDIA_COURT, MEDIA_NOM, MEDIA_SIGNATURE } from "@/lib/brand";
 export type Maquette = { id: string; nom: string; idee: string; doc: () => Doc };
 
 const PH = { bras: "/studio/bras.jpg", saut: "/studio/saut.jpg", dos: "/studio/dos.jpg", bureau: "/studio/bureau.jpg" };
-const B = "#5B3DF5", NUIT = "#1B0F4D", CIEL = "#A08BFF", OR = "#E11D74", NOIR = "#0A0A0A", BLANC = "#FFFFFF", JAUNE = "#F2B21B";
+const B = "#047857", NUIT = "#0F172A", CIEL = "#34D399", OR = "#D97706", NOIR = "#0A0A0A", BLANC = "#FFFFFF", JAUNE = "#F2B21B";
 
 // Raccourcis
 type O = Partial<El>;
@@ -23,7 +23,7 @@ const lignesScan = (h: number, n = 14) => Array.from({ length: n }, (_, i) => F(
 const VISUELS: Maquette[] = [
   {
     id: "v-tete", nom: "Cartes autour de la tête", idee: "La personne au centre, 5 cartes d'appli qui flottent autour de sa tête.",
-    doc: () => doc("visuel", "portrait", 8, [page("#150E33", [
+    doc: () => doc("visuel", "portrait", 8, [page("#0F172A", [
       I(PH.bureau, 0, 0, 1080, 1350, { nom: "Photo" }),
       F(0, 0, 1080, 420, "lin:rgba(11,22,51,0.75),rgba(11,22,51,0),180", { nom: "Ombre du haut" }),
       F(0, 750, 1080, 600, "lin:rgba(0,0,0,0),rgba(0,0,0,0.97),180", { nom: "Ombre du bas" }),
@@ -31,7 +31,7 @@ const VISUELS: Maquette[] = [
       C(380, 40, 320, 214, { titre: "Deux étapes", etat: "Activée", texte: "Votre WhatsApp est protégé par un code PIN.", bouton: "Activer", icone: "bouclier" }, { role: "carte1", anim: A("pop", 0.3, "flotter") }),
       C(40, 190, 310, 214, { titre: "Mise à jour", etat: "Installée", texte: "Téléphone à jour : failles corrigées.", bouton: "Vérifier", icone: "maj", couleur: NUIT }, { role: "carte2", anim: A("pop", 0.48, "flotter") }),
       C(730, 190, 310, 214, { titre: "Mot de passe", etat: "Fort", texte: "Long, unique, jamais partagé.", bouton: "Changer", icone: "cle", couleur: OR }, { role: "carte3", anim: A("pop", 0.66, "flotter") }),
-      C(30, 470, 300, 214, { titre: "Sauvegarde", etat: "Faite", texte: "Photos et discussions à l'abri.", bouton: "Lancer", icone: "nuage", couleur: "#4527D9" }, { role: "carte4", anim: A("pop", 0.84, "flotter") }),
+      C(30, 470, 300, 214, { titre: "Sauvegarde", etat: "Faite", texte: "Photos et discussions à l'abri.", bouton: "Lancer", icone: "nuage", couleur: "#065F46" }, { role: "carte4", anim: A("pop", 0.84, "flotter") }),
       C(750, 470, 300, 214, { titre: "Lien suspect", etat: "Évité", texte: "« Vous avez gagné » ? On ne clique pas.", bouton: "Signaler", icone: "lien", couleur: NOIR }, { role: "carte5", anim: A("pop", 1.02, "flotter") }),
       T("Nouvelle semaine", 60, 900, 960, 100, { role: "titre", police: 92, align: "center", anim: A("glisser-haut", 1.2) }),
       Pa("bons réflexes", 160, 1010, 760, 110, { role: "fort", police: 88, fond: `lin:${B},${CIEL},90`, rayon: 12, marge: 6, ombre: "neon", anim: A("pop", 1.45) }),
@@ -51,7 +51,7 @@ const VISUELS: Maquette[] = [
       C(380, 40, 320, 214, { titre: "Samedi", etat: "Repos", texte: "Le téléphone peut souffler, vous aussi.", bouton: "Profiter", icone: "bulle" }, { role: "carte1", ombre: "neon", anim: A("pop", 0.3, "flotter") }),
       C(40, 190, 310, 214, { titre: "À lire", etat: "4 actus", texte: "La semaine tech, au calme.", bouton: "Lire", icone: "antenne", couleur: NUIT }, { role: "carte2", rot: -3, ombre: "neon", anim: A("pop", 0.48, "balancer") }),
       C(730, 190, 310, 214, { titre: "Lien suspect", etat: "Évité", texte: "« Vous avez gagné » ? Non.", bouton: "Signaler", icone: "lien", couleur: OR }, { role: "carte3", rot: 3, ombre: "neon", anim: A("pop", 0.66, "balancer") }),
-      C(30, 470, 300, 214, { titre: "Messenger", etat: "Ouvert", texte: "Une question ? On répond.", bouton: "Écrire", icone: "bulle", couleur: "#4527D9" }, { role: "carte4", rot: 2, ombre: "neon", anim: A("pop", 0.84, "flotter") }),
+      C(30, 470, 300, 214, { titre: "Messenger", etat: "Ouvert", texte: "Une question ? On répond.", bouton: "Écrire", icone: "bulle", couleur: "#065F46" }, { role: "carte4", rot: 2, ombre: "neon", anim: A("pop", 0.84, "flotter") }),
       C(750, 470, 300, 214, { titre: "Lundi 7h", etat: "À suivre", texte: "Une nouvelle semaine d'actu.", bouton: "Rappel", icone: "cal", couleur: NOIR }, { role: "carte5", rot: -2, ombre: "neon", anim: A("pop", 1.02, "flotter") }),
       T("Bon week-end", 60, 900, 960, 100, { role: "titre", police: 96, align: "center", couleur: "lin:#FFFFFF,#FFE6A3,180", ombre: "forte", anim: A("glisser-haut", 1.2) }),
       Pa("prudents en ligne", 90, 1010, 900, 110, { role: "fort", police: 88, fond: `lin:${B},${CIEL},90`, rayon: 12, marge: 6, ombre: "neon", anim: A("pop", 1.45) }),
@@ -70,7 +70,7 @@ const VISUELS: Maquette[] = [
       T("SEMAINE", 40, 345, 1000, 110, { role: "fort", police: 104, couleur: B, align: "center", anim: A("glisser-haut", 0.5) }),
       Pa("Passionnés de tech.", 260, 470, 560, 84, { role: "pastille", anim: A("pop", 0.8) }),
       T(`Restez informés, vite et bien, avec ${MEDIA_NOM}.`, 60, 575, 960, 44, { role: "sous", police: 32, graisse: 600, couleur: NOIR, align: "center" }),
-      ...["IA", "Cybersécurité", "Mobile money", "Startups"].map((t, i) => Pa(t, i < 2 ? 50 : 730, 680 + (i % 2) * 82, 300, 62, { role: `etiquette${i + 1}`, police: 28, fond: ["#E6E0FF", B, NUIT, NOIR][i], couleur: i === 0 ? NUIT : BLANC, ombre: "douce", anim: A(i < 2 ? "glisser-droite" : "glisser-gauche", 1.2 + i * 0.12, "flotter") })),
+      ...["IA", "Cybersécurité", "Mobile money", "Startups"].map((t, i) => Pa(t, i < 2 ? 50 : 730, 680 + (i % 2) * 82, 300, 62, { role: `etiquette${i + 1}`, police: 28, fond: ["#D1FAE5", B, NUIT, NOIR][i], couleur: i === 0 ? NUIT : BLANC, ombre: "douce", anim: A(i < 2 ? "glisser-droite" : "glisser-gauche", 1.2 + i * 0.12, "flotter") })),
       F(0, 1150, 1080, 220, NOIR, { nom: "Barre du bas", rayon: 44 }),
       T("Toute l'actu tech sur :", 60, 1225, 470, 50, { role: "barre", police: 34, graisse: 600, align: "right" }),
       Pa(`${MEDIA_SIGNATURE}`, 550, 1210, 470, 80, { role: "bouton", police: 34, rayon: 40 }),
@@ -83,15 +83,15 @@ const VISUELS: Maquette[] = [
       F(0, 0, 1080, 1350, "rgba(6,11,26,0.45)", { nom: "Voile" }),
       ...logo(),
       T("09:41", 40, 170, 1000, 190, { nom: "Heure", police: 180, graisse: 600, align: "center", anim: A("fondu", 0) }),
-      T("Vendredi 6 novembre", 40, 370, 1000, 50, { nom: "Date", police: 36, graisse: 600, align: "center", couleur: "#E6E0FF" }),
+      T("Vendredi 6 novembre", 40, 370, 1000, 50, { nom: "Date", police: 36, graisse: 600, align: "center", couleur: "#D1FAE5" }),
       F(90, 470, 900, 230, "rgba(255,255,255,0.92)", { nom: "Notification", rayon: 34, ombre: "douce", anim: A("glisser-bas", 0.5) }),
       Ic("bulle", 125, 505, 64, "#22C55E", { anim: A("glisser-bas", 0.5) }),
       T("SMS · maintenant", 210, 515, 600, 40, { police: 26, graisse: 700, couleur: "#6B7280", anim: A("glisser-bas", 0.5) }),
       T("Votre compte mobile money est suspendu. Réactivez-le ici : http://…", 125, 585, 840, 100, { role: "piege", police: 32, graisse: 700, couleur: NOIR, interligne: 1.2, anim: A("glisser-bas", 0.5) }),
-      F(210, 760, 660, 190, "rgba(225,29,116,0.12)", { nom: "Tampon (cadre)", rayon: 20, bordure: OR, epaisseur: 12, rot: -10, anim: A("pop", 1.4, "trembler") }),
+      F(210, 760, 660, 190, "rgba(217,119,6,0.12)", { nom: "Tampon (cadre)", rayon: 20, bordure: OR, epaisseur: 12, rot: -10, anim: A("pop", 1.4, "trembler") }),
       T("ARNAQUE", 210, 790, 660, 140, { role: "tampon", police: 128, align: "center", couleur: OR, rot: -10, anim: A("pop", 1.4, "trembler") }),
       T("Un SMS qui demande un lien ou un code ?", 60, 1000, 960, 130, { role: "titre", police: 50, align: "center", interligne: 1.1 }),
-      T("C'est toujours une arnaque. Ne cliquez pas, appelez votre opérateur.", 90, 1130, 900, 100, { role: "sous", police: 34, graisse: 600, align: "center", couleur: "#E6E0FF", interligne: 1.25 }),
+      T("C'est toujours une arnaque. Ne cliquez pas, appelez votre opérateur.", 90, 1130, 900, 100, { role: "sous", police: 34, graisse: 600, align: "center", couleur: "#D1FAE5", interligne: 1.25 }),
       Pa("#CyberActu", 390, 1235, 300, 66, { role: "bouton", police: 32, fond: OR }),
     ])]),
   },
@@ -189,23 +189,23 @@ const fin = (titre: string, sous: string): Doc["pages"][number] => page(`lin:${B
   ...logo(),
   Ic("coeur", 440, 380, 200, "rgba(255,255,255,0.15)", { rayon: 50, anim: A("pop", 0.1, "pulser") }),
   T(titre, 60, 640, 960, 220, { role: "fin", police: 92, align: "center", interligne: 1.02 }),
-  T(sous, 90, 880, 900, 100, { role: "finSous", police: 36, graisse: 600, align: "center", couleur: "#E6E0FF" }),
+  T(sous, 90, 880, 900, 100, { role: "finSous", police: 36, graisse: 600, align: "center", couleur: "#D1FAE5" }),
   Pa(`Suivez ${MEDIA_NOM}`, 330, 1060, 420, 84, { role: "bouton", police: 38, fond: BLANC, couleur: B, ombre: "forte" }),
 ]);
-const swipe = (dark = true) => T("Glissez →", 760, 1250, 280, 50, { nom: "Glissez", police: 30, graisse: 700, align: "right", couleur: dark ? "#D2C8FF" : B });
+const swipe = (dark = true) => T("Glissez →", 760, 1250, 280, 50, { nom: "Glissez", police: 30, graisse: 700, align: "right", couleur: dark ? "#A7F3D0" : B });
 
 const CARROUSELS: Maquette[] = [
   {
     id: "c-actus", nom: "La semaine en 4 actus", idee: "Une couverture, puis une page par actu avec sa photo.",
     doc: () => {
-      const actu = (n: number, cat: string, titre: string, ic: string, ph: string) => page(`lin:#150E33,#1D3A7A,160`, [
+      const actu = (n: number, cat: string, titre: string, ic: string, ph: string) => page(`lin:#0F172A,#1D3A7A,160`, [
         I(ph, 60, 160, 960, 620, { nom: "Photo de l'actu", rayon: 28, ombre: "forte" }),
         ...logo(60, 52), T(`${n}/4`, 860, 50, 160, 60, { nom: "Numéro", police: 44, align: "right", couleur: CIEL }),
         Ic(ic, 60, 830, 80, B), T(cat, 160, 845, 600, 50, { role: `categorie${n}`, police: 34, graisse: 700, couleur: CIEL, majuscules: true, espacement: 3 }),
         T(titre, 60, 940, 960, 260, { role: `actu${n}`, police: 64, interligne: 1.08 }), swipe(),
       ]);
       return doc("carrousel", "portrait", 6, [
-        page("rad:#FFFFFF,#E4ECFF,#D2C8FF", [I(PH.saut, -10, 430, 1100, 920, { nom: "Photo", ajustement: "contain" }), ...logo(56, 52, false),
+        page("rad:#FFFFFF,#E4ECFF,#A7F3D0", [I(PH.saut, -10, 430, 1100, 920, { nom: "Photo", ajustement: "contain" }), ...logo(56, 52, false),
           T("La semaine tech", 60, 160, 960, 100, { role: "titre", police: 92, couleur: NOIR, align: "center" }), T("en 4 actus", 60, 262, 960, 100, { role: "fort", police: 92, couleur: B, align: "center" }), Pa("Glissez →", 330, 390, 420, 70, { role: "bouton", police: 34 })]),
         actu(1, "Télécoms", "5G en Afrique : les premiers cas d'usage", "antenne", PH.dos), actu(2, "Mobile money", "PI-SPI : payer avec son numéro de téléphone", "argent", PH.saut),
         actu(3, "CyberActu", "Europol frappe un vaste réseau criminel", "bouclier", PH.bureau), actu(4, "Robotique", "Meta prépare Max, un robot humanoïde", "robot", PH.bras),
@@ -227,7 +227,7 @@ const CARROUSELS: Maquette[] = [
           T(String(i + 1), -20, 140, 600, 600, { nom: "Numéro géant", police: 600, couleur: "transparent", contour: i % 2 ? CIEL : B, epContour: 7 }),
           Ic(ic, 820, 180, 180, B, { rayon: 40, ombre: "neon" }),
           T(t, 60, 720, 960, 230, { role: `reflexe${i + 1}`, police: 74, interligne: 1.05 }),
-          T(x, 60, 960, 960, 200, { role: `detail${i + 1}`, police: 38, graisse: 600, couleur: "#E6E0FF", interligne: 1.3 }), swipe()])),
+          T(x, 60, 960, 960, 200, { role: `detail${i + 1}`, police: 38, graisse: 600, couleur: "#D1FAE5", interligne: 1.3 }), swipe()])),
         fin("Gardez ce post", "Et partagez-le à quelqu'un qui en a besoin."),
       ]);
     },
@@ -237,7 +237,7 @@ const CARROUSELS: Maquette[] = [
     doc: () => doc("carrousel", "portrait", 6, [
       page(BLANC, [...logo(56, 52, false), T("AVANT", 60, 260, 960, 220, { role: "titre", police: 210, couleur: OR, align: "center" }), T("APRÈS", 60, 520, 960, 220, { role: "fort", police: 210, couleur: B, align: "center" }), T("Le mot de passe, version pro", 60, 820, 960, 80, { role: "sous", police: 50, couleur: NOIR, align: "center" }), swipe(false)]),
       page("#FFF1EA", [...logo(56, 52, false), Pa("AVANT", 60, 200, 300, 80, { fond: OR, police: 40 }), T("123456", 60, 420, 960, 200, { role: "avant", police: 190, couleur: NOIR, align: "center" }), F(80, 500, 920, 22, OR, { nom: "Barre rouge", rot: -8, rayon: 11, anim: A("glisser-droite", 0.3) }), T("Trouvé en moins d'une seconde.", 60, 760, 960, 120, { role: "avantDetail", police: 56, couleur: NOIR, align: "center" }), swipe(false)]),
-      page("#F1EEFF", [...logo(56, 52, false), Pa("APRÈS", 60, 200, 300, 80, { police: 40 }), T("Soleil-Ouaga-2026!", 60, 440, 960, 140, { role: "apres", police: 96, couleur: NOIR, align: "center" }), Ic("check", 440, 620, 200, B, { rayon: 100, ombre: "neon", anim: A("pop", 0.3) }), T("Long, facile à retenir, difficile à deviner.", 60, 880, 960, 140, { role: "apresDetail", police: 52, couleur: NOIR, align: "center" }), swipe(false)]),
+      page("#ECFDF5", [...logo(56, 52, false), Pa("APRÈS", 60, 200, 300, 80, { police: 40 }), T("Soleil-Ouaga-2026!", 60, 440, 960, 140, { role: "apres", police: 96, couleur: NOIR, align: "center" }), Ic("check", 440, 620, 200, B, { rayon: 100, ombre: "neon", anim: A("pop", 0.3) }), T("Long, facile à retenir, difficile à deviner.", 60, 880, 960, 140, { role: "apresDetail", police: 52, couleur: NOIR, align: "center" }), swipe(false)]),
       fin("Changez-le aujourd'hui", "Commencez par votre compte mobile money et votre e-mail."),
     ]),
   },
@@ -258,9 +258,9 @@ const CARROUSELS: Maquette[] = [
       const E = [["Ouvrez WhatsApp", "Puis touchez Paramètres."], ["Touchez « Compte »", "Choisissez « Validation en deux étapes »."], ["Touchez « Activer »", "Créez un code PIN à 6 chiffres."], ["Ajoutez un e-mail", "Il servira si vous oubliez votre code."]];
       return doc("carrousel", "portrait", 6, [
         page(`lin:${NUIT},${B},160`, [...logo(), T("TUTO", 60, 230, 960, 120, { nom: "Surtitre", police: 60, align: "center", couleur: CIEL, espacement: 12 }), T("Protégez votre WhatsApp en 1 minute", 60, 360, 960, 360, { role: "titre", police: 96, align: "center", interligne: 1.02 }), Ic("bouclier", 400, 800, 280, "rgba(255,255,255,0.12)", { rayon: 70, ombre: "neon", anim: A("pop", 0.2, "flotter") }), swipe()]),
-        ...E.map(([t, x], i) => page("#F1EEFF", [...logo(56, 52, false),
+        ...E.map(([t, x], i) => page("#ECFDF5", [...logo(56, 52, false),
           F(560, 160, 440, 900, NOIR, { nom: "Téléphone", rayon: 64, ombre: "forte" }), F(580, 180, 400, 860, BLANC, { nom: "Écran", rayon: 50 }),
-          F(610, 250 + i * 120, 340, 90, "#E6E0FF", { nom: "Zone touchée", rayon: 18, bordure: B, epaisseur: 5, anim: A("pop", 0.3, "pulser") }),
+          F(610, 250 + i * 120, 340, 90, "#D1FAE5", { nom: "Zone touchée", rayon: 18, bordure: B, epaisseur: 5, anim: A("pop", 0.3, "pulser") }),
           ...[0, 1, 2, 3, 4].map((k) => F(630, 270 + k * 120, k === i ? 0 : 300, k === i ? 0 : 50, "#F3F4F6", { nom: "Ligne de l'écran", rayon: 12 })),
           T(String(i + 1), 60, 220, 300, 300, { nom: "Étape", police: 300, couleur: B }),
           T(t, 60, 600, 470, 220, { role: `etape${i + 1}`, police: 60, couleur: NOIR, interligne: 1.05 }),
@@ -283,8 +283,8 @@ const CARROUSELS: Maquette[] = [
   {
     id: "c-top", nom: "Le classement", idee: "Du n°5 au n°1, avec un podium et un suspense jusqu'au bout.",
     doc: () => doc("carrousel", "portrait", 6, [
-      page(NOIR, [...logo(), F(140, 820, 260, 300, "#4527D9", { nom: "Podium 2" }), F(410, 720, 260, 400, B, { nom: "Podium 1" }), F(680, 900, 260, 220, NUIT, { nom: "Podium 3" }), T("TOP 5", 60, 200, 960, 220, { role: "titre", police: 220, align: "center", couleur: JAUNE }), T("[Votre thème : applis, astuces…]", 60, 450, 960, 120, { role: "sous", police: 48, align: "center" }), swipe()]),
-      ...[5, 4, 3, 2, 1].map((n) => page(n === 1 ? `rad:${JAUNE},#C27210,#4A2204` : NUIT, [...logo(), T(`N°${n}`, 60, 220, 960, 300, { nom: "Rang", police: 280, align: "center", couleur: n === 1 ? BLANC : JAUNE }), T(`[Élément n°${n}]`, 60, 600, 960, 140, { role: `element${n}`, police: 86, align: "center" }), T("[Pourquoi il est là, en une phrase]", 90, 780, 900, 160, { role: `pourquoi${n}`, police: 40, graisse: 600, align: "center", couleur: "#E6E0FF" }), swipe()])),
+      page(NOIR, [...logo(), F(140, 820, 260, 300, "#065F46", { nom: "Podium 2" }), F(410, 720, 260, 400, B, { nom: "Podium 1" }), F(680, 900, 260, 220, NUIT, { nom: "Podium 3" }), T("TOP 5", 60, 200, 960, 220, { role: "titre", police: 220, align: "center", couleur: JAUNE }), T("[Votre thème : applis, astuces…]", 60, 450, 960, 120, { role: "sous", police: 48, align: "center" }), swipe()]),
+      ...[5, 4, 3, 2, 1].map((n) => page(n === 1 ? `rad:${JAUNE},#C27210,#4A2204` : NUIT, [...logo(), T(`N°${n}`, 60, 220, 960, 300, { nom: "Rang", police: 280, align: "center", couleur: n === 1 ? BLANC : JAUNE }), T(`[Élément n°${n}]`, 60, 600, 960, 140, { role: `element${n}`, police: 86, align: "center" }), T("[Pourquoi il est là, en une phrase]", 90, 780, 900, 160, { role: `pourquoi${n}`, police: 40, graisse: 600, align: "center", couleur: "#D1FAE5" }), swipe()])),
       fin("D'accord avec ce classement ?", "Votre n°1 à vous, en commentaire."),
     ]),
   },
@@ -326,8 +326,8 @@ const CARROUSELS: Maquette[] = [
     doc: () => {
       const Q = [["Votre parcours en une phrase ?", "[Sa réponse, en quelques lignes.]"], ["Votre plus grande fierté ?", "[Sa réponse, en quelques lignes.]"], ["Un conseil aux jeunes du Faso ?", "[Sa réponse, en quelques lignes.]"]];
       return doc("carrousel", "portrait", 6, [
-        page(NOIR, [I(PH.bras, 0, 0, 1080, 1350, { nom: "Portrait" }), F(0, 750, 1080, 600, "lin:rgba(0,0,0,0),rgba(0,0,0,0.95),180", { nom: "Ombre" }), ...logo(), Pa("PORTRAIT", 60, 820, 300, 70, { police: 34, fond: OR }), T("Prénom Nom", 60, 920, 960, 130, { role: "titre", police: 110 }), T("Fonction, organisation", 60, 1060, 960, 60, { role: "sous", police: 40, graisse: 600, couleur: "#E6E0FF" }), swipe()]),
-        ...Q.map(([q, r], i) => page(i % 2 ? NUIT : "#150E33", [...logo(), I(PH.bras, 820, 40, 200, 200, { nom: "Mini portrait", rayon: 100 }), T("Q", 60, 260, 200, 200, { nom: "Lettre", police: 200, couleur: B }), T(q, 60, 470, 960, 230, { role: `question${i + 1}`, police: 68, interligne: 1.08 }), F(60, 720, 120, 8, OR, { nom: "Trait" }), T(r, 60, 770, 960, 380, { role: `reponse${i + 1}`, police: 44, graisse: 600, couleur: "#E6E0FF", interligne: 1.3 }), swipe()])),
+        page(NOIR, [I(PH.bras, 0, 0, 1080, 1350, { nom: "Portrait" }), F(0, 750, 1080, 600, "lin:rgba(0,0,0,0),rgba(0,0,0,0.95),180", { nom: "Ombre" }), ...logo(), Pa("PORTRAIT", 60, 820, 300, 70, { police: 34, fond: OR }), T("Prénom Nom", 60, 920, 960, 130, { role: "titre", police: 110 }), T("Fonction, organisation", 60, 1060, 960, 60, { role: "sous", police: 40, graisse: 600, couleur: "#D1FAE5" }), swipe()]),
+        ...Q.map(([q, r], i) => page(i % 2 ? NUIT : "#0F172A", [...logo(), I(PH.bras, 820, 40, 200, 200, { nom: "Mini portrait", rayon: 100 }), T("Q", 60, 260, 200, 200, { nom: "Lettre", police: 200, couleur: B }), T(q, 60, 470, 960, 230, { role: `question${i + 1}`, police: 68, interligne: 1.08 }), F(60, 720, 120, 8, OR, { nom: "Trait" }), T(r, 60, 770, 960, 380, { role: `reponse${i + 1}`, police: 44, graisse: 600, couleur: "#D1FAE5", interligne: 1.3 }), swipe()])),
         fin("Une personne à découvrir ?", "Proposez-nous un portrait en message privé."),
       ]);
     },
@@ -342,7 +342,7 @@ const VIDEOS: Maquette[] = [
   V("r-actu", "Actu du jour", "Titre qui glisse, photo qui flotte, carte qui surgit.", 8, `rad:#3B6CF0,#1D3A9E,#060B1A`, () => [
     nouveau.rayons({ x: -410, y: -200, couleur: "rgba(200,220,255,0.25)" }),
     I(PH.bras, 90, 560, 900, 1000, { nom: "Photo", rayon: 40, ombre: "forte", anim: A("zoom", 0.2, "flotter", 1) }), ...logoS(),
-    T("L'actu tech du jour", 70, 250, 940, 60, { role: "surtitre", police: 44, graisse: 600, couleur: "#D2C8FF", anim: A("fondu", 0.1) }),
+    T("L'actu tech du jour", 70, 250, 940, 60, { role: "surtitre", police: 44, graisse: 600, couleur: "#A7F3D0", anim: A("fondu", 0.1) }),
     T("Le titre qui arrête le pouce", 70, 320, 940, 220, { role: "titre", police: 96, interligne: 1.02, anim: A("glisser-haut", 0.3) }),
     C(560, 1450, 440, 214, { titre: "À retenir", etat: "Important", texte: "Une info clé en une phrase.", bouton: "Lire", icone: "ia" }, { role: "carte1", anim: A("pop", 1.4, "flotter") }),
     Pa(`Suivez ${MEDIA_NOM}`, 290, 1740, 500, 90, { role: "bouton", police: 40, ombre: "neon", anim: A("pop", 2, "pulser") }),
@@ -362,7 +362,7 @@ const VIDEOS: Maquette[] = [
       Ic("bulle", 110, 555 + i * 230, 60, ["#22C55E", OR, B, "#22C55E"][i], { anim: A("glisser-bas", 0.5 + i * 0.55) }),
       T(t, 195, 560 + i * 230, 770, 130, { role: `notif${i + 1}`, police: 34, couleur: NOIR, interligne: 1.2, anim: A("glisser-bas", 0.5 + i * 0.55) }),
     ]).flat(),
-    F(160, 830, 760, 230, "rgba(225,29,116,0.15)", { nom: "Tampon (cadre)", rayon: 20, bordure: OR, epaisseur: 14, rot: -12, anim: A("pop", 3.1, "trembler") }),
+    F(160, 830, 760, 230, "rgba(217,119,6,0.15)", { nom: "Tampon (cadre)", rayon: 20, bordure: OR, epaisseur: 14, rot: -12, anim: A("pop", 3.1, "trembler") }),
     T("ARNAQUES", 160, 870, 760, 160, { role: "tampon", police: 140, couleur: OR, align: "center", rot: -12, anim: A("pop", 3.1, "trembler") }),
     T("Au moindre doute : ne cliquez pas.", 70, 1520, 940, 160, { role: "titre", police: 66, align: "center", interligne: 1.08, anim: A("glisser-haut", 4) }),
     Pa("#CyberActu", 340, 1740, 400, 90, { role: "bouton", police: 42, fond: OR, anim: A("pop", 4.6, "pulser") }),
@@ -403,7 +403,7 @@ const VIDEOS: Maquette[] = [
     F(0, 0, 1080, 170, NOIR, { nom: "Bande cinéma haut" }), F(0, 1750, 1080, 170, NOIR, { nom: "Bande cinéma bas" }), ...logo(70, 56),
     T("CHAPITRE 1", 70, 1100, 940, 60, { nom: "Chapitre", police: 40, graisse: 700, couleur: CIEL, espacement: 10, anim: A("fondu", 1) }),
     T("La jeunesse qui code l'Afrique", 70, 1180, 940, 300, { role: "titre", police: 100, interligne: 1.02, anim: A("fondu", 2, "aucune", 1.4) }),
-    T(`Une série ${MEDIA_NOM}`, 70, 1520, 940, 60, { role: "sous", police: 42, graisse: 600, couleur: "#E6E0FF", anim: A("fondu", 3.5) }),
+    T(`Une série ${MEDIA_NOM}`, 70, 1520, 940, 60, { role: "sous", police: 42, graisse: 600, couleur: "#D1FAE5", anim: A("fondu", 3.5) }),
   ]),
   V("r-duel", "Duel animé", "Les deux camps arrivent de chaque côté, le VS tombe au milieu.", 7, NOIR, () => [
     F(0, 0, 540, 1920, `lin:${B},${NUIT},180`, { nom: "Moitié gauche", anim: A("glisser-droite", 0, "aucune", 0.7) }), F(540, 0, 540, 1920, `lin:${OR},#7A2603,180`, { nom: "Moitié droite", anim: A("glisser-gauche", 0, "aucune", 0.7) }), ...logoS(),

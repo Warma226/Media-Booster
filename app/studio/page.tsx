@@ -28,7 +28,7 @@ const INFO_GENRE: Record<Genre, { taille: string; sous: string; ideal: string[] 
   carrousel: { taille: "4:5 · 2 à 10 pages", sous: "Plusieurs pages à faire défiler", ideal: ["Réflexes", "Pas à pas", "Chiffres clés"] },
   video: { taille: "9:16 · 60 s max", sous: "Reel, story ou TikTok animé, avec voix off", ideal: ["Reel", "Story", "Narration"] },
 };
-const NUANCIER = ["#FFFFFF", "#0A0A0A", "#5B3DF5", "#A08BFF", "#1B0F4D", "#E11D74", "#F2B21B", "#E6E0FF", "#F3F4F6"];
+const NUANCIER = ["#FFFFFF", "#0A0A0A", "#047857", "#34D399", "#0F172A", "#D97706", "#F2B21B", "#D1FAE5", "#F3F4F6"];
 
 type Glisse = { mode: "deplacer" | "redim"; id: string; x0: number; y0: number; el0: El } | null;
 
@@ -450,7 +450,7 @@ export default function Studio() {
       <span className="label">{label}</span>
       <div className="row" style={{ flexWrap: "wrap", gap: 6 }}>
         {NUANCIER.map((c) => <button key={c} type="button" aria-label={`Couleur ${c}`} onClick={() => f(c)} style={{ width: 30, height: 30, borderRadius: 8, background: c, border: v === c ? "3px solid var(--bleu)" : "1px solid #CBD5E1", cursor: "pointer" }} />)}
-        <input type="text" aria-label={`${label} (code)`} value={v ?? ""} onChange={(e) => f(e.target.value)} placeholder="#5B3DF5 ou lin:#a,#b,90" style={{ flex: 1, minWidth: 140 }} />
+        <input type="text" aria-label={`${label} (code)`} value={v ?? ""} onChange={(e) => f(e.target.value)} placeholder="#047857 ou lin:#a,#b,90" style={{ flex: 1, minWidth: 140 }} />
       </div>
     </div>
   );
@@ -558,7 +558,7 @@ export default function Studio() {
                   <span style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 3, textAlign: "left" }}>
                     <strong style={{ fontSize: 14 }}>{brouillon.titre || "Sans titre"}</strong>
                     <span style={{ fontSize: 12, color: "#5B6B86" }}>{GENRES.find((g) => g.id === (brouillon.genre ?? "visuel"))?.nom} · {brouillon.pages.length} page{brouillon.pages.length > 1 ? "s" : ""}{brouillon.audio ? " · voix off" : ""}</span>
-                    <span style={{ fontSize: 12, fontWeight: 800, color: "#5B3DF5" }}>Reprendre →</span>
+                    <span style={{ fontSize: 12, fontWeight: 800, color: "#047857" }}>Reprendre →</span>
                   </span>
                 </button>
                 <span className="tv-gris" style={{ fontSize: 12 }}>Gardée dans ce navigateur. Exportez ou envoyez-la au calendrier pour la retrouver ailleurs.</span>
@@ -566,14 +566,14 @@ export default function Studio() {
             ) : null}
             <section className="tv-carte-side" aria-labelledby="t-sa-charte">
               <h2 id="t-sa-charte" className="tv-h2" style={{ fontSize: 17 }}>La charte, toujours appliquée</h2>
-              <div className="row" style={{ gap: 8 }}>{[["Nuit", "#1B0F4D"], ["Bleu", "#5B3DF5"], ["Orange", "#E11D74"], ["Noir", "#0A0A0A"], ["Blanc", "#FFFFFF"]].map(([n, c]) => <span key={n} title={n} style={{ width: 30, height: 30, borderRadius: 9, background: c, border: "1px solid rgba(0,0,0,0.08)" }} />)}</div>
+              <div className="row" style={{ gap: 8 }}>{[["Nuit", "#0F172A"], ["Bleu", "#047857"], ["Orange", "#D97706"], ["Noir", "#0A0A0A"], ["Blanc", "#FFFFFF"]].map(([n, c]) => <span key={n} title={n} style={{ width: 30, height: 30, borderRadius: 9, background: c, border: "1px solid rgba(0,0,0,0.08)" }} />)}</div>
               <span style={{ fontSize: 13, color: "#33425C", lineHeight: 1.45 }}>Montserrat pour les titres, logo du média en haut à gauche, zone sûre réservée aux interfaces de TikTok et des Reels.</span>
             </section>
             <section className="tv-sa-voix" aria-labelledby="t-sa-voix">
               <Voa humeur="veille" taille={40} />
               <span style={{ display: "flex", flexDirection: "column", gap: 4 }}>
                 <strong id="t-sa-voix" style={{ fontSize: 14 }}>{VOIX.length} voix de narration</strong>
-                <span style={{ fontSize: 13, color: "#D9D2F2", lineHeight: 1.45 }}>Dans une vidéo, ouvrez « Ajouter une voix off » : choisissez la voix et le ton (conteur, flash info, pub), NOVA enregistre.</span>
+                <span style={{ fontSize: 13, color: "#CBD5E1", lineHeight: 1.45 }}>Dans une vidéo, ouvrez « Ajouter une voix off » : choisissez la voix et le ton (conteur, flash info, pub), NOVA enregistre.</span>
               </span>
             </section>
           </aside>
@@ -616,7 +616,7 @@ export default function Studio() {
         <div className="tv-studio-barre">
           <button type="button" className="tv-verre-btn" aria-label="Revenir à l'accueil du Studio" onClick={() => setEtape("accueil")}><Trait d="M15 18l-6-6 6-6" size={20} stroke={2.2} /></button>
           <div style={{ flex: "1 1 260px", minWidth: 0, display: "flex", flexDirection: "column", gap: 2 }}>
-            <span className="tv-kicker" style={{ color: "#FF9CC6", letterSpacing: 2 }}>STUDIO · {(GENRES.find((g) => g.id === (doc.genre ?? "visuel"))?.nom ?? "Création").toUpperCase()}</span>
+            <span className="tv-kicker" style={{ color: "#FCD34D", letterSpacing: 2 }}>STUDIO · {(GENRES.find((g) => g.id === (doc.genre ?? "visuel"))?.nom ?? "Création").toUpperCase()}</span>
             <label><span className="sr-only">Nom de la création</span><input className="tv-studio-titre" value={doc.titre ?? ""} placeholder="Sans titre" onChange={(e) => changer((d) => ({ ...d, titre: e.target.value }), false)} /></label>
           </div>
           <div role="radiogroup" aria-label="Format" className="tv-studio-formats">
@@ -660,22 +660,22 @@ export default function Studio() {
               onPointerDown={toucher} onPointerMove={bouger} onPointerUp={lacher} onPointerCancel={lacher}
               onDoubleClick={() => { if (elSel && elSel.type === "texte") setEdition(elSel.id); }}>
               <canvas ref={canvasRef} width={W} height={H} style={{ width: "100%", height: "100%", display: "block" }} aria-label="Création en cours" />
-              {guide.v ? <div style={{ position: "absolute", left: largeurVue / 2, top: 0, bottom: 0, width: 1, background: "#E11D74" }} /> : null}
-              {guide.h ? <div style={{ position: "absolute", top: (H * echelle) / 2, left: 0, right: 0, height: 1, background: "#E11D74" }} /> : null}
+              {guide.v ? <div style={{ position: "absolute", left: largeurVue / 2, top: 0, bottom: 0, width: 1, background: "#D97706" }} /> : null}
+              {guide.h ? <div style={{ position: "absolute", top: (H * echelle) / 2, left: 0, right: 0, height: 1, background: "#D97706" }} /> : null}
               {zone && !lecture ? <div aria-hidden="true" style={{ position: "absolute", left: `${ZONE[doc.format].g * 100}%`, right: `${ZONE[doc.format].d * 100}%`, top: `${ZONE[doc.format].h * 100}%`, bottom: `${ZONE[doc.format].b * 100}%`, border: "1.5px dashed rgba(255,180,138,0.75)", borderRadius: 4, pointerEvents: "none" }} /> : null}
               {elSel && !lecture ? (
                 <div style={{ position: "absolute", left: elSel.x * echelle, top: elSel.y * echelle, width: elSel.w * echelle, height: elSel.h * echelle, border: "2px solid #60A5FA", pointerEvents: "none" }}>
-                  <div style={{ position: "absolute", right: -9, bottom: -9, width: 18, height: 18, background: "#FFFFFF", border: "2px solid #5B3DF5", borderRadius: 4 }} />
+                  <div style={{ position: "absolute", right: -9, bottom: -9, width: 18, height: 18, background: "#FFFFFF", border: "2px solid #047857", borderRadius: 4 }} />
                 </div>
               ) : null}
               {edition && elSel && elSel.id === edition ? (
                 <textarea autoFocus defaultValue={elSel.texte} onBlur={(e) => { majEl(elSel.id, { texte: e.target.value }); setEdition(null); }} onPointerDown={(e) => e.stopPropagation()}
-                  style={{ position: "absolute", left: elSel.x * echelle, top: elSel.y * echelle, width: Math.max(120, elSel.w * echelle), minHeight: Math.max(40, elSel.h * echelle), fontSize: Math.max(12, (elSel.police ?? 40) * echelle), fontWeight: elSel.graisse ?? 800, fontFamily: POLICE.famille, lineHeight: elSel.interligne ?? 1.1, textAlign: elSel.align ?? "left", background: "rgba(255,255,255,.92)", color: "#0A0A0A", border: "2px solid #5B3DF5", padding: 4, resize: "both" }} />
+                  style={{ position: "absolute", left: elSel.x * echelle, top: elSel.y * echelle, width: Math.max(120, elSel.w * echelle), minHeight: Math.max(40, elSel.h * echelle), fontSize: Math.max(12, (elSel.police ?? 40) * echelle), fontWeight: elSel.graisse ?? 800, fontFamily: POLICE.famille, lineHeight: elSel.interligne ?? 1.1, textAlign: elSel.align ?? "left", background: "rgba(255,255,255,.92)", color: "#0A0A0A", border: "2px solid #047857", padding: 4, resize: "both" }} />
               ) : null}
             </div>
             <div className="row" style={{ gap: 14, flexWrap: "wrap", justifyContent: "center" }}>
               <label className="row tv-studio-gris" style={{ gap: 8, fontSize: 12, fontWeight: 600, cursor: "pointer" }}>
-                <input type="checkbox" checked={zone} onChange={(e) => setZone(e.target.checked)} style={{ width: 16, height: 16, accentColor: "#E11D74" }} />
+                <input type="checkbox" checked={zone} onChange={(e) => setZone(e.target.checked)} style={{ width: 16, height: 16, accentColor: "#D97706" }} />
                 Zone sûre
               </label>
               <span className="tv-studio-gris" style={{ fontSize: 12 }}>Glisser pour déplacer · poignée pour redimensionner · double-clic pour écrire</span>
@@ -701,7 +701,7 @@ export default function Studio() {
                   <span className="barre" />
                   <span className="post-fantome" />
                   <div className="post">
-                    <span className="row" style={{ gap: 6, padding: 6 }}><span style={{ width: 16, height: 16, borderRadius: 8, background: "#1B0F4D" }} /><span style={{ fontSize: 9, fontWeight: 700 }}>{MEDIA_NOM}</span></span>
+                    <span className="row" style={{ gap: 6, padding: 6 }}><span style={{ width: 16, height: 16, borderRadius: 8, background: "#0F172A" }} /><span style={{ fontSize: 9, fontWeight: 700 }}>{MEDIA_NOM}</span></span>
                     <span style={{ display: "block", padding: "0 6px 6px", fontSize: 8, lineHeight: 1.35, color: "#050505" }}>{(legende || "Le texte du post apparaît ici.").slice(0, 70)}{legende.length > 70 ? "… " : " "}<span style={{ color: "#65676B" }}>Voir plus</span></span>
                     <Miniature page={page} format={doc.format} images={images.current} version={version} actif={false} onClick={() => undefined} numero={pageIdx + 1} largeur={168} />
                   </div>
@@ -716,13 +716,13 @@ export default function Studio() {
               return (
                 <section className="tv-carte-side" aria-labelledby="t-qualite">
                   <div className="row" style={{ gap: 12 }}>
-                    <span role="img" aria-label={`Note de lisibilité ${note} sur 100`} className="tv-note" style={{ background: `conic-gradient(${note >= 80 ? "#22C55E" : "#E11D74"} 0 ${note}%, #EDF1F7 ${note}% 100%)` }}><span>{note}</span></span>
+                    <span role="img" aria-label={`Note de lisibilité ${note} sur 100`} className="tv-note" style={{ background: `conic-gradient(${note >= 80 ? "#22C55E" : "#D97706"} 0 ${note}%, #EDF1F7 ${note}% 100%)` }}><span>{note}</span></span>
                     <span style={{ display: "flex", flexDirection: "column" }}><h2 id="t-qualite" className="tv-h2" style={{ fontSize: 16 }}>Note de lisibilité</h2><span className="tv-gris" style={{ fontSize: 12 }}>sur téléphone, dans le fil</span></span>
                   </div>
                   <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: 8 }}>
                     {pts.map((x) => (
                       <li key={x.texte} className="row" style={{ gap: 10, alignItems: "flex-start", fontSize: 13, lineHeight: 1.4 }}>
-                        <span style={{ width: 18, height: 18, borderRadius: 9, flexShrink: 0, marginTop: 1, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", background: x.ok ? "#16A34A" : "#E11D74" }}><Trait d={x.ok ? "M20 6L9 17l-5-5" : "M12 8v5M12 17h.01"} size={11} stroke={3.2} /></span>
+                        <span style={{ width: 18, height: 18, borderRadius: 9, flexShrink: 0, marginTop: 1, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", background: x.ok ? "#16A34A" : "#D97706" }}><Trait d={x.ok ? "M20 6L9 17l-5-5" : "M12 8v5M12 17h.01"} size={11} stroke={3.2} /></span>
                         {!x.ok && (x.el || x.page !== undefined) ? (
                           <button type="button" className="btn link" style={{ fontSize: 13, color: "#9A3412", fontWeight: 600, textAlign: "left", padding: 0, minHeight: 0 }} onClick={() => { if (x.page !== undefined) setPageIdx(x.page); setSel(x.el ?? null); }}>{x.texte}</button>
                         ) : <span style={{ color: x.ok ? "#33425C" : "#9A3412", fontWeight: x.ok ? 400 : 600 }}>{x.texte}</span>}
@@ -735,7 +735,7 @@ export default function Studio() {
             <section className="tv-carte-side" aria-labelledby="t-charte">
               <h2 id="t-charte" className="tv-h2" style={{ fontSize: 16 }}>Charte du média</h2>
               <div className="row" style={{ gap: 8, flexWrap: "wrap" }}>
-                {([["#1B0F4D", "Nuit"], ["#5B3DF5", "Bleu"], ["#A08BFF", "Bleu clair"], ["#E11D74", "Orange"], ["#F2EFE8", "Crème"], ["#FFFFFF", "Blanc"]] as const).map(([c, n]) => (
+                {([["#0F172A", "Nuit"], ["#047857", "Bleu"], ["#34D399", "Bleu clair"], ["#D97706", "Orange"], ["#F2EFE8", "Crème"], ["#FFFFFF", "Blanc"]] as const).map(([c, n]) => (
                   <button key={c} type="button" title={elSel ? `Appliquer ${n}` : n} aria-label={elSel ? `Appliquer la couleur ${n} à l'élément` : `Couleur ${n}`} disabled={!elSel}
                     onClick={() => elSel && majEl(elSel.id, elSel.type === "texte" || elSel.type === "icone" || elSel.type === "rayons" ? { couleur: c } : { fond: c })}
                     style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4, fontSize: 10, color: "#5B6B86", background: "none", border: 0, padding: 0, cursor: elSel ? "pointer" : "default" }}>
@@ -824,7 +824,7 @@ export default function Studio() {
                 <p className="section-title">Page {pageIdx + 1}</p>
                 <label className="field">Format<select value={doc.format} onChange={(e) => changer((d) => ({ ...d, format: e.target.value as Format }))}>{Object.entries(FORMATS).map(([k, v]) => <option key={k} value={k}>{v.nom} ({v.w} × {v.h})</option>)}</select></label>
                 {couleur("Fond de la page", page.fond, (c) => majPage({ fond: c }))}
-                <p className="muted" style={{ fontSize: 13 }}>Dégradés : « lin:#150E33,#5B3DF5,160 » (linéaire) ou « rad:#FFD45A,#F2B21B,#4A2204 » (radial).</p>
+                <p className="muted" style={{ fontSize: 13 }}>Dégradés : « lin:#0F172A,#047857,160 » (linéaire) ou « rad:#FFD45A,#F2B21B,#4A2204 » (radial).</p>
                 {doc.sequence ? (
                   <>
                     {num("Durée de cette scène (s)", page.duree ?? doc.duree, (v) => majPage({ duree: Math.max(1, Math.min(30, v)) }), 0.1)}

@@ -1,6 +1,7 @@
 // Accès aux données : Supabase si configuré, sinon mémoire (mode démo, réinitialisé au redémarrage).
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
 import type { Platform, RubriqueId } from "./config";
+import { espaceId } from "./espace";
 
 export type PostStatus = "brouillon" | "a_valider" | "planifie" | "publie" | "erreur" | "annule";
 
@@ -49,13 +50,77 @@ let client: SupabaseClient | null = null;
 export function isDemo() {
   return !(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY);
 }
-export function db(): SupabaseClient {
+
+/** Accès brut à la base, tous espaces confondus. Réservé à la connexion, l'inscription, les tâches planifiées et les paiements. */
+export function dbGlobal(): SupabaseClient {
   if (!client) {
     client = createClient(process.env.SUPABASE_URL as string, process.env.SUPABASE_SERVICE_ROLE_KEY as string, {
       auth: { persistSession: false },
     });
   }
   return client;
+}
+
+// Tables dont chaque ligne appartient à un espace client.
+const TABLES_ESPACE = new Set(["posts", "settings", "seen_items", "membres", "sessions", "cm_journal", "cm_rapports", "videos_yt", "paiements"]);
+
+/**
+ * Base vue depuis l'espace courant : chaque lecture, modification ou suppression sur une table d'espace
+ * est filtrée par espace_id, et chaque ajout reçoit l'espace_id. Les appels restent écrits comme avant
+ * (db().from("posts").select()…) ; la requête n'est construite qu'au moment du await, une fois l'espace connu.
+ */
+export function db(): SupabaseClient {
+  const brut = dbGlobal();
+  return new Proxy(brut, {
+    get(cible, prop, recepteur) {
+      if (prop !== "from") return Reflect.get(cible, prop, recepteur);
+      return (table: string) => (TABLES_ESPACE.has(table) ? requeteEspace(cible, table) : cible.from(table));
+    },
+  }) as SupabaseClient;
+}
+
+function avecEspaceId(lignes: unknown, e: string): unknown {
+  const marquer = (l: unknown) => (l && typeof l === "object" ? { ...(l as Record<string, unknown>), espace_id: e } : l);
+  return Array.isArray(lignes) ? lignes.map(marquer) : marquer(lignes);
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function requeteEspace(cible: SupabaseClient, table: string): any {
+  const etapes: [string, unknown[]][] = [];
+  const construire = async () => {
+    const e = await espaceId();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let q: any = cible.from(table);
+    let filtre = false;
+    for (const [m, args] of etapes) {
+      if (!filtre && (m === "insert" || m === "upsert")) {
+        q = q[m](avecEspaceId(args[0], e), ...args.slice(1));
+        filtre = true;
+        continue;
+      }
+      q = q[m](...args);
+      if (!filtre && (m === "select" || m === "update" || m === "delete")) {
+        q = q.eq("espace_id", e);
+        filtre = true;
+      }
+    }
+    return q;
+  };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const relais: any = new Proxy(function () {}, {
+    get(_c, prop) {
+      if (prop === "then") {
+        return (ok?: (v: unknown) => unknown, ko?: (r: unknown) => unknown) => construire().then((q) => q).then(ok, ko);
+      }
+      if (prop === "catch") return (ko: (r: unknown) => unknown) => construire().then((q) => q).catch(ko);
+      if (prop === "finally") return (f: () => void) => construire().then((q) => q).finally(f);
+      return (...args: unknown[]) => {
+        etapes.push([String(prop), args]);
+        return relais;
+      };
+    },
+  });
+  return relais;
 }
 
 type Mem = { posts: Post[]; settings: Settings; seen: Set<string> };

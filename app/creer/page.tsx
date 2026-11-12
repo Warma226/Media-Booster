@@ -58,14 +58,14 @@ function Choix() {
     if (r === "citation") {
       const sansPhoto = posts.filter((p) => p.rubrique === "citation" && ["planifie", "erreur"].includes(p.status) && !p.visual?.photo).length;
       if (sansPhoto) return [`${sansPhoto} citation${sansPhoto > 1 ? "s" : ""} sans photo`, "#B42318"];
-      return libre ? [`Prochain créneau : ${dateLongue(libre).toLowerCase()}`, "#4527D9"] : ["Grille complète", "#05603A"];
+      return libre ? [`Prochain créneau : ${dateLongue(libre).toLowerCase()}`, "#065F46"] : ["Grille complète", "#05603A"];
     }
     if (r === "portrait") {
       const n = posts.filter((p) => p.rubrique === "portrait" && ["brouillon", "a_valider"].includes(p.status)).length;
-      return n ? [`${n} portrait${n > 1 ? "s" : ""} en cours`, "#4527D9"] : ["Aucun portrait en cours", "#5B6B86"];
+      return n ? [`${n} portrait${n > 1 ? "s" : ""} en cours`, "#065F46"] : ["Aucun portrait en cours", "#5B6B86"];
     }
     const n = posts.filter((p) => p.rubrique === "actu" && p.status === "brouillon").length;
-    return n ? [`${n} brouillon${n > 1 ? "s" : ""} en attente`, "#4527D9"] : ["Partez d'une actu de la veille", "#5B6B86"];
+    return n ? [`${n} brouillon${n > 1 ? "s" : ""} en attente`, "#065F46"] : ["Partez d'une actu de la veille", "#5B6B86"];
   };
 
   return (
@@ -92,7 +92,7 @@ function Choix() {
                     <span className="tv-pill">{DESC[r][1]}</span>
                     <span style={{ color: c, fontWeight: 700 }}>{txt}</span>
                   </span>
-                  <span style={{ marginTop: 2, fontSize: 14, fontWeight: 800, color: "#5B3DF5" }}>Ouvrir l'atelier {RUB[r].nom} →</span>
+                  <span style={{ marginTop: 2, fontSize: 14, fontWeight: 800, color: "#047857" }}>Ouvrir l'atelier {RUB[r].nom} →</span>
                 </span>
               </Link>
             );
@@ -116,7 +116,7 @@ function Choix() {
             {posts === null ? <span className="tv-gris">…</span> : brouillons.length === 0 ? <span className="tv-gris" style={{ fontSize: 14 }}>Aucun brouillon en attente.</span> : null}
             <div style={{ display: "flex", flexDirection: "column" }}>
               {vBr.visibles.map((p) => (
-                <Link key={p.id} href={`/editeur?id=${p.id}`} className="row" style={{ gap: 12, padding: "12px 0", borderTop: "1px solid #EDF1F7", textDecoration: "none", color: "#150E33" }}>
+                <Link key={p.id} href={`/editeur?id=${p.id}`} className="row" style={{ gap: 12, padding: "12px 0", borderTop: "1px solid #EDF1F7", textDecoration: "none", color: "#0F172A" }}>
                   <span className="tv-pill" style={{ background: RUB[p.rubrique].pastille[0], color: RUB[p.rubrique].pastille[1], flexShrink: 0 }}>{RUB[p.rubrique].nom.toUpperCase()}</span>
                   <strong style={{ flex: 1, fontSize: 14, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{p.title || p.visual?.titre || p.idea || "Sans titre"}</strong>
                 </Link>

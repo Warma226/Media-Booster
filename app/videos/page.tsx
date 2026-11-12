@@ -13,7 +13,7 @@ const ilya = (iso: string) => {
   const h = Math.round((Date.now() - new Date(iso).getTime()) / 3.6e6);
   return h < 1 ? "à l'instant" : h < 24 ? `il y a ${h} h` : h < 48 ? "hier" : `il y a ${Math.round(h / 24)} j`;
 };
-const COUL = ["#E11D74", "#5B3DF5", "#7C3AED", "#0E9F8E"];
+const COUL = ["#D97706", "#047857", "#7C3AED", "#0E9F8E"];
 const GENRES: [string, string][] = [["tout", "Tout"], ["actu", "Actu tech"], ["interview", "Interviews"], ["docu", "Documentaires"]];
 const GENRE_NOM: Record<Genre, string> = { actu: "Actu", interview: "Interview", docu: "Documentaire" };
 const LIC: Record<Licence, { nom: string; cls: string }> = { cc: { nom: "CC BY", cls: "vert" }, autorisee: { nom: "Autorisée", cls: "vert" }, reservee: { nom: "Droits réservés", cls: "ambre" } };
@@ -152,9 +152,9 @@ export default function VideosPage() {
                   <strong>{x.info.titre}</strong>
                   <small>{x.info.chaine} · {ilya(x.info.publie)}{x.info.langue && x.info.langue !== "fr" ? ` · ${x.info.langue.toUpperCase()}` : ""}</small>
                   <span className="row" style={{ gap: 6, flexWrap: "wrap" }}>
-                    {x.info.genre !== "actu" ? <span className="tv-pill" style={{ background: x.info.genre === "docu" ? "#EDE5FF" : "#FFE0EE", color: x.info.genre === "docu" ? "#5B21B6" : "#B23A00" }}>{GENRE_NOM[x.info.genre]}</span> : null}
+                    {x.info.genre !== "actu" ? <span className="tv-pill" style={{ background: x.info.genre === "docu" ? "#EDE5FF" : "#FEF3C7", color: x.info.genre === "docu" ? "#5B21B6" : "#B23A00" }}>{GENRE_NOM[x.info.genre]}</span> : null}
                     <span className={`tv-pill ${LIC[x.licence].cls}`}>{LIC[x.licence].nom}</span>
-                    {x.extraits?.length ? <span style={{ fontSize: 12, fontWeight: 800, color: "#5B3DF5" }}>{x.extraits.length} extraits</span> : null}
+                    {x.extraits?.length ? <span style={{ fontSize: 12, fontWeight: 800, color: "#047857" }}>{x.extraits.length} extraits</span> : null}
                     <span style={{ fontSize: 12, color: "#5B6B86" }}>{x.info.vues >= 1000 ? `${Math.round(x.info.vues / 100) / 10} k vues` : `${x.info.vues} vues`}</span>
                   </span>
                 </span>
@@ -324,7 +324,7 @@ function Decoupe({ videoId, extrait, credit, titre: titre0, fermer }: { videoId:
     const duree = Math.max(1, fin - debut);
     const dessiner = (src: Source | null, t: number) => {
       if (!ctx) return;
-      ctx.fillStyle = "#120A38"; ctx.fillRect(0, 0, W, H);
+      ctx.fillStyle = "#0B1220"; ctx.fillRect(0, 0, W, H);
       if (mise === "choc") return styleChoc(ctx, src, t);
       if (mise === "plein") return pleinEcran(ctx, src, t);
       let y0 = 560, dh = 608;
@@ -339,7 +339,7 @@ function Decoupe({ videoId, extrait, credit, titre: titre0, fermer }: { videoId:
       ctx.font = "900 62px Montserrat, sans-serif"; ctx.textAlign = "center";
       lignes(ctx, titre, W - 200, 3).forEach((l, i) => {
         const w = ctx.measureText(l).width + 44, y = 300 + i * 82;
-        ctx.fillStyle = "#E11D74"; ctx.beginPath(); ctx.roundRect((W - w) / 2, y - 60, w, 76, 14); ctx.fill();
+        ctx.fillStyle = "#D97706"; ctx.beginPath(); ctx.roundRect((W - w) / 2, y - 60, w, 76, 14); ctx.fill();
         ctx.fillStyle = "#fff"; ctx.fillText(l, W / 2, y);
       });
       const p = Math.min(1, Math.max(0, (t - debut) / duree));
@@ -350,12 +350,12 @@ function Decoupe({ videoId, extrait, credit, titre: titre0, fermer }: { videoId:
         ctx.fillStyle = "rgba(0,0,0,0.72)"; ctx.beginPath(); ctx.roundRect(80, yb, W - 160, hb, 28); ctx.fill();
         ctx.fillStyle = "#fff"; ls.forEach((l, i) => ctx.fillText(l, W / 2, yb + 70 + i * 70));
       }
-      ctx.fillStyle = "#5B3DF5"; ctx.beginPath(); ctx.roundRect(70, 90, 150, 150, 38); ctx.fill();
+      ctx.fillStyle = "#047857"; ctx.beginPath(); ctx.roundRect(70, 90, 150, 150, 38); ctx.fill();
       ctx.fillStyle = "#fff"; ctx.font = "800 38px Montserrat, sans-serif"; ctx.fillText(MEDIA_COURT, 145, 175);
-      ctx.fillStyle = "#DDD5FF"; ctx.font = "700 15px Montserrat, sans-serif"; ctx.fillText("TECH MEDIA", 145, 205);
-      ctx.fillStyle = "#D9D2F2"; ctx.font = "600 30px Inter, sans-serif"; ctx.fillText(credit, W / 2, H - 120);
+      ctx.fillStyle = "#A7F3D0"; ctx.font = "700 15px Montserrat, sans-serif"; ctx.fillText("TECH MEDIA", 145, 205);
+      ctx.fillStyle = "#CBD5E1"; ctx.font = "600 30px Inter, sans-serif"; ctx.fillText(credit, W / 2, H - 120);
       ctx.fillStyle = "rgba(255,255,255,0.18)"; ctx.fillRect(0, H - 14, W, 14);
-      ctx.fillStyle = "#E11D74"; ctx.fillRect(0, H - 14, W * p, 14);
+      ctx.fillStyle = "#D97706"; ctx.fillRect(0, H - 14, W * p, 14);
     };
     // Style « Short d'interview » : image plein écran recadrée sur la personne, accroche en haut,
     // gros sous-titres mot par mot (3 à 4 mots à la fois, mot prononcé surligné), logo et crédit discrets.
@@ -376,7 +376,7 @@ function Decoupe({ videoId, extrait, credit, titre: titre0, fermer }: { videoId:
       ctx.font = "900 58px Montserrat, sans-serif";
       lignes(ctx, titre, W - 180, 3).forEach((l, i) => {
         const w = ctx.measureText(l).width + 40, y = 250 + i * 76;
-        ctx.fillStyle = "#E11D74"; ctx.beginPath(); ctx.roundRect((W - w) / 2, y - 56, w, 72, 12); ctx.fill();
+        ctx.fillStyle = "#D97706"; ctx.beginPath(); ctx.roundRect((W - w) / 2, y - 56, w, 72, 12); ctx.fill();
         ctx.fillStyle = "#fff"; ctx.fillText(l, W / 2, y);
       });
       // sous-titres mot par mot
@@ -405,11 +405,11 @@ function Decoupe({ videoId, extrait, credit, titre: titre0, fermer }: { videoId:
         });
       }
       // logo et crédit discrets
-      ctx.fillStyle = "#5B3DF5"; ctx.beginPath(); ctx.roundRect(W - 190, 60, 130, 52, 14); ctx.fill();
+      ctx.fillStyle = "#047857"; ctx.beginPath(); ctx.roundRect(W - 190, 60, 130, 52, 14); ctx.fill();
       ctx.fillStyle = "#fff"; ctx.font = "800 28px Montserrat, sans-serif"; ctx.textAlign = "center"; ctx.fillText(MEDIA_COURT, W - 125, 96);
       ctx.fillStyle = "rgba(255,255,255,0.85)"; ctx.font = "600 28px Inter, sans-serif"; ctx.fillText(credit, W / 2, H - 70);
       ctx.fillStyle = "rgba(255,255,255,0.2)"; ctx.fillRect(0, H - 12, W, 12);
-      ctx.fillStyle = "#E11D74"; ctx.fillRect(0, H - 12, W * p, 12);
+      ctx.fillStyle = "#D97706"; ctx.fillRect(0, H - 12, W * p, 12);
     };
     // Style « coup de gueule » (Shorts de chaînes télé) : plein écran serré sur la personne, plan large / plan serré
     // qui alternent à chaque coupe, citation en blocs blancs les premières secondes, logo discret.
@@ -449,11 +449,11 @@ function Decoupe({ videoId, extrait, credit, titre: titre0, fermer }: { videoId:
       }
       // logo du média discret, crédit, progression
       ctx.textAlign = "center";
-      ctx.fillStyle = "#5B3DF5"; ctx.fillRect(W - 220, 110, 150, 46);
+      ctx.fillStyle = "#047857"; ctx.fillRect(W - 220, 110, 150, 46);
       ctx.fillStyle = "#fff"; ctx.font = "900 30px Montserrat, sans-serif"; ctx.fillText(MEDIA_COURT, W - 145, 144);
       ctx.fillStyle = "rgba(255,255,255,0.9)"; ctx.font = "600 22px Inter, sans-serif"; ctx.fillText("TECH MEDIA", W - 145, 96);
       ctx.fillStyle = "rgba(255,255,255,0.8)"; ctx.font = "600 24px Inter, sans-serif"; ctx.shadowColor = "rgba(0,0,0,0.8)"; ctx.shadowBlur = 6; ctx.fillText(credit, W / 2, H - 60); ctx.shadowBlur = 0;
-      ctx.fillStyle = "#E11D74"; ctx.fillRect(0, H - 8, W * p, 8);
+      ctx.fillStyle = "#D97706"; ctx.fillRect(0, H - 8, W * p, 8);
     };
     return { c, ctx, mime, duree, dessiner };
   }

@@ -48,7 +48,7 @@ function verdict(tab: Tab, n: number): [string, boolean] {
   return ["Dans la zone idéale", true];
 }
 const NOM: Record<Tab, string> = { commun: "Texte commun", facebook: "Facebook", linkedin: "LinkedIn", tiktok: "TikTok", wordpress: "Site du média" };
-const ICO: Record<Tab, [string, string]> = { commun: ["≡", "#5B6B86"], facebook: ["F", "#1877F2"], linkedin: ["in", "#0A66C2"], tiktok: ["T", "#150E33"], wordpress: ["W", "#1B0F4D"] };
+const ICO: Record<Tab, [string, string]> = { commun: ["≡", "#5B6B86"], facebook: ["F", "#1877F2"], linkedin: ["in", "#0A66C2"], tiktok: ["T", "#0F172A"], wordpress: ["W", "#0F172A"] };
 
 // Hashtags proposés à partir de la rubrique, des thèmes détectés et des produits cités.
 function suggestHashtags(post: Post, text: string): string[] {
@@ -305,7 +305,7 @@ function Editeur() {
   const apercuImage = visuels[tab === "commun" ? "facebook" : tab] || visuels.facebook || current.visual.image || undefined;
   const titreWp = current.texts.wp_title ?? "";
   const meta = current.texts.wp_excerpt ?? "";
-  const pastille = (ok: boolean) => ({ padding: "2px 7px", borderRadius: 7, fontWeight: 800, whiteSpace: "nowrap" as const, background: ok ? "#D9F7E6" : "#FFE0EE", color: ok ? "#05603A" : "#9A3412" });
+  const pastille = (ok: boolean) => ({ padding: "2px 7px", borderRadius: 7, fontWeight: 800, whiteSpace: "nowrap" as const, background: ok ? "#D9F7E6" : "#FEF3C7", color: ok ? "#05603A" : "#9A3412" });
 
   // Tableau des tailles et remarques de NOVA, pour chaque canal de la publication
   const lignes: { ou: string; visible: string; ideal: string; valeur: string; ok: boolean; tab: Tab; conseil?: string }[] = [];
@@ -508,7 +508,7 @@ function Editeur() {
                 <tbody>
                   {lignes.map((l) => (
                     <tr key={l.ou}>
-                      <th scope="row"><button type="button" className="btn link" style={{ fontSize: 12, color: "#150E33", fontWeight: 700 }} onClick={() => setTab(l.tab)}>{l.ou}</button></th>
+                      <th scope="row"><button type="button" className="btn link" style={{ fontSize: 12, color: "#0F172A", fontWeight: 700 }} onClick={() => setTab(l.tab)}>{l.ou}</button></th>
                       <td>{l.visible}</td><td>{l.ideal}</td>
                       <td style={{ textAlign: "right" }}><span style={pastille(l.ok)}>{l.valeur}</span></td>
                     </tr>
@@ -525,7 +525,7 @@ function Editeur() {
                   <div key={i} className="tv-voa-alerte">
                     <span className="tv-tag" style={{ background: "rgba(255,255,255,0.15)", color: "#fff" }}>{r.ou.toUpperCase()}</span>
                     <span style={{ fontSize: 14, lineHeight: 1.45 }}>{r.conseil}</span>
-                    <button type="button" style={{ alignSelf: "flex-start", border: 0, background: "none", padding: 0, fontSize: 13, fontWeight: 700, color: "#FF9CC6", cursor: "pointer" }} onClick={() => setTab(r.tab)}>Voir cette version →</button>
+                    <button type="button" style={{ alignSelf: "flex-start", border: 0, background: "none", padding: 0, fontSize: 13, fontWeight: 700, color: "#FCD34D", cursor: "pointer" }} onClick={() => setTab(r.tab)}>Voir cette version →</button>
                   </div>
                 ))}
               </section>

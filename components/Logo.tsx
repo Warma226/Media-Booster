@@ -1,4 +1,4 @@
-// Identité Media Booster : deux chevrons qui montent (le « boost »), violet électrique et point rose.
+// Identité Media Booster : deux chevrons qui montent (le « boost »), émeraude, point ambre.
 
 /** Le signe seul : deux chevrons empilés, en blanc par défaut (posé sur la tuile violette). */
 export function SigneBoost({ size = 24, color = "#FFFFFF" }: { size?: number; color?: string }) {
@@ -11,7 +11,7 @@ export function SigneBoost({ size = 24, color = "#FFFFFF" }: { size?: number; co
 }
 
 /** Logotype horizontal : tuile + « MEDIA BOOSTER ». */
-export function Logo({ size = 24, color = "#14102B", tuile = "#5B3DF5" }: { size?: number; color?: string; tuile?: string }) {
+export function Logo({ size = 24, color = "#0F172A", tuile = "#047857" }: { size?: number; color?: string; tuile?: string }) {
   return (
     <div role="img" aria-label="Media Booster" style={{ display: "flex", alignItems: "center", gap: size * 0.4, lineHeight: 1 }}>
       <span aria-hidden="true" style={{ width: size * 1.5, height: size * 1.5, borderRadius: size * 0.4, background: tuile, display: "inline-flex", alignItems: "center", justifyContent: "center" }}>

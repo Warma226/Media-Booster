@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { cmPassage } from "@/lib/cm";
+import { avecEspace } from "@/lib/espace";
+import { espacesActifs } from "@/lib/comptes";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 300;
@@ -8,10 +10,16 @@ export const maxDuration = 300;
 export async function GET(req: Request) {
   const secret = process.env.CRON_SECRET;
   if (!secret || req.headers.get("authorization") !== `Bearer ${secret}`) return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
-  try {
-    return NextResponse.json({ ok: true, log: await cmPassage() });
-  } catch (e) {
-    console.error("cm-cron", e);
-    return NextResponse.json({ ok: false, error: (e as Error).message }, { status: 500 });
+  const bilan: { espace: string; ok: boolean; log?: unknown; error?: string }[] = [];
+  const debut = Date.now();
+  for (const e of await espacesActifs()) {
+    if (Date.now() - debut > 240_000) break; // le reste passera dans 15 minutes
+    try {
+      bilan.push({ espace: e.id, ok: true, log: await avecEspace(e.id, () => cmPassage()) });
+    } catch (err) {
+      console.error("cm-cron", e.id, err);
+      bilan.push({ espace: e.id, ok: false, error: (err as Error).message });
+    }
   }
+  return NextResponse.json({ ok: bilan.every((b) => b.ok), bilan });
 }

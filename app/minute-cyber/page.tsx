@@ -18,7 +18,7 @@ import {
 
 const CLE_BROUILLON = "mb-studio-brouillon";
 const CLE_LEGENDE = "mb-studio-legende";
-const COULEUR: Record<TypeScene, string> = { accroche: "#0A0A0A", histoire: "#5B3DF5", message: "#22C55E", appel: "#16A34A", revelation: "#E11D74", technique: "#1B0F4D", reflexes: "#A08BFF", fin: "#94A3B8" };
+const COULEUR: Record<TypeScene, string> = { accroche: "#0A0A0A", histoire: "#047857", message: "#22C55E", appel: "#16A34A", revelation: "#D97706", technique: "#0F172A", reflexes: "#34D399", fin: "#94A3B8" };
 
 async function api<T>(body: Record<string, unknown>): Promise<T> {
   const r = await fetch("/api/minute", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
@@ -192,7 +192,7 @@ export default function MinuteCyber() {
       <div className="tv-corps" style={{ paddingTop: 20 }}>
         <div className="tv-entete" style={{ gap: 14 }}>
           <div style={{ flex: "1 1 360px", display: "flex", flexDirection: "column", gap: 6, minWidth: 0 }}>
-            <span className="tv-kicker" style={{ color: "#E11D74", letterSpacing: 2 }}>LA MINUTE CYBER · SÉRIE VIDÉO · 60 S MAX</span>
+            <span className="tv-kicker" style={{ color: "#D97706", letterSpacing: 2 }}>LA MINUTE CYBER · SÉRIE VIDÉO · 60 S MAX</span>
             {ep ? (
               <div className="row" style={{ gap: 12, alignItems: "baseline", flexWrap: "wrap" }}>
                 <span className="tv-titre" style={{ color: "#9AA8BE", fontFamily: "var(--font-mont)", fontWeight: 800 }}>Ép. {ep.numero ?? "?"}</span>
@@ -239,7 +239,7 @@ export default function MinuteCyber() {
                   <span style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 2, textAlign: "left" }}>
                     <strong style={{ fontSize: 14 }}>{e.titre}</strong>
                     <span style={{ fontSize: 12, color: "#5B6B86" }}>{e.menace} · {Math.round(dureeEpisode(e))} s</span>
-                    <span style={{ fontSize: 11, fontWeight: 800, color: e.statut === "envoye" ? "#16A34A" : e.statut === "monte" ? "#5B3DF5" : e.audio ? "#0E9F8E" : "#E11D74" }}>{e.statut === "envoye" ? "Envoyé au calendrier" : e.statut === "monte" ? "Monté" : e.audio ? "Voix prête" : "Voix à faire"}</span>
+                    <span style={{ fontSize: 11, fontWeight: 800, color: e.statut === "envoye" ? "#16A34A" : e.statut === "monte" ? "#047857" : e.audio ? "#0E9F8E" : "#D97706" }}>{e.statut === "envoye" ? "Envoyé au calendrier" : e.statut === "monte" ? "Monté" : e.audio ? "Voix prête" : "Voix à faire"}</span>
                   </span>
                 </button>
               ))}
@@ -339,7 +339,7 @@ export default function MinuteCyber() {
                 <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: 8 }}>
                   {gardes.map(([t, ok]) => (
                     <li key={t} className="row" style={{ gap: 10, alignItems: "flex-start", fontSize: 13, lineHeight: 1.4 }}>
-                      <span style={{ width: 18, height: 18, borderRadius: 9, flexShrink: 0, marginTop: 1, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", background: ok ? "#16A34A" : "#E11D74" }}><Trait d={ok ? "M20 6L9 17l-5-5" : "M12 8v5M12 17h.01"} size={11} stroke={3.2} /></span>
+                      <span style={{ width: 18, height: 18, borderRadius: 9, flexShrink: 0, marginTop: 1, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", background: ok ? "#16A34A" : "#D97706" }}><Trait d={ok ? "M20 6L9 17l-5-5" : "M12 8v5M12 17h.01"} size={11} stroke={3.2} /></span>
                       <span style={{ color: ok ? "#33425C" : "#9A3412", fontWeight: ok ? 400 : 600 }}>{t}</span>
                     </li>
                   ))}
@@ -397,7 +397,7 @@ export default function MinuteCyber() {
               <section className="tv-voa" style={{ flex: "none", alignItems: "center" }}>
                 <h2 id="t-apercu" style={{ alignSelf: "flex-start", fontSize: 16, fontWeight: 800, color: "#fff" }}>Aperçu de l&apos;épisode</h2>
                 <Apercu doc={doc} prete={prete} />
-                <span style={{ fontSize: 12, color: "#B6A8EC", textAlign: "center" }}>Format 9:16 pour TikTok, les stories et les Reels.</span>
+                <span style={{ fontSize: 12, color: "#94A3B8", textAlign: "center" }}>Format 9:16 pour TikTok, les stories et les Reels.</span>
               </section>
               <section className="tv-carte-side">
                 <h2 className="tv-h2" style={{ fontSize: 16 }}>Quand l&apos;épisode est prêt</h2>

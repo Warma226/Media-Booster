@@ -1,6 +1,7 @@
 // Stockage des images importées depuis le téléphone (tes visuels, photos de fond).
 // 1. Supabase Storage (seau public « visuels », créé automatiquement) ; 2. sinon la médiathèque WordPress.
 import { db, isDemo } from "./store";
+import { espaceId } from "./espace";
 
 const BUCKET = "visuels";
 let bucketReady = false;
@@ -38,7 +39,7 @@ async function wordpressUpload(bytes: ArrayBuffer, type: string, name: string): 
 export async function signedUpload(type: string, ext: string): Promise<{ signedUrl: string; publicUrl: string }> {
   if (isDemo()) throw new Error("L'envoi de vidéos demande Supabase (voir Connexions).");
   if (!/^(video|image|audio)\//.test(type)) throw new Error("Type de fichier refusé.");
-  const name = `${new Date().toISOString().slice(0, 7)}/mb-${crypto.randomUUID().slice(0, 8)}.${ext.replace(/[^a-z0-9]/gi, "").slice(0, 5) || "bin"}`;
+  const name = `${await espaceId()}/${new Date().toISOString().slice(0, 7)}/mb-${crypto.randomUUID().slice(0, 8)}.${ext.replace(/[^a-z0-9]/gi, "").slice(0, 5) || "bin"}`;
   const storage = db().storage.from(BUCKET);
   const { data, error } = await storage.createSignedUploadUrl(name);
   if (error || !data) throw new Error(`Stockage Supabase : ${error?.message ?? "lien d'envoi indisponible"}`);
@@ -48,7 +49,7 @@ export async function signedUpload(type: string, ext: string): Promise<{ signedU
 // Fichier produit côté serveur (voix off de synthèse…) → URL publique Supabase.
 export async function enregistrerFichier(bytes: ArrayBuffer, type: string, ext: string): Promise<string> {
   if (isDemo()) throw new Error("Le stockage de fichiers demande Supabase.");
-  return supabaseUpload(bytes, type, `${new Date().toISOString().slice(0, 7)}/mb-${crypto.randomUUID().slice(0, 8)}.${ext}`);
+  return supabaseUpload(bytes, type, `${await espaceId()}/${new Date().toISOString().slice(0, 7)}/mb-${crypto.randomUUID().slice(0, 8)}.${ext}`);
 }
 
 export function uploadAvailable(): boolean {
@@ -57,7 +58,7 @@ export function uploadAvailable(): boolean {
 
 export async function storeImage(bytes: ArrayBuffer, type: string): Promise<string> {
   const ext = type === "image/jpeg" ? "jpg" : type === "image/webp" ? "webp" : "png";
-  const name = `${new Date().toISOString().slice(0, 7)}/mb-${crypto.randomUUID().slice(0, 8)}.${ext}`;
+  const name = `${await espaceId()}/${new Date().toISOString().slice(0, 7)}/mb-${crypto.randomUUID().slice(0, 8)}.${ext}`;
   if (!isDemo()) return supabaseUpload(bytes, type, name);
   if (process.env.WP_URL && process.env.WP_USER && process.env.WP_APP_PASSWORD) return wordpressUpload(bytes, type, name);
   throw new Error("Pour importer une image, branche Supabase ou WordPress (voir Connexions). En attendant, colle le lien de l'image.");

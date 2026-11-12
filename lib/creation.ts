@@ -104,7 +104,7 @@ function decouper(x: string): string[] {
 }
 function arret(g: CanvasGradient, pos: number, c: string) { try { g.addColorStop(pos, c); } catch { g.addColorStop(pos, "#000000"); } }
 
-// Fond : « #5B3DF5 », « lin:#a,#b[,angle] », « rad:#a,#b[,#c] ». Une couleur illisible devient noire au lieu de bloquer le rendu.
+// Fond : « #047857 », « lin:#a,#b[,angle] », « rad:#a,#b[,#c] ». Une couleur illisible devient noire au lieu de bloquer le rendu.
 function peinture(ctx: Ctx, spec: string | undefined, x: number, y: number, w: number, h: number): string | CanvasGradient {
   if (!spec) return "transparent";
   if (spec.startsWith("lin:")) {
@@ -244,10 +244,10 @@ export function dessinerElement(ctx: Ctx, el: El, t: number, images: Map<string,
       if (f === "flou") ctx.filter = "blur(18px) brightness(0.8)";
       ctx.drawImage(img, (w - iw) / 2, el.ajustement === "contain" ? (h - ih) : Math.min(0, (h - ih) * 0.3), iw, ih);
       ctx.filter = "none";
-      if (f === "duo") { ctx.globalCompositeOperation = "color"; ctx.fillStyle = el.teinte ?? "#5B3DF5"; ctx.fillRect(0, 0, w, h); ctx.globalCompositeOperation = "source-over"; }
+      if (f === "duo") { ctx.globalCompositeOperation = "color"; ctx.fillStyle = el.teinte ?? "#047857"; ctx.fillRect(0, 0, w, h); ctx.globalCompositeOperation = "source-over"; }
     } else {
       ctx.fillStyle = "#1D3A7A"; ctx.fillRect(0, 0, w, h);
-      ctx.fillStyle = "#D2C8FF"; ctx.font = police(34, 700); ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      ctx.fillStyle = "#A7F3D0"; ctx.font = police(34, 700); ctx.textAlign = "center"; ctx.textBaseline = "middle";
       ctx.fillText(el.src ? "Chargement…" : "Ajoute une photo", w / 2, h / 2);
     }
     ctx.restore();
@@ -300,7 +300,7 @@ export function dessinerElement(ctx: Ctx, el: El, t: number, images: Map<string,
         const coul = ctx.fillStyle;
         ctx.save(); ctx.globalAlpha *= 0.85;
         ctx.fillStyle = "#00D1FF"; ls.forEach((l, i) => ctx.fillText(l, x - amp, base(i) + 2));
-        ctx.fillStyle = "#E11D74"; ls.forEach((l, i) => ctx.fillText(l, x + amp, base(i) - 2));
+        ctx.fillStyle = "#D97706"; ls.forEach((l, i) => ctx.fillText(l, x + amp, base(i) - 2));
         ctx.restore(); ctx.fillStyle = coul;
       }
       ls.forEach((l, i) => ecrire(l, x, base(i)));
@@ -324,14 +324,14 @@ export function dessinerElement(ctx: Ctx, el: El, t: number, images: Map<string,
     ctx.strokeStyle = "rgba(255,255,255,0.35)"; ctx.lineWidth = 12; rrect(ctx, -6, -6, w + 12, h + 12, 26); ctx.stroke();
     ctx.restore();
     const p = 20;
-    ctx.fillStyle = c.couleur || "#5B3DF5"; rrect(ctx, p, p, 44, 44, 12); ctx.fill();
+    ctx.fillStyle = c.couleur || "#047857"; rrect(ctx, p, p, 44, 44, 12); ctx.fill();
     dessinerIcone(ctx, c.icone || "bulle", p + 10, p + 10, 24, "#FFFFFF");
     ctx.fillStyle = "#0A0A0A"; ctx.font = police(20, 800); ctx.textAlign = "left"; ctx.textBaseline = "middle";
     ctx.fillText(c.titre, p + 56, p + 22, w - p * 2 - 56 - (c.etat ? 90 : 0));
     if (c.etat) {
       ctx.font = police(14, 700); const bw = ctx.measureText(c.etat).width + 18;
-      ctx.fillStyle = "#E6E0FF"; rrect(ctx, w - p - bw, p + 9, bw, 26, 7); ctx.fill();
-      ctx.fillStyle = "#4527D9"; ctx.textAlign = "center"; ctx.fillText(c.etat, w - p - bw / 2, p + 22);
+      ctx.fillStyle = "#D1FAE5"; rrect(ctx, w - p - bw, p + 9, bw, 26, 7); ctx.fill();
+      ctx.fillStyle = "#065F46"; ctx.textAlign = "center"; ctx.fillText(c.etat, w - p - bw / 2, p + 22);
     }
     const yTexte = p + 60, hBouton = c.bouton ? 50 : 0;
     const hBoite = Math.max(40, h - yTexte - p - hBouton);
@@ -342,7 +342,7 @@ export function dessinerElement(ctx: Ctx, el: El, t: number, images: Map<string,
       const yb = h - p - 36;
       ctx.fillStyle = "#6B7280"; ctx.font = police(16, 600); ctx.textBaseline = "middle"; ctx.fillText("✎ Modifier", p, yb + 18);
       ctx.font = police(17, 700); const bw = ctx.measureText(c.bouton).width + 36;
-      ctx.fillStyle = "#5B3DF5"; rrect(ctx, w - p - bw, yb, bw, 36, 10); ctx.fill();
+      ctx.fillStyle = "#047857"; rrect(ctx, w - p - bw, yb, bw, 36, 10); ctx.fill();
       ctx.fillStyle = "#FFFFFF"; ctx.textAlign = "center"; ctx.fillText(c.bouton, w - p - bw / 2, yb + 18);
     }
   }
@@ -378,18 +378,18 @@ export function dessinerSequence(ctx: Ctx, doc: Doc, t: number, images: Map<stri
 const base = (p: Partial<El>): El => ({ id: uid(), type: "texte", x: 100, y: 100, w: 400, h: 120, rot: 0, opacite: 1, anim: { ...ANIM_FIXE }, ...p });
 export const nouveau = {
   texte: (p: Partial<El> = {}) => base({ type: "texte", nom: "Texte", texte: "Votre texte", police: 64, graisse: 800, couleur: "#FFFFFF", align: "left", interligne: 1.08, w: 700, h: 80, ...p }),
-  pastille: (p: Partial<El> = {}) => base({ type: "texte", nom: "Pastille", texte: "Mot clé", police: 46, graisse: 700, couleur: "#FFFFFF", fond: "#5B3DF5", rayon: 16, marge: 18, align: "center", w: 520, h: 84, ...p }),
+  pastille: (p: Partial<El> = {}) => base({ type: "texte", nom: "Pastille", texte: "Mot clé", police: 46, graisse: 700, couleur: "#FFFFFF", fond: "#047857", rayon: 16, marge: 18, align: "center", w: 520, h: 84, ...p }),
   image: (p: Partial<El> = {}) => base({ type: "image", nom: "Photo", x: 0, y: 0, w: 1080, h: 1350, ajustement: "cover", ...p }),
-  forme: (p: Partial<El> = {}) => base({ type: "forme", nom: "Forme", forme: "rect", fond: "#5B3DF5", rayon: 24, w: 300, h: 200, ...p }),
-  carte: (p: Partial<El> = {}, c: Partial<Carte> = {}) => base({ type: "carte", nom: "Carte", w: 320, h: 214, ombre: "verre", carte: { titre: "Titre", etat: "État", texte: "Une phrase courte.", bouton: "Bouton", icone: "bouclier", couleur: "#5B3DF5", ...c }, ...p }),
-  icone: (p: Partial<El> = {}) => base({ type: "icone", nom: "Icône", icone: "ia", w: 90, h: 90, fond: "#5B3DF5", rayon: 20, couleur: "#FFFFFF", ...p }),
+  forme: (p: Partial<El> = {}) => base({ type: "forme", nom: "Forme", forme: "rect", fond: "#047857", rayon: 24, w: 300, h: 200, ...p }),
+  carte: (p: Partial<El> = {}, c: Partial<Carte> = {}) => base({ type: "carte", nom: "Carte", w: 320, h: 214, ombre: "verre", carte: { titre: "Titre", etat: "État", texte: "Une phrase courte.", bouton: "Bouton", icone: "bouclier", couleur: "#047857", ...c }, ...p }),
+  icone: (p: Partial<El> = {}) => base({ type: "icone", nom: "Icône", icone: "ia", w: 90, h: 90, fond: "#047857", rayon: 20, couleur: "#FFFFFF", ...p }),
   rayons: (p: Partial<El> = {}) => base({ type: "rayons", nom: "Rayons de lumière", x: -410, y: -480, w: 1900, h: 1900, couleur: "rgba(255,240,190,0.38)", anim: { entree: "fondu", delai: 0, duree: 1, boucle: "tourner" }, ...p }),
 };
 export const anim = (entree: Entree, delai: number, boucle: Boucle = "aucune", duree = 0.8, fin?: number): Anim => ({ entree, delai, duree, boucle, ...(fin ? { fin } : {}) });
 
 export function logo(x = 56, y = 52, clair = true): El[] {
   return [
-    nouveau.forme({ nom: "Logo (carré)", x, y, w: 58, h: 58, rayon: 0, fond: "#5B3DF5" }),
+    nouveau.forme({ nom: "Logo (carré)", x, y, w: 58, h: 58, rayon: 0, fond: "#047857" }),
     nouveau.texte({ nom: "Logo (sigle)", x, y: y + 20, w: 58, h: 20, texte: MEDIA_COURT, police: 13, graisse: 800, align: "center" }),
     nouveau.texte({ nom: "Logo (nom)", x: x + 72, y: y + 6, w: 240, h: 50, texte: MEDIA_COURT, police: 40, graisse: 800, couleur: clair ? "#FFFFFF" : "#0A0A0A" }),
   ];
@@ -402,18 +402,18 @@ export const page = (fond: string, elements: El[]): Page => ({ id: uid(), fond, 
 export const MODELES: Modele[] = [
   {
     id: "tete", nom: "Cartes autour de la tête", description: "Photo plein cadre, 5 cartes qui surgissent puis flottent, titre surligné.",
-    doc: () => ({ format: "portrait", duree: 8, pages: [page("#150E33", [
+    doc: () => ({ format: "portrait", duree: 8, pages: [page("#0F172A", [
       nouveau.image({ nom: "Photo", anim: anim("zoom", 0, "aucune", 1.2) }),
       nouveau.forme({ nom: "Ombre du haut", x: 0, y: 0, w: 1080, h: 420, rayon: 0, fond: "lin:rgba(11,22,51,0.75),rgba(11,22,51,0),180" }),
       nouveau.forme({ nom: "Ombre du bas", x: 0, y: 750, w: 1080, h: 600, rayon: 0, fond: "lin:rgba(0,0,0,0),rgba(0,0,0,0.97),180" }),
       ...logo(),
-      nouveau.carte({ role: "carte1", x: 380, y: 40, anim: anim("pop", 0.3, "flotter") }, { titre: "Deux étapes", etat: "Activée", texte: "Votre WhatsApp est protégé par un code PIN.", bouton: "Activer", icone: "bouclier", couleur: "#5B3DF5" }),
-      nouveau.carte({ role: "carte2", x: 40, y: 190, w: 310, anim: anim("pop", 0.48, "flotter") }, { titre: "Mise à jour", etat: "Installée", texte: "Téléphone à jour : failles corrigées.", bouton: "Vérifier", icone: "maj", couleur: "#1B0F4D" }),
-      nouveau.carte({ role: "carte3", x: 730, y: 190, w: 310, anim: anim("pop", 0.66, "flotter") }, { titre: "Mot de passe", etat: "Fort", texte: "Long, unique, jamais partagé.", bouton: "Changer", icone: "cle", couleur: "#E11D74" }),
-      nouveau.carte({ role: "carte4", x: 30, y: 470, w: 300, anim: anim("pop", 0.84, "flotter") }, { titre: "Sauvegarde", etat: "Faite", texte: "Photos et discussions à l'abri.", bouton: "Lancer", icone: "nuage", couleur: "#4527D9" }),
+      nouveau.carte({ role: "carte1", x: 380, y: 40, anim: anim("pop", 0.3, "flotter") }, { titre: "Deux étapes", etat: "Activée", texte: "Votre WhatsApp est protégé par un code PIN.", bouton: "Activer", icone: "bouclier", couleur: "#047857" }),
+      nouveau.carte({ role: "carte2", x: 40, y: 190, w: 310, anim: anim("pop", 0.48, "flotter") }, { titre: "Mise à jour", etat: "Installée", texte: "Téléphone à jour : failles corrigées.", bouton: "Vérifier", icone: "maj", couleur: "#0F172A" }),
+      nouveau.carte({ role: "carte3", x: 730, y: 190, w: 310, anim: anim("pop", 0.66, "flotter") }, { titre: "Mot de passe", etat: "Fort", texte: "Long, unique, jamais partagé.", bouton: "Changer", icone: "cle", couleur: "#D97706" }),
+      nouveau.carte({ role: "carte4", x: 30, y: 470, w: 300, anim: anim("pop", 0.84, "flotter") }, { titre: "Sauvegarde", etat: "Faite", texte: "Photos et discussions à l'abri.", bouton: "Lancer", icone: "nuage", couleur: "#065F46" }),
       nouveau.carte({ role: "carte5", x: 750, y: 470, w: 300, anim: anim("pop", 1.02, "flotter") }, { titre: "Lien suspect", etat: "Évité", texte: "« Vous avez gagné » ? On ne clique pas.", bouton: "Signaler", icone: "lien", couleur: "#0A0A0A" }),
       nouveau.texte({ role: "titre", x: 60, y: 900, w: 960, h: 100, texte: "Nouvelle semaine", police: 92, align: "center", anim: anim("glisser-haut", 1.2) }),
-      nouveau.pastille({ role: "fort", x: 160, y: 1010, w: 760, h: 110, texte: "bons réflexes", police: 88, graisse: 800, fond: "lin:#5B3DF5,#A08BFF,90", rayon: 12, marge: 6, ombre: "neon", anim: anim("pop", 1.45) }),
+      nouveau.pastille({ role: "fort", x: 160, y: 1010, w: 760, h: 110, texte: "bons réflexes", police: 88, graisse: 800, fond: "lin:#047857,#34D399,90", rayon: 12, marge: 6, ombre: "neon", anim: anim("pop", 1.45) }),
       nouveau.texte({ role: "sous", x: 60, y: 1150, w: 960, h: 50, texte: "Activez la vérification en deux étapes sur WhatsApp", police: 32, graisse: 600, align: "center", anim: anim("fondu", 1.7) }),
       nouveau.pastille({ role: "bouton", x: 360, y: 1225, w: 360, h: 64, texte: "Voir l'astuce", police: 30, rayon: 12, marge: 10, ombre: "neon", anim: anim("pop", 1.95, "pulser") }),
     ])] }),
@@ -428,12 +428,12 @@ export const MODELES: Modele[] = [
       nouveau.forme({ nom: "Ombre du bas", x: 0, y: 750, w: 1080, h: 600, rayon: 0, fond: "lin:rgba(0,0,0,0),rgba(0,0,0,0.97),180" }),
       ...logo(),
       nouveau.carte({ role: "carte1", x: 380, y: 40, ombre: "neon", anim: anim("pop", 0.3, "flotter") }, { titre: "Samedi", etat: "Repos", texte: "Le téléphone peut souffler, vous aussi.", bouton: "Profiter", icone: "bulle" }),
-      nouveau.carte({ role: "carte2", x: 40, y: 190, w: 310, rot: -3, ombre: "neon", anim: anim("pop", 0.48, "balancer") }, { titre: "À lire", etat: "4 actus", texte: "La semaine tech, au calme.", bouton: "Lire", icone: "antenne", couleur: "#1B0F4D" }),
-      nouveau.carte({ role: "carte3", x: 730, y: 190, w: 310, rot: 3, ombre: "neon", anim: anim("pop", 0.66, "balancer") }, { titre: "Lien suspect", etat: "Évité", texte: "« Vous avez gagné » ? Non.", bouton: "Signaler", icone: "lien", couleur: "#E11D74" }),
-      nouveau.carte({ role: "carte4", x: 30, y: 470, w: 300, rot: 2, ombre: "neon", anim: anim("pop", 0.84, "flotter") }, { titre: "Messenger", etat: "Ouvert", texte: "Une question ? On répond.", bouton: "Écrire", icone: "bulle", couleur: "#4527D9" }),
+      nouveau.carte({ role: "carte2", x: 40, y: 190, w: 310, rot: -3, ombre: "neon", anim: anim("pop", 0.48, "balancer") }, { titre: "À lire", etat: "4 actus", texte: "La semaine tech, au calme.", bouton: "Lire", icone: "antenne", couleur: "#0F172A" }),
+      nouveau.carte({ role: "carte3", x: 730, y: 190, w: 310, rot: 3, ombre: "neon", anim: anim("pop", 0.66, "balancer") }, { titre: "Lien suspect", etat: "Évité", texte: "« Vous avez gagné » ? Non.", bouton: "Signaler", icone: "lien", couleur: "#D97706" }),
+      nouveau.carte({ role: "carte4", x: 30, y: 470, w: 300, rot: 2, ombre: "neon", anim: anim("pop", 0.84, "flotter") }, { titre: "Messenger", etat: "Ouvert", texte: "Une question ? On répond.", bouton: "Écrire", icone: "bulle", couleur: "#065F46" }),
       nouveau.carte({ role: "carte5", x: 750, y: 470, w: 300, rot: -2, ombre: "neon", anim: anim("pop", 1.02, "flotter") }, { titre: "Lundi 7h", etat: "À suivre", texte: "Une nouvelle semaine d'actu.", bouton: "Rappel", icone: "cal", couleur: "#0A0A0A" }),
       nouveau.texte({ role: "titre", x: 60, y: 900, w: 960, h: 100, texte: "Bon week-end", police: 96, align: "center", couleur: "lin:#FFFFFF,#FFE6A3,180", ombre: "forte", anim: anim("glisser-haut", 1.2) }),
-      nouveau.pastille({ role: "fort", x: 90, y: 1010, w: 900, h: 110, texte: "prudents en ligne", police: 88, fond: "lin:#5B3DF5,#A08BFF,90", rayon: 12, marge: 6, ombre: "neon", anim: anim("pop", 1.45) }),
+      nouveau.pastille({ role: "fort", x: 90, y: 1010, w: 900, h: 110, texte: "prudents en ligne", police: 88, fond: "lin:#047857,#34D399,90", rayon: 12, marge: 6, ombre: "neon", anim: anim("pop", 1.45) }),
       nouveau.texte({ role: "sous", x: 60, y: 1150, w: 960, h: 50, texte: "Déconnectez-vous, mais gardez les bons réflexes", police: 32, graisse: 600, align: "center", anim: anim("fondu", 1.7) }),
       nouveau.pastille({ role: "bouton", x: 340, y: 1225, w: 400, h: 64, texte: "Voir nos conseils", police: 30, rayon: 12, marge: 10, ombre: "neon", anim: anim("pop", 1.95, "pulser") }),
     ])] }),
@@ -446,10 +446,10 @@ export const MODELES: Modele[] = [
       ...logo(56, 52, false),
       nouveau.texte({ role: "surtitre", x: 90, y: 175, w: 900, h: 60, texte: "Bienvenue dans une", police: 48, graisse: 600, couleur: "#0A0A0A", align: "center", anim: anim("fondu", 0.1) }),
       nouveau.texte({ role: "titre", x: 40, y: 245, w: 1000, h: 110, texte: "NOUVELLE", police: 104, couleur: "#0A0A0A", align: "center", anim: anim("glisser-haut", 0.3) }),
-      nouveau.texte({ role: "fort", x: 40, y: 345, w: 1000, h: 110, texte: "SEMAINE", police: 104, couleur: "#5B3DF5", align: "center", anim: anim("glisser-haut", 0.5) }),
+      nouveau.texte({ role: "fort", x: 40, y: 345, w: 1000, h: 110, texte: "SEMAINE", police: 104, couleur: "#047857", align: "center", anim: anim("glisser-haut", 0.5) }),
       nouveau.pastille({ role: "pastille", x: 260, y: 470, w: 560, h: 84, texte: "Passionnés de tech.", anim: anim("pop", 0.8) }),
       nouveau.texte({ role: "sous", x: 60, y: 575, w: 960, h: 44, texte: `Restez informés, vite et bien, avec ${MEDIA_NOM}.`, police: 32, graisse: 600, couleur: "#0A0A0A", align: "center", anim: anim("fondu", 1) }),
-      ...["IA", "Cybersécurité", "Mobile money", "Startups"].map((t, i) => nouveau.pastille({ role: `etiquette${i + 1}`, x: i < 2 ? 50 : 730, y: 680 + (i % 2) * 82, w: 300, h: 62, texte: t, police: 28, fond: ["#E6E0FF", "#5B3DF5", "#1B0F4D", "#0A0A0A"][i], couleur: i === 0 ? "#1B0F4D" : "#FFFFFF", ombre: "douce", anim: anim(i < 2 ? "glisser-droite" : "glisser-gauche", 1.2 + i * 0.12, "flotter") })),
+      ...["IA", "Cybersécurité", "Mobile money", "Startups"].map((t, i) => nouveau.pastille({ role: `etiquette${i + 1}`, x: i < 2 ? 50 : 730, y: 680 + (i % 2) * 82, w: 300, h: 62, texte: t, police: 28, fond: ["#D1FAE5", "#047857", "#0F172A", "#0A0A0A"][i], couleur: i === 0 ? "#0F172A" : "#FFFFFF", ombre: "douce", anim: anim(i < 2 ? "glisser-droite" : "glisser-gauche", 1.2 + i * 0.12, "flotter") })),
       nouveau.forme({ nom: "Barre du bas", x: 0, y: 1150, w: 1080, h: 220, rayon: 44, fond: "#0A0A0A" }),
       nouveau.texte({ role: "barre", x: 60, y: 1225, w: 470, h: 50, texte: "Toute l'actu tech sur :", police: 34, graisse: 600, align: "right" }),
       nouveau.pastille({ role: "bouton", x: 550, y: 1210, w: 470, h: 80, texte: `${MEDIA_SIGNATURE}`, police: 34, rayon: 40, anim: anim("aucune", 0, "pulser") }),
@@ -458,21 +458,21 @@ export const MODELES: Modele[] = [
   {
     id: "carrousel", nom: "Carrousel « La semaine en actus »", description: "Une couverture et une page par actu, à faire défiler.",
     doc: () => {
-      const actu = (n: number, cat: string, titre: string, ic: string): Page => page("lin:#150E33,#1D3A7A,160", [
+      const actu = (n: number, cat: string, titre: string, ic: string): Page => page("lin:#0F172A,#1D3A7A,160", [
         nouveau.image({ nom: "Photo de l'actu", x: 60, y: 160, w: 960, h: 620, rayon: 28, ombre: "forte" }),
         ...logo(60, 52),
-        nouveau.texte({ nom: "Numéro", x: 860, y: 50, w: 160, h: 60, texte: `${n}/4`, police: 44, align: "right", couleur: "#A08BFF" }),
+        nouveau.texte({ nom: "Numéro", x: 860, y: 50, w: 160, h: 60, texte: `${n}/4`, police: 44, align: "right", couleur: "#34D399" }),
         nouveau.icone({ x: 60, y: 830, icone: ic, w: 80, h: 80 }),
-        nouveau.texte({ role: `categorie${n}`, x: 160, y: 845, w: 600, h: 50, texte: cat, police: 34, graisse: 700, couleur: "#A08BFF", majuscules: true, espacement: 3 }),
+        nouveau.texte({ role: `categorie${n}`, x: 160, y: 845, w: 600, h: 50, texte: cat, police: 34, graisse: 700, couleur: "#34D399", majuscules: true, espacement: 3 }),
         nouveau.texte({ role: `actu${n}`, x: 60, y: 940, w: 960, h: 260, texte: titre, police: 64, interligne: 1.08 }),
-        nouveau.texte({ nom: "Glisser", x: 60, y: 1250, w: 960, h: 40, texte: n < 4 ? "Glissez pour la suite →" : `Tout lire sur ${MEDIA_SIGNATURE}`, police: 28, graisse: 600, couleur: "#D2C8FF" }),
+        nouveau.texte({ nom: "Glisser", x: 60, y: 1250, w: 960, h: 40, texte: n < 4 ? "Glissez pour la suite →" : `Tout lire sur ${MEDIA_SIGNATURE}`, police: 28, graisse: 600, couleur: "#A7F3D0" }),
       ]);
       return { format: "portrait", duree: 6, pages: [
-        page("rad:#FFFFFF,#E4ECFF,#D2C8FF", [
+        page("rad:#FFFFFF,#E4ECFF,#A7F3D0", [
           nouveau.image({ nom: "Photo", x: -10, y: 430, w: 1100, h: 920, ajustement: "contain" }),
           ...logo(56, 52, false),
           nouveau.texte({ role: "titre", x: 60, y: 160, w: 960, h: 100, texte: "La semaine tech", police: 92, couleur: "#0A0A0A", align: "center" }),
-          nouveau.texte({ role: "fort", x: 60, y: 262, w: 960, h: 100, texte: "en 4 actus", police: 92, couleur: "#5B3DF5", align: "center" }),
+          nouveau.texte({ role: "fort", x: 60, y: 262, w: 960, h: 100, texte: "en 4 actus", police: 92, couleur: "#047857", align: "center" }),
           nouveau.pastille({ role: "bouton", x: 330, y: 390, w: 420, h: 70, texte: "Glissez →", police: 34 }),
         ]),
         actu(1, "Télécoms", "5G en Afrique : les premiers cas d'usage", "antenne"),
@@ -488,11 +488,11 @@ export const MODELES: Modele[] = [
       nouveau.rayons({ x: -410, y: -200, couleur: "rgba(200,220,255,0.25)" }),
       nouveau.image({ nom: "Photo", x: 90, y: 560, w: 900, h: 1000, rayon: 40, ombre: "forte", anim: anim("zoom", 0.2, "flotter", 1) }),
       ...logo(70, 90),
-      nouveau.texte({ role: "surtitre", x: 70, y: 250, w: 940, h: 60, texte: "L'actu tech du jour", police: 44, graisse: 600, couleur: "#D2C8FF", anim: anim("fondu", 0.1) }),
+      nouveau.texte({ role: "surtitre", x: 70, y: 250, w: 940, h: 60, texte: "L'actu tech du jour", police: 44, graisse: 600, couleur: "#A7F3D0", anim: anim("fondu", 0.1) }),
       nouveau.texte({ role: "titre", x: 70, y: 320, w: 940, h: 220, texte: "Le titre qui arrête le pouce", police: 96, interligne: 1.02, anim: anim("glisser-haut", 0.3) }),
       nouveau.carte({ role: "carte1", x: 560, y: 1450, w: 440, h: 190, anim: anim("pop", 1.4, "flotter") }, { titre: "À retenir", etat: "Important", texte: "Une info clé en une phrase.", bouton: "Lire", icone: "ia" }),
       nouveau.pastille({ role: "bouton", x: 290, y: 1720, w: 500, h: 90, texte: `Suivez ${MEDIA_NOM}`, police: 40, ombre: "neon", anim: anim("pop", 2, "pulser") }),
     ])] }),
   },
-  { id: "vierge", nom: "Page vierge", description: "Partir de zéro.", doc: () => ({ format: "portrait", duree: 6, pages: [page("#150E33", [...logo()])] }) },
+  { id: "vierge", nom: "Page vierge", description: "Partir de zéro.", doc: () => ({ format: "portrait", duree: 6, pages: [page("#0F172A", [...logo()])] }) },
 ];

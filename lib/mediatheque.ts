@@ -1,5 +1,6 @@
 // Médiathèque : les fichiers du seau Supabase « visuels », classés comme dans l'Explorateur Windows.
 import { db } from "./store";
+import { espaceId } from "./espace";
 
 const BUCKET = "visuels";
 export const CAPACITE = 1024 * 1024 * 1024; // offre gratuite Supabase : 1 Go de stockage
@@ -37,7 +38,8 @@ export async function listerFichiers(): Promise<Fichier[]> {
       if (objets.length < 1000) break;
     }
   }
-  await parcourir("", 0);
+  // Chaque client ne voit que son dossier (les fichiers sont rangés sous <espace>/<mois>/…).
+  await parcourir(await espaceId(), 0);
   return out.sort((a, b) => b.date.localeCompare(a.date));
 }
 
@@ -69,6 +71,7 @@ export async function renommerFichier(chemin: string, nom: string): Promise<stri
   if (!propre) throw new Error("Nom de fichier invalide.");
   const ext = /\.[a-z0-9]{2,5}$/i.exec(chemin)?.[0] ?? "";
   const final = propre.toLowerCase().endsWith(ext.toLowerCase()) ? propre : `${propre}${ext}`;
+  await verifierChemins([chemin]);
   const dossier = chemin.includes("/") ? chemin.slice(0, chemin.lastIndexOf("/") + 1) : "";
   const cible = `${dossier}${final}`;
   if (cible === chemin) return chemin;
@@ -79,7 +82,14 @@ export async function renommerFichier(chemin: string, nom: string): Promise<stri
 
 export async function supprimerFichiers(chemins: string[]): Promise<number> {
   if (!chemins.length) return 0;
+  await verifierChemins(chemins);
   const { data, error } = await db().storage.from(BUCKET).remove(chemins);
   if (error) throw new Error(`Suppression impossible : ${error.message}`);
   return data?.length ?? 0;
+}
+
+// Un client ne peut renommer ou supprimer que des fichiers de son propre dossier.
+async function verifierChemins(chemins: string[]) {
+  const e = await espaceId();
+  if (chemins.some((c) => !c.startsWith(`${e}/`) || c.includes(".."))) throw new Error("Fichier introuvable dans votre médiathèque.");
 }

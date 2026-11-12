@@ -27,7 +27,7 @@ export const peut = (role: Role, zone: Zone, ecrire = false) => {
 const PAGES: [string, Zone | null][] = [
   ["/compte", null], ["/apercu", null], ["/calendrier", "calendrier"], ["/veille", "veille"], ["/videos", "veille"], ["/rubriques", "creer"],
   ["/creer", "creer"], ["/partage", "creer"], ["/editeur", "creer"], ["/studio", "studio"], ["/minute-cyber", "studio"], ["/communaute", "grin"],
-  ["/mediatheque", "admin"], ["/connexions", "admin"], ["/declencheurs", "admin"], ["/sources", "admin"],
+  ["/mediatheque", "admin"], ["/connexions", "admin"], ["/declencheurs", "admin"], ["/sources", "admin"], ["/demarrage", "admin"], ["/marque", "admin"],
 ];
 export function zonePage(path: string): Zone | null | undefined {
   if (path === "/") return null;
@@ -50,6 +50,7 @@ const API: [string, Zone | null, Zone | null][] = [
   ["/api/cm", "grin", "grin"],
   ["/api/membres", "admin", "admin"], ["/api/mediatheque", "admin", "admin"], ["/api/connexions", "admin", "admin"],
   ["/api/sources", "admin", "admin"], ["/api/tiktok", "admin", "admin"],
+  ["/api/abonnement", null, "admin"], ["/api/marque", null, "admin"], ["/api/rubriques", null, "admin"], ["/api/wp-categories", null, "admin"],
 ];
 export function apiAutorisee(role: Role, path: string, methode: string): boolean {
   if (role === "admin") return true;

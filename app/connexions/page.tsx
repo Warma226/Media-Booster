@@ -53,11 +53,11 @@ type Sante = {
 type Etat = "ok" | "warn" | "off" | "err";
 const ETATS: Record<Etat, [string, string, string, string]> = {
   ok: ["Opérationnel", "#D9F7E6", "#05603A", "#16A34A"],
-  warn: ["À surveiller", "#FFE0EE", "#9A3412", "#E11D74"],
-  off: ["Non connecté", "#EEF2F8", "#5B6B86", "#9AA8BE"],
+  warn: ["À surveiller", "#FEF3C7", "#9A3412", "#D97706"],
+  off: ["Non connecté", "#F7F6F2", "#5B6B86", "#9AA8BE"],
   err: ["En panne", "#FDE3E6", "#9F1239", "#E11D2E"],
 };
-const COULEUR: Record<Platform, string> = { facebook: "#1877F2", linkedin: "#0A66C2", wordpress: "#1B0F4D", tiktok: "#150E33" };
+const COULEUR: Record<Platform, string> = { facebook: "#1877F2", linkedin: "#0A66C2", wordpress: "#0F172A", tiktok: "#0F172A" };
 const ROLE: Record<Platform, string> = { facebook: "Publications, commentaires, messages", linkedin: "Publication via Make", wordpress: "Articles du site", tiktok: "Vidéos et carrousels" };
 const AUTORISATIONS: [string, string][] = [
   ["pages_manage_posts", "Publier sur la Page"],
@@ -78,7 +78,7 @@ const jours = (iso: string | null) => (iso ? Math.ceil((new Date(iso).getTime() 
 function Puce({ ok, children }: { ok: boolean | null; children: React.ReactNode }) {
   return (
     <li className="row" style={{ gap: 10, alignItems: "flex-start", fontSize: 13, lineHeight: 1.4 }}>
-      <span style={{ width: 18, height: 18, borderRadius: 9, flexShrink: 0, marginTop: 1, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", background: ok ? "#16A34A" : ok === false ? "#E11D74" : "#C9D3E3" }}>
+      <span style={{ width: 18, height: 18, borderRadius: 9, flexShrink: 0, marginTop: 1, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", background: ok ? "#16A34A" : ok === false ? "#D97706" : "#C9D3E3" }}>
         <Trait d={ok ? "M20 6L9 17l-5-5" : "M12 8v5M12 17h.01"} size={11} stroke={3.2} />
       </span>
       <span style={{ color: ok === false ? "#9A3412" : "#33425C", fontWeight: ok === false ? 600 : 400 }}>{children}</span>
@@ -297,7 +297,7 @@ export default function Connexions() {
                     <span className="trait" style={{ background: i.resolu ? "#9AA8BE" : "#E11D2E" }} />
                     <span style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 2 }}>
                       <span style={{ fontSize: 11, color: "#5B6B86" }}>{quand(i.at)} · {PLATFORMS.find((x) => x.id === i.plateforme)?.label}</span>
-                      <Link href={`/apercu?id=${i.id}`} style={{ fontSize: 13, fontWeight: 700, lineHeight: 1.35, color: "#150E33", textDecoration: "none" }}>{i.detail}</Link>
+                      <Link href={`/apercu?id=${i.id}`} style={{ fontSize: 13, fontWeight: 700, lineHeight: 1.35, color: "#0F172A", textDecoration: "none" }}>{i.detail}</Link>
                     </span>
                     <span style={{ fontSize: 11, fontWeight: 800, color: i.resolu ? "#05603A" : "#9F1239", whiteSpace: "nowrap" }}>{i.resolu ? "Résolu" : "À voir"}</span>
                   </li>

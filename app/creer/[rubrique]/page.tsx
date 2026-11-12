@@ -249,7 +249,7 @@ function AtelierRubrique({ rub }: { rub: RubriqueId }) {
       {gen.variantes.map((v, i) => (
         <button key={i} type="button" role="radio" aria-checked={picked === i} onClick={() => setPicked(i)}>
           <span className="row" style={{ gap: 8 }}><span className="radio" /><span style={{ fontSize: 11, fontWeight: 800, letterSpacing: 1, color: "#5B6B86" }}>{VERSIONS[i] ?? `VERSION ${i + 1}`}</span><span style={{ marginLeft: "auto", fontSize: 12, color: v.length > 125 ? "#B45309" : "#5B6B86" }}>{v.length} car.</span></span>
-          <span style={{ fontSize: 15, lineHeight: 1.45, fontWeight: 600, color: "#150E33" }}>{v}</span>
+          <span style={{ fontSize: 15, lineHeight: 1.45, fontWeight: 600, color: "#0F172A" }}>{v}</span>
         </button>
       ))}
     </div>

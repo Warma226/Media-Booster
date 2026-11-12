@@ -54,7 +54,7 @@ const CSS = `
 @media (prefers-reduced-motion: reduce){.voa svg *{animation:none !important}}
 `;
 
-const ENCRE = "#000000", NUIT = "#1B0F4D", BLEU = "#5B3DF5", CIEL = "#A08BFF", CYAN = "#00D1FF", ORANGE = "#E11D74";
+const ENCRE = "#000000", NUIT = "#0F172A", BLEU = "#047857", CIEL = "#34D399", CYAN = "#00D1FF", ORANGE = "#D97706";
 const CORPS = { x: 34, y: 44, width: 132, height: 150, rx: 58 };
 
 export default function Voa({ humeur = "veille", taille = 120, decor = false }: { humeur?: Humeur; taille?: number; decor?: boolean }) {

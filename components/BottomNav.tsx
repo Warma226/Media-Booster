@@ -35,7 +35,7 @@ export function Trait({ d, size = 22, stroke = 1.8 }: { d: string; size?: number
 }
 
 // Tuile logo Media Booster (carré violet, chevrons blancs, point rose)
-export function LogoTuile({ taille = 76, bord = "#1B0F4D" }: { taille?: number; bord?: string }) {
+export function LogoTuile({ taille = 76, bord = "#0F172A" }: { taille?: number; bord?: string }) {
   const k = taille / 76;
   return (
     <span className="tv-logo" style={{ width: taille, height: taille, borderRadius: 20 * k }} role="img" aria-label="Media Booster">
@@ -77,13 +77,13 @@ export function BottomNav() {
   const moi = useMoi();
   const voit = (href: string) => !moi || lienVisible(moi.role, href);
   useEffect(() => {
-    if (path.startsWith("/acces") || path.startsWith("/invitation") || path.startsWith("/hors-ligne")) return;
+    if (path.startsWith("/acces") || path.startsWith("/inscription") || path.startsWith("/invitation") || path.startsWith("/hors-ligne")) return;
     fetch("/api/tableau?leger=1", { cache: "no-store" })
       .then((r) => (r.ok ? r.json() : null))
       .then((d) => d && !d.error && !d.demo && setEtat({ autopilot: Boolean(d.autopilot), grin: d.grin?.aTraiter ?? 0 }))
       .catch(() => {});
   }, [path]);
-  if (path.startsWith("/acces") || path.startsWith("/invitation") || path.startsWith("/hors-ligne")) return null;
+  if (path.startsWith("/acces") || path.startsWith("/inscription") || path.startsWith("/invitation") || path.startsWith("/hors-ligne")) return null;
   const actif = (href: string) => (href === "/" ? path === "/" : path.startsWith(href));
   const secondaire = SECONDAIRES.some((p) => path.startsWith(p));
   const media = actif("/mediatheque");
@@ -118,7 +118,7 @@ export function BottomNav() {
           </span>
         </Link>
         <div className="tv-side-pilote">
-          <span className="tv-kicker" style={{ color: "#FF9CC6" }}>PILOTE AUTOMATIQUE</span>
+          <span className="tv-kicker" style={{ color: "#FCD34D" }}>PILOTE AUTOMATIQUE</span>
           <span style={{ fontSize: 13, lineHeight: 1.4, color: "#E6ECFA" }}>
             {etat?.autopilot ? "L'app publie seule les actus de la veille." : "Les posts attendent ta validation."}
           </span>

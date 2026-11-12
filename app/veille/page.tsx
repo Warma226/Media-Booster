@@ -9,8 +9,8 @@ import { TOPICS, allSources, allTriggers, isOn, type Trigger } from "@/lib/confi
 import type { VeilleItem } from "@/lib/veille";
 import { getInfo } from "@/lib/client";
 
-const COUL: Record<string, string> = { tout: "#1B0F4D", burkina: "#E11D74", afrique: "#0E9F8E", cyber: "#DC2626", ia: "#7C3AED", crypto: "#D97706", startups: "#5B3DF5", reseaux: "#DB2777", evenements: "#4338CA", robotique: "#0891B2", smartphones: "#64748B" };
-const BARRES = ["#5B3DF5", "#0E9F8E", "#E11D74", "#7C3AED", "#8A93A6"];
+const COUL: Record<string, string> = { tout: "#0F172A", burkina: "#D97706", afrique: "#0E9F8E", cyber: "#DC2626", ia: "#7C3AED", crypto: "#D97706", startups: "#047857", reseaux: "#DB2777", evenements: "#4338CA", robotique: "#0891B2", smartphones: "#64748B" };
+const BARRES = ["#047857", "#0E9F8E", "#D97706", "#7C3AED", "#8A93A6"];
 
 function ilYa(iso: string | null, now: number): string {
   if (!iso) return "";
@@ -179,7 +179,7 @@ export default function Veille() {
           <span>Infos des 2 derniers jours uniquement : au-delà, elles quittent la veille.</span>
           {nbReprises ? (
             <label className="row" style={{ gap: 8, cursor: "pointer", fontWeight: 600, color: "#33425C" }}>
-              <input type="checkbox" checked={masquerReprises} onChange={(e) => setMasquerReprises(e.target.checked)} style={{ width: 18, height: 18, accentColor: "#5B3DF5" }} />
+              <input type="checkbox" checked={masquerReprises} onChange={(e) => setMasquerReprises(e.target.checked)} style={{ width: 18, height: 18, accentColor: "#047857" }} />
               Masquer les {nbReprises} info{nbReprises > 1 ? "s" : ""} déjà reprise{nbReprises > 1 ? "s" : ""}
             </label>
           ) : null}
@@ -193,17 +193,17 @@ export default function Veille() {
             {sujet ? (
               <article className="tv-sujet">
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 8, alignItems: "center", position: "relative" }}>
-                  <span className="tv-tag" style={{ background: "#E11D74", color: "#fff", fontSize: 12 }}>SUJET DU JOUR</span>
+                  <span className="tv-tag" style={{ background: "#D97706", color: "#fff", fontSize: 12 }}>SUJET DU JOUR</span>
                   {sujet.topics.length ? <span className="tv-tag" style={{ background: "rgba(255,255,255,0.12)", color: "#fff", letterSpacing: 0, fontWeight: 700, fontSize: 12 }}>{sujet.topics.map((t) => TOPICS.find((x) => x.id === t)?.label).filter(Boolean).slice(0, 2).join(" · ")}</span> : null}
-                  <span style={{ fontSize: 13, color: "#D9D2F2" }}>{sujet.sameStoryCount > 1 ? `repris par ${sujet.sameStoryCount} sources` : `pertinence ${sujet.score}`}</span>
+                  <span style={{ fontSize: 13, color: "#CBD5E1" }}>{sujet.sameStoryCount > 1 ? `repris par ${sujet.sameStoryCount} sources` : `pertinence ${sujet.score}`}</span>
                 </div>
                 <h2><a className="lien" href={sujet.url} target="_blank" rel="noopener noreferrer">{sujet.title}</a></h2>
                 {sujet.summary ? <p style={{ fontSize: 15, lineHeight: 1.55, color: "#DCE5F7", maxWidth: 760, position: "relative" }}>{sujet.summary.slice(0, 260)}{sujet.summary.length > 260 ? "…" : ""}</p> : null}
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 10, alignItems: "center", position: "relative" }}>
                   <SourceLogo name={sujet.sourceName} domain={domaines[sujet.sourceId]} url={sujet.url} size={36} radius={18} />
-                  <span style={{ fontSize: 13, color: "#D9D2F2" }}>{sujet.sourceName}{sujet.publishedAt ? ` · ${ilYa(sujet.publishedAt, now)}` : ""}{sujet.lang === "en" ? " · en anglais, sera traduit" : ""}</span>
+                  <span style={{ fontSize: 13, color: "#CBD5E1" }}>{sujet.sourceName}{sujet.publishedAt ? ` · ${ilYa(sujet.publishedAt, now)}` : ""}{sujet.lang === "en" ? " · en anglais, sera traduit" : ""}</span>
                   <span style={{ flex: 1 }} />
-                  <Link href={lienCreer(sujet)} style={{ height: 46, padding: "0 18px", borderRadius: 14, background: "#fff", color: "#1B0F4D", textDecoration: "none", display: "flex", alignItems: "center", gap: 8, fontSize: 14, fontWeight: 800 }}>
+                  <Link href={lienCreer(sujet)} style={{ height: 46, padding: "0 18px", borderRadius: 14, background: "#fff", color: "#0F172A", textDecoration: "none", display: "flex", alignItems: "center", gap: 8, fontSize: 14, fontWeight: 800 }}>
                     <Trait d={NAV_ICONS.studio} size={16} stroke={2} />Rédiger le post
                   </Link>
                   <a href={sujet.url} target="_blank" rel="noopener noreferrer" style={{ height: 46, padding: "0 16px", borderRadius: 14, background: "rgba(255,255,255,0.12)", color: "#fff", textDecoration: "none", display: "flex", alignItems: "center", fontSize: 14, fontWeight: 700 }}>Lire la source</a>
@@ -225,7 +225,7 @@ export default function Veille() {
                 return (
                   <article key={it.id} className="tv-actu" data-reprise={it.post?.status === "publie" ? "publie" : it.post ? "oui" : undefined}>
                     <div style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
-                      <SourceLogo name={it.sourceName} domain={domaines[it.sourceId]} url={it.url} size={48} radius={14} couleur={COUL[th?.id ?? ""] ?? "#5B3DF5"} />
+                      <SourceLogo name={it.sourceName} domain={domaines[it.sourceId]} url={it.url} size={48} radius={14} couleur={COUL[th?.id ?? ""] ?? "#047857"} />
                       <div style={{ flex: 1, minWidth: 0, display: "flex", flexWrap: "wrap", gap: 6, alignItems: "center", fontSize: 12, color: "#5B6B86" }}>
                         <span className={`tv-pill ${e.tone}`}>{e.label}</span>
                         <strong style={{ color: "#33425C" }}>{it.sourceName}</strong>
@@ -254,7 +254,7 @@ export default function Veille() {
                       ) : (
                         <Link href={lienCreer(it)} className="btn primary">Rédiger le post</Link>
                       )}
-                      <a href={it.url} target="_blank" rel="noopener noreferrer" className="btn" style={{ background: "#F1EEFF", borderColor: "#F1EEFF", color: "#4527D9" }}>Lire la source</a>
+                      <a href={it.url} target="_blank" rel="noopener noreferrer" className="btn" style={{ background: "#ECFDF5", borderColor: "#ECFDF5", color: "#065F46" }}>Lire la source</a>
                       <button type="button" className="btn" style={{ border: 0, background: "transparent", color: "#5B6B86" }} onClick={() => setHidden(new Set(hidden).add(it.id))}>Masquer</button>
                     </div>
                   </article>
@@ -265,12 +265,12 @@ export default function Veille() {
 
           {/* Colonne droite */}
           <aside className="tv-veille-side">
-            <section aria-labelledby="voa-veille" className="tv-carte-side" style={{ background: "#1B0F4D", color: "#fff", flexDirection: "row", alignItems: "center", border: 0 }}>
+            <section aria-labelledby="voa-veille" className="tv-carte-side" style={{ background: "#0F172A", color: "#fff", flexDirection: "row", alignItems: "center", border: 0 }}>
               <span style={{ flexShrink: 0 }}><Voa humeur={items === null ? "ecoute" : "parle"} taille={70} /></span>
               <div style={{ display: "flex", flexDirection: "column", gap: 6, minWidth: 0 }}>
                 <h2 id="voa-veille" style={{ fontSize: 15, fontWeight: 800, color: "#fff" }}>L'avis de NOVA</h2>
                 <span style={{ fontSize: 14, lineHeight: 1.45, color: "#DCE5F7" }}>{avis}</span>
-                {sujet ? <Link href={lienCreer(sujet)} style={{ fontSize: 13, fontWeight: 700, color: "#FF9CC6", textDecoration: "none" }}>Oui, prépare-le →</Link> : null}
+                {sujet ? <Link href={lienCreer(sujet)} style={{ fontSize: 13, fontWeight: 700, color: "#FCD34D", textDecoration: "none" }}>Oui, prépare-le →</Link> : null}
               </div>
             </section>
 
