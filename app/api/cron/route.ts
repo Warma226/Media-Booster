@@ -199,7 +199,9 @@ async function run(log: string[], opts: { force: boolean; now: boolean } = { for
       }
     }
   } else {
-    log.push("Veille automatique en pause : ajoute GEMINI_API_KEY (gratuit) ou ANTHROPIC_API_KEY dans Vercel.");
+    log.push(aiConfigured()
+      ? "Veille automatique en pause : la rubrique Actualité n'est pas activée (page Rubriques)."
+      : "Veille automatique en pause : ajoute GEMINI_API_KEY (gratuit) ou ANTHROPIC_API_KEY dans Vercel.");
   }
 
   // ─── 1 bis. Récap tech du vendredi ───────────────────────────────
