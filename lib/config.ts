@@ -1,0 +1,271 @@
+// Configuration éditoriale de TUVOA : sources, rubriques, déclencheurs, garde-fous.
+// Modifie ce fichier pour ajouter une source ou un déclencheur.
+
+export type Platform = "facebook" | "linkedin" | "tiktok" | "wordpress";
+export const PLATFORMS: { id: Platform; label: string; limit: number }[] = [
+  { id: "facebook", label: "Facebook", limit: 63206 },
+  { id: "linkedin", label: "LinkedIn", limit: 3000 },
+  { id: "tiktok", label: "TikTok", limit: 150 },
+  { id: "wordpress", label: "WordPress", limit: 100000 },
+];
+
+export type RubriqueId = "actu" | "cyberbase" | "portrait" | "citation";
+// `heure` : rubrique publiée chaque jour à heure fixe (heure locale du téléphone).
+export const RUBRIQUES: { id: RubriqueId; label: string; hashtag: string; description: string; alwaysManual: boolean; heure?: number }[] = [
+  { id: "actu", label: "Actualité tech", hashtag: "#ActuTech", description: "Les infos du moment, résumées et sourcées.", alwaysManual: false },
+  { id: "cyberbase", label: "CyberBase", hashtag: "#CyberBase", description: "Comprendre les notions basiques de la tech. Une notion chaque jour à 7 h.", alwaysManual: false, heure: 7 },
+  { id: "portrait", label: "Portrait", hashtag: "#Portrait", description: "Les experts tech d'ici et d'ailleurs. Accord de la personne obligatoire.", alwaysManual: true },
+  { id: "citation", label: "Citation", hashtag: "#Citation", description: "Les phrases qui font la tech, d'ici et d'ailleurs. Une citation toutes les 2 heures. Citation vérifiable, auteur, source et photo obligatoires.", alwaysManual: true },
+];
+
+export type Source = {
+  id: string;
+  name: string;
+  domain: string;
+  lang: "fr" | "en";
+  theme: string;
+  feed: string | null;
+  enabledByDefault: boolean;
+  // Si renseigné, seuls les articles contenant un de ces mots sont gardés.
+  filterKeywords?: string[];
+  note: string;
+};
+
+export const SOURCES: Source[] = [
+  {
+    id: "thehackernews",
+    name: "The Hacker News",
+    domain: "thehackernews.com",
+    lang: "en",
+    theme: "Cybersécurité",
+    feed: "https://feeds.feedburner.com/TheHackersNews",
+    enabledByDefault: true,
+    note: "Résumé traduit en français.",
+  },
+  {
+    id: "frandroid",
+    name: "Frandroid",
+    domain: "frandroid.com",
+    lang: "fr",
+    theme: "Smartphones · Tech",
+    feed: "https://www.frandroid.com/feed",
+    enabledByDefault: true,
+    note: "Mobiles, Android, tests produits.",
+  },
+  {
+    id: "techcrunch",
+    name: "TechCrunch",
+    domain: "techcrunch.com",
+    lang: "en",
+    theme: "Startups · IA",
+    feed: "https://techcrunch.com/feed/",
+    enabledByDefault: true,
+    note: "Levées de fonds, IA. Résumé traduit.",
+  },
+  {
+    id: "cybersecuritymag",
+    name: "Cybersecurity Mag Africa",
+    domain: "cybersecuritymag.africa",
+    lang: "fr",
+    theme: "Cybersécurité Afrique",
+    feed: null,
+    enabledByDefault: false,
+    note: "Le site bloque la lecture automatique : à brancher via un flux RSS ou une newsletter s'ils en proposent.",
+  },
+  {
+    id: "digitalmag",
+    name: "Digital Mag Côte d'Ivoire",
+    domain: "digitalmag.ci",
+    lang: "fr",
+    theme: "Numérique · Afrique de l'Ouest",
+    feed: "https://digitalmag.ci/feed/",
+    enabledByDefault: true,
+    note: "Média ivoirien 100 % digital : cybersécurité, fintech, télécoms et startups en Afrique.",
+  },
+  {
+    id: "sikafinance",
+    name: "Sikafinance",
+    domain: "sikafinance.com",
+    lang: "fr",
+    theme: "Économie Afrique de l'Ouest",
+    // Pas de flux RSS public : recherche Google Actualités limitée au site.
+    feed: "https://news.google.com/rss/search?q=site:sikafinance.com&hl=fr&gl=FR&ceid=FR:fr",
+    enabledByDefault: true,
+    filterKeywords: ["télécom", "telecom", "fintech", "numérique", "digital", "mobile money", "orange", "mtn", "moov", "internet", "cyber", "startup", "technolog", "data", "ia "],
+    note: "Site financier : seuls les sujets télécoms, fintech et numérique sont gardés.",
+  },
+];
+
+// `poids` : points de pertinence ajoutés quand le thème est détecté (la veille classe les actus avec).
+// Les annonces de nouveaux smartphones intéressent peu le public de TUVOA : elles ne sont pas mises en avant.
+export const TOPICS: { id: string; label: string; keywords: string[]; poids: number }[] = [
+  { id: "burkina", label: "Burkina Faso", poids: 35, keywords: ["burkina", "burkinabè", "burkinabe", "ouaga", "ouagadougou", "bobo-dioulasso", "koudougou", "faso"] },
+  { id: "evenements", label: "Événements tech", poids: 20, keywords: ["forum ia", "cyber africa", "africa tech summit", "innov africa", "gitex", "hackathon", "salon du numérique", "semaine du numérique", "sitic"] },
+  { id: "afrique", label: "Afrique & télécoms", poids: 25, keywords: ["afrique", "africa", "african", "sénégal", "senegal", "côte d'ivoire", "ivory coast", "burkina", "mali", "niger", "bénin", "togo", "ghana", "nigeria", "kenya", "cameroun", "uemoa", "cedeao", "orange money", "mobile money", "wave", "mtn", "moov", "airtel", "télécom", "telecom", "opérateur"] },
+  { id: "cyber", label: "Cybersécurité", poids: 15, keywords: ["faille", "vulnérabilit", "vulnerability", "malware", "ransomware", "phishing", "arnaque", "scam", "hack", "cve-", "zero-day", "exploit", "cyber", "breach", "fuite"] },
+  { id: "ia", label: "IA", poids: 15, keywords: ["intelligence artificielle", " ia ", "ai ", " ai,", "llm", "chatgpt", "openai", "anthropic", "claude", "gemini", "machine learning", "modèle"] },
+  { id: "crypto", label: "Crypto & blockchain", poids: 10, keywords: ["crypto", "blockchain", "bitcoin", "ethereum", "web3", "stablecoin", "binance"] },
+  { id: "reseaux", label: "Réseaux sociaux", poids: 10, keywords: ["réseaux sociaux", "social media", "facebook", "tiktok", "whatsapp", "instagram", "youtube", " meta ", "linkedin", "x (ex-twitter)"] },
+  { id: "robotique", label: "Robotique", poids: 10, keywords: ["robot", "robotique", "robotics", "drone", "humanoïde", "humanoid", "automatisation"] },
+  { id: "startups", label: "Startups", poids: 15, keywords: ["startup", "start-up", "levée", "raises", "funding", "series a", "series b", "seed", "fintech"] },
+  { id: "smartphones", label: "Smartphones", poids: 0, keywords: ["android", "iphone", "ios", "smartphone", "samsung", "galaxy", "pixel", "xiaomi", "tecno", "infinix", "itel"] },
+];
+
+export type TriggerFormat = "resume" | "explication" | "les-deux";
+export type TriggerMode = "general" | "manuel";
+// Image jointe au post : seul le visuel TUVOA généré est branché pour l'instant.
+export type TriggerImage = "visuel" | "presse" | "banque";
+export type Trigger = {
+  id: string;
+  name: string;
+  sources: string[];
+  keywords: string[];
+  minScore: number;
+  format: TriggerFormat;
+  platforms: Platform[];
+  mode: TriggerMode; // "manuel" = toujours un aperçu, même en autopilote
+  image?: TriggerImage;
+  enabledByDefault: boolean;
+};
+
+export const TRIGGERS: Trigger[] = [
+  {
+    id: "faille-critique",
+    name: "Faille de sécurité critique",
+    sources: ["thehackernews", "cybersecuritymag"],
+    keywords: ["critical", "critique", "zero-day", "0-day", "actively exploited", "exploitée", "urgent"],
+    minScore: 80,
+    format: "explication",
+    platforms: ["facebook", "linkedin"],
+    mode: "manuel",
+    enabledByDefault: true,
+  },
+  {
+    id: "android-ios",
+    name: "Nouvelle version Android / iOS",
+    sources: ["frandroid", "techcrunch"],
+    keywords: ["android 1", "ios 1", "ios 2", "mise à jour", "one ui", "hyperos"],
+    minScore: 70,
+    format: "resume",
+    platforms: ["facebook", "linkedin", "wordpress"],
+    mode: "general",
+    enabledByDefault: false, // nouveaux smartphones : peu suivis par le public de TUVOA
+  },
+  {
+    id: "ia-modele",
+    name: "Lancement d'un modèle d'IA",
+    sources: ["techcrunch", "frandroid"],
+    keywords: ["launches", "lance", "new model", "nouveau modèle", "releases", "dévoile"],
+    minScore: 75,
+    format: "explication",
+    platforms: ["linkedin", "facebook"],
+    mode: "general",
+    enabledByDefault: true,
+  },
+  {
+    id: "startup-afrique",
+    name: "Levée de fonds startup africaine",
+    sources: ["techcrunch", "sikafinance"],
+    keywords: ["africa", "afrique", "nigeria", "kenya", "sénégal", "senegal", "côte d'ivoire", "ghana", "burkina"],
+    minScore: 70,
+    format: "resume",
+    platforms: ["linkedin", "wordpress"],
+    mode: "general",
+    enabledByDefault: false,
+  },
+];
+
+// Les déclencheurs modifiés dans l'app remplacent la liste par défaut ci-dessus.
+export function allTriggers(custom?: Trigger[] | null): Trigger[] {
+  return Array.isArray(custom) ? custom : TRIGGERS;
+}
+
+// Sources par défaut + sources ajoutées depuis l'app.
+export function allSources(custom?: Source[] | null): Source[] {
+  const extra = (custom ?? []).filter((c) => !SOURCES.some((s) => s.id === c.id));
+  return [...SOURCES, ...extra];
+}
+
+export function isOn(map: Record<string, boolean> | undefined, id: string, fallback: boolean): boolean {
+  return typeof map?.[id] === "boolean" ? (map[id] as boolean) : fallback;
+}
+
+// Garde-fous de l'autopilote
+export const GUARDRAILS = {
+  // Sujets jamais publiés automatiquement (toujours en aperçu)
+  blockedKeywords: [
+    "décès", "décédé", "mort", "meurt", "tué", "killed", "dies", "died", "death",
+    "élection", "election", "président", "politique", "accusé", "accusation", "arrest", "arrêté",
+    "guerre", "war ", "attentat", "terror", "suicide", "procès", "lawsuit", "sues",
+  ],
+  // Autopilote : l'app choisit elle-même la meilleure actu et la publie, à intervalle régulier.
+  // Plage horaire de publication (heure UTC = heure d'Abidjan, Dakar, Ouaga ; +1 h à Lagos/Douala)
+  autoStartHour: 7,
+  autoEndHour: 21,
+  // Écart minimal entre deux publications automatiques (un post toutes les 30 min ; marge pour le passage toutes les 15 min)
+  minGapMinutes: 27,
+  // Pertinence minimale (thème suivi + actu fraîche) pour être publiée seule
+  minAutoScore: 55,
+  // Délai pendant lequel on peut annuler une publication automatique
+  delayMinutes: 10,
+  // Plafond de publications automatiques par jour
+  maxAutoPerDay: 28,
+  // Récap tech de la semaine : vendredi (5) à 17 h (UTC), avec au moins 3 actus publiées dans la semaine
+  recapDay: 5,
+  recapHour: 17,
+  recapMinPosts: 3,
+  // Plafond de posts générés par passage de la tâche planifiée (maîtrise des coûts IA)
+  maxGenerationsPerRun: 2,
+};
+
+// Garde-fous effectifs : réglages de l'écran Déclencheurs, sinon valeurs par défaut.
+export function gardeFous(g?: { debut?: number; fin?: number; maxParJour?: number; ecart?: number; scoreMin?: number } | null) {
+  const n = (v: unknown, def: number, min: number, max: number) => (typeof v === "number" && Number.isFinite(v) ? Math.min(max, Math.max(min, Math.round(v))) : def);
+  return {
+    debut: n(g?.debut, GUARDRAILS.autoStartHour, 0, 23),
+    fin: n(g?.fin, GUARDRAILS.autoEndHour, 1, 24),
+    maxParJour: n(g?.maxParJour, GUARDRAILS.maxAutoPerDay, 1, 60),
+    ecart: n(g?.ecart, GUARDRAILS.minGapMinutes, 10, 240),
+    scoreMin: n(g?.scoreMin, GUARDRAILS.minAutoScore, 30, 95),
+  };
+}
+
+// Guide de style donné à l'IA à chaque rédaction
+export const STYLE_GUIDE = `
+Tu écris pour TUVOA Tech Media (anciennement Warmachiner Tech), média burkinabè et africain d'infos et de formation en technologies, fondé en 2021 (site : www.tuvoa.media).
+Mission : « On décode la tech pour que chacun puisse s'en servir, pas juste la subir. » Conviction : la technologie n'a de valeur que si elle est comprise, et d'impact que si elle est partagée.
+Ligne éditoriale : uniquement la tech, traduite, ancrée dans les réalités locales et expliquée sans jargon, pour un public jeune. Priorité au Burkina Faso, puis à l'Afrique de l'Ouest et au continent : cybersécurité et arnaques, IA, crypto et blockchain, mobile money et télécoms, réseaux sociaux, robotique, startups, et les grands rendez-vous tech africains (Forum IA Ouaga, Forum Cyber Africa, Africa Tech Summit, Innov Africa…).
+Quand une actu mondiale a un effet concret pour les lecteurs africains (prix, accès, sécurité, emploi), dis-le en une phrase, sans rien inventer.
+Les annonces de nouveaux smartphones n'intéressent que si elles concernent l'Afrique (prix, disponibilité, modèles vendus localement) : sinon, reste bref.
+Ton : celui d'un média d'information tech sérieux. Neutre, factuel, rigoureux, à la troisième personne : pas de tutoiement, pas d'interpellation du lecteur, pas de formule familière, pas de « tu vois ? ».
+Le post résume l'information : qui, quoi, quand, chiffres clés, conséquences. Pas de conseils au lecteur sauf si l'info l'exige (ex. mise à jour de sécurité urgente), formulés sobrement.
+Public : lecteurs francophones, en particulier en Afrique de l'Ouest ; explique brièvement le jargon.
+Langue : écris TOUJOURS en français, même quand l'article source est en anglais (traduis et reformule). Garde seulement les noms propres et de marques tels quels ; les hashtags sont en français ou des noms de marques.
+Règles :
+- Toujours reformuler avec tes propres mots. Ne jamais recopier l'article (aucune phrase reprise, citation de 15 mots maximum).
+- Toujours citer la source (nom du média) et ne rien inventer : si une info n'est pas dans l'article, ne l'écris pas.
+- Distinguer clairement ce qui est officiel, une fuite ou une rumeur.
+- Pas de sensationnalisme, pas de point d'exclamation, pas d'émoji.
+- Les chiffres en chiffres, les noms de marques avec leur casse officielle.
+- Tout montant en devise étrangère est suivi de sa conversion en francs CFA : « … dollars, soit environ … FCFA ».
+Qualité professionnelle, niveau rédaction d'un média sérieux :
+- Première phrase forte et précise (le fait principal), pas de formule creuse (« Grosse nouvelle », « Vous n'allez pas y croire »…).
+- Chaque phrase apporte une info ou une explication utile ; pas de remplissage ni de répétition.
+- Orthographe, accords et ponctuation française impeccables (espace avant « : ; ? ! », guillemets « »).
+- Termine par une chute journalistique sobre : une phrase qui met l'info en perspective ou pose l'enjeu à venir, sans ironie ni familiarité, jamais un résumé ni une consigne. Puis la source.
+`.trim();
+
+// Catégories du site WordPress pour l'actualité (Portrait et Exclusivité restent manuelles).
+export const WP_CATEGORIES_AUTO = ["CyberActu", "IA", "Robotique", "Réseaux Sociaux", "Apps"] as const;
+const sansAccent = (t: string) => t.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+const MOTS_CATEGORIE: [string, RegExp][] = [
+  ["CyberActu", /cyber|pirat|hacker|ransomware|rancongiciel|malware|logiciel malveillant|phishing|hameconnage|faille|vulnerab|fuite de donnees|breach|escroquer|arnaque|fraude|europol|interpol|threat/],
+  ["Robotique", /robot|humanoide|drone|automate/],
+  ["IA", /intelligence artificielle|\bia\b|\bai\b|chatgpt|openai|gemini|\bllm\b|anthropic|claude|deepseek|mistral|copilot|apprentissage automatique/],
+  ["Réseaux Sociaux", /reseaux? sociaux|facebook|instagram|tiktok|whatsapp|twitter|\bx\b \(|linkedin|youtube|snapchat|threads|telegram|\bmeta\b|influenceu/],
+];
+// Choisit une catégorie à partir du titre et du texte (secours si l'IA n'en a pas donné).
+export function categorieWp(...textes: string[]): string {
+  const t = sansAccent(textes.join(" "));
+  return MOTS_CATEGORIE.find(([, re]) => re.test(t))?.[0] ?? "Apps";
+}
