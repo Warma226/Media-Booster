@@ -2,6 +2,7 @@
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
 import type { Platform, RubriqueId } from "./config";
 import { espaceId } from "./espace";
+import { completerMarque } from "./marque";
 
 export type PostStatus = "brouillon" | "a_valider" | "planifie" | "publie" | "erreur" | "annule";
 
@@ -32,6 +33,9 @@ export type Post = {
     // WordPress : légende et texte alternatif de l'image à la une, catégories, étiquettes, adresse, images supplémentaires
     legende?: string; alt?: string; image_secours?: string; wp_categories?: string[]; wp_tags?: string[]; wp_slug?: string; wp_maj?: "categories";
     wp_images?: { url: string; legende: string; alt?: string }[];
+    // Bas des visuels générés : site ou nom du média (rempli à l'enregistrement d'après la marque de l'espace)
+    signature?: string;
+    court?: string; // sigle du média, logo texte des visuels
   };
   platforms: Platform[];
   status: PostStatus;
@@ -183,6 +187,10 @@ export async function getPost(id: string): Promise<Post | null> {
 }
 
 export async function savePost(post: Post): Promise<Post> {
+  if (!post.visual.signature || !post.visual.court) {
+    const m = completerMarque((await getSettings().catch(() => null))?.marque);
+    post = { ...post, visual: { ...post.visual, signature: post.visual.signature || m.signature, court: post.visual.court || m.court } };
+  }
   if (isDemo()) {
     const m = mem();
     const i = m.posts.findIndex((p) => p.id === post.id);

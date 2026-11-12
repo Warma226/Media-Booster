@@ -1,7 +1,7 @@
 // Galerie d'inspiration du Studio : 10 maquettes par type (visuel, carrousel, vidéo), toutes modifiables.
 // Les photos d'exemple (public/studio) se remplacent en un clic dans l'éditeur.
 import { anim as A, logo, nouveau, page, uid, type Carte, type Doc, type El, type Genre } from "./creation";
-import { MEDIA_COURT, MEDIA_NOM, MEDIA_SIGNATURE } from "@/lib/brand";
+import { marqueActive } from "@/lib/marque";
 
 export type Maquette = { id: string; nom: string; idee: string; doc: () => Doc };
 
@@ -69,11 +69,11 @@ const VISUELS: Maquette[] = [
       T("NOUVELLE", 40, 245, 1000, 110, { role: "titre", police: 104, couleur: NOIR, align: "center", anim: A("glisser-haut", 0.3) }),
       T("SEMAINE", 40, 345, 1000, 110, { role: "fort", police: 104, couleur: B, align: "center", anim: A("glisser-haut", 0.5) }),
       Pa("Passionnés de tech.", 260, 470, 560, 84, { role: "pastille", anim: A("pop", 0.8) }),
-      T(`Restez informés, vite et bien, avec ${MEDIA_NOM}.`, 60, 575, 960, 44, { role: "sous", police: 32, graisse: 600, couleur: NOIR, align: "center" }),
+      T(`Restez informés, vite et bien, avec ${marqueActive.nom}.`, 60, 575, 960, 44, { role: "sous", police: 32, graisse: 600, couleur: NOIR, align: "center" }),
       ...["IA", "Cybersécurité", "Mobile money", "Startups"].map((t, i) => Pa(t, i < 2 ? 50 : 730, 680 + (i % 2) * 82, 300, 62, { role: `etiquette${i + 1}`, police: 28, fond: ["#D1FAE5", B, NUIT, NOIR][i], couleur: i === 0 ? NUIT : BLANC, ombre: "douce", anim: A(i < 2 ? "glisser-droite" : "glisser-gauche", 1.2 + i * 0.12, "flotter") })),
       F(0, 1150, 1080, 220, NOIR, { nom: "Barre du bas", rayon: 44 }),
       T("Toute l'actu tech sur :", 60, 1225, 470, 50, { role: "barre", police: 34, graisse: 600, align: "right" }),
-      Pa(`${MEDIA_SIGNATURE}`, 550, 1210, 470, 80, { role: "bouton", police: 34, rayon: 40 }),
+      Pa(`${marqueActive.signature}`, 550, 1210, 470, 80, { role: "bouton", police: 34, rayon: 40 }),
     ])]),
   },
   {
@@ -118,7 +118,7 @@ const VISUELS: Maquette[] = [
       I(PH.bras, 0, 0, 1080, 1350, { nom: "Photo de couverture", filtre: "contraste" }),
       F(0, 0, 1080, 380, "lin:rgba(0,0,0,0.55),rgba(0,0,0,0),180", { nom: "Ombre du haut" }),
       F(0, 900, 1080, 450, "lin:rgba(0,0,0,0),rgba(0,0,0,0.85),180", { nom: "Ombre du bas" }),
-      T(MEDIA_COURT, 30, 20, 1020, 240, { role: "masthead", police: 250, graisse: 800, align: "center", espacement: -6, anim: A("glisser-bas", 0) }),
+      T(marqueActive.court, 30, 20, 1020, 240, { role: "masthead", police: 250, graisse: 800, align: "center", espacement: -6, anim: A("glisser-bas", 0) }),
       T("TECH MAGAZINE · NOVEMBRE", 40, 255, 1000, 40, { nom: "Sous-masthead", police: 28, graisse: 700, align: "center", espacement: 8 }),
       T("IA : ce qui change pour vous", 50, 420, 420, 130, { role: "accroche1", police: 44, interligne: 1.05, anim: A("glisser-droite", 0.4) }),
       F(50, 560, 120, 8, OR, { nom: "Trait" }),
@@ -126,7 +126,7 @@ const VISUELS: Maquette[] = [
       F(780, 360, 240, 240, OR, { nom: "Badge", forme: "etoile", anim: A("pop", 0.9, "tourner") }),
       T("N°1\nGRATUIT", 780, 425, 240, 120, { nom: "Texte du badge", police: 40, align: "center", interligne: 1.05, rot: 8, anim: A("pop", 0.9) }),
       T("5 pièges à éviter sur WhatsApp", 50, 1040, 980, 150, { role: "titre", police: 74, interligne: 1.02, anim: A("glisser-haut", 1.1) }),
-      T(`${MEDIA_SIGNATURE}`, 50, 1230, 600, 50, { role: "bouton", police: 30, graisse: 700, couleur: CIEL }),
+      T(`${marqueActive.signature}`, 50, 1230, 600, 50, { role: "bouton", police: 30, graisse: 700, couleur: CIEL }),
       ...Array.from({ length: 14 }, (_, i) => F(830 + i * 14 + (i % 3) * 2, 1215, i % 2 ? 4 : 8, 70, BLANC, { nom: "Code-barres" })),
     ])]),
   },
@@ -147,14 +147,14 @@ const VISUELS: Maquette[] = [
       ...logo(),
       F(160, 150, 760, 1120, "#FBFBF8", { nom: "Ticket", rayon: 6, ombre: "forte", rot: -2, anim: A("glisser-haut", 0.1) }),
       T("REÇU DE LA SEMAINE", 200, 210, 680, 60, { role: "titre", police: 50, couleur: NOIR, align: "center", rot: -2 }),
-      T(`${MEDIA_NOM}`, 200, 280, 680, 40, { nom: "Adresse", police: 24, graisse: 600, couleur: "#6B7280", align: "center", rot: -2 }),
+      T(`${marqueActive.nom}`, 200, 280, 680, 40, { nom: "Adresse", police: 24, graisse: 600, couleur: "#6B7280", align: "center", rot: -2 }),
       T("- - - - - - - - - - - - - - - - - - - - -", 200, 340, 680, 40, { nom: "Pointillés", police: 26, couleur: "#9CA3AF", align: "center", rot: -2 }),
       ...["1 × IA générative ........ LUE", "1 × Arnaque SMS ........ ÉVITÉE", "1 × Mobile money ........ COMPRIS", "1 × 5G en Afrique ........ À SUIVRE"].map((l, i) => T(l, 210, 400 + i * 90, 660, 60, { role: `ligne${i + 1}`, police: 30, graisse: 700, couleur: NOIR, rot: -2, anim: A("machine", 0.4 + i * 0.4, "aucune", 0.5) })),
       T("- - - - - - - - - - - - - - - - - - - - -", 200, 770, 680, 40, { nom: "Pointillés", police: 26, couleur: "#9CA3AF", align: "center", rot: -2 }),
       T("TOTAL : 4 actus à ne pas rater", 210, 830, 660, 60, { role: "total", police: 38, couleur: B, rot: -2 }),
       T("Prix : 0 FCFA", 210, 900, 660, 50, { nom: "Prix", police: 32, graisse: 700, couleur: NOIR, rot: -2 }),
       ...Array.from({ length: 22 }, (_, i) => F(300 + i * 22 + (i % 4) * 3, 1010 - i * 0.77, i % 3 ? 6 : 12, 110, NOIR, { nom: "Code-barres", rot: -2 })),
-      T(`Merci de votre fidélité · ${MEDIA_SIGNATURE}`, 200, 1160, 680, 40, { role: "bouton", police: 24, graisse: 700, couleur: "#374151", align: "center", rot: -2 }),
+      T(`Merci de votre fidélité · ${marqueActive.signature}`, 200, 1160, 680, 40, { role: "bouton", police: 24, graisse: 700, couleur: "#374151", align: "center", rot: -2 }),
     ])]),
   },
   {
@@ -190,7 +190,7 @@ const fin = (titre: string, sous: string): Doc["pages"][number] => page(`lin:${B
   Ic("coeur", 440, 380, 200, "rgba(255,255,255,0.15)", { rayon: 50, anim: A("pop", 0.1, "pulser") }),
   T(titre, 60, 640, 960, 220, { role: "fin", police: 92, align: "center", interligne: 1.02 }),
   T(sous, 90, 880, 900, 100, { role: "finSous", police: 36, graisse: 600, align: "center", couleur: "#D1FAE5" }),
-  Pa(`Suivez ${MEDIA_NOM}`, 330, 1060, 420, 84, { role: "bouton", police: 38, fond: BLANC, couleur: B, ombre: "forte" }),
+  Pa(`Suivez ${marqueActive.nom}`, 330, 1060, 420, 84, { role: "bouton", police: 38, fond: BLANC, couleur: B, ombre: "forte" }),
 ]);
 const swipe = (dark = true) => T("Glissez →", 760, 1250, 280, 50, { nom: "Glissez", police: 30, graisse: 700, align: "right", couleur: dark ? "#A7F3D0" : B });
 
@@ -237,7 +237,7 @@ const CARROUSELS: Maquette[] = [
     doc: () => doc("carrousel", "portrait", 6, [
       page(BLANC, [...logo(56, 52, false), T("AVANT", 60, 260, 960, 220, { role: "titre", police: 210, couleur: OR, align: "center" }), T("APRÈS", 60, 520, 960, 220, { role: "fort", police: 210, couleur: B, align: "center" }), T("Le mot de passe, version pro", 60, 820, 960, 80, { role: "sous", police: 50, couleur: NOIR, align: "center" }), swipe(false)]),
       page("#FFF1EA", [...logo(56, 52, false), Pa("AVANT", 60, 200, 300, 80, { fond: OR, police: 40 }), T("123456", 60, 420, 960, 200, { role: "avant", police: 190, couleur: NOIR, align: "center" }), F(80, 500, 920, 22, OR, { nom: "Barre rouge", rot: -8, rayon: 11, anim: A("glisser-droite", 0.3) }), T("Trouvé en moins d'une seconde.", 60, 760, 960, 120, { role: "avantDetail", police: 56, couleur: NOIR, align: "center" }), swipe(false)]),
-      page("#ECFDF5", [...logo(56, 52, false), Pa("APRÈS", 60, 200, 300, 80, { police: 40 }), T("Soleil-Ouaga-2026!", 60, 440, 960, 140, { role: "apres", police: 96, couleur: NOIR, align: "center" }), Ic("check", 440, 620, 200, B, { rayon: 100, ombre: "neon", anim: A("pop", 0.3) }), T("Long, facile à retenir, difficile à deviner.", 60, 880, 960, 140, { role: "apresDetail", police: 52, couleur: NOIR, align: "center" }), swipe(false)]),
+      page("#ECFDF5", [...logo(56, 52, false), Pa("APRÈS", 60, 200, 300, 80, { police: 40 }), T("Soleil-Plage-2026!", 60, 440, 960, 140, { role: "apres", police: 96, couleur: NOIR, align: "center" }), Ic("check", 440, 620, 200, B, { rayon: 100, ombre: "neon", anim: A("pop", 0.3) }), T("Long, facile à retenir, difficile à deviner.", 60, 880, 960, 140, { role: "apresDetail", police: 52, couleur: NOIR, align: "center" }), swipe(false)]),
       fin("Changez-le aujourd'hui", "Commencez par votre compte mobile money et votre e-mail."),
     ]),
   },
@@ -317,7 +317,7 @@ const CARROUSELS: Maquette[] = [
       return doc("carrousel", "portrait", 6, [
         page(NOIR, [...bande(0), ...logo(), T("Glissez pour voir la suite →", 60, 1240, 960, 50, { nom: "Consigne", police: 32, graisse: 700, couleur: CIEL })]),
         page(NOIR, [...bande(1), T("IA · Cybersécurité · Mobile money · Startups", 60, 220, 960, 140, { role: "sous", police: 52, align: "center", interligne: 1.15 })]),
-        page(NOIR, [...bande(2), T("Rejoignez la communauté", 60, 200, 960, 200, { role: "fin", police: 84, align: "center", interligne: 1.02 }), Pa(`Suivez ${MEDIA_NOM}`, 330, 1220, 420, 84, { role: "bouton", police: 38, ombre: "neon" })]),
+        page(NOIR, [...bande(2), T("Rejoignez la communauté", 60, 200, 960, 200, { role: "fin", police: 84, align: "center", interligne: 1.02 }), Pa(`Suivez ${marqueActive.nom}`, 330, 1220, 420, 84, { role: "bouton", police: 38, ombre: "neon" })]),
       ]);
     },
   },
@@ -345,7 +345,7 @@ const VIDEOS: Maquette[] = [
     T("L'actu tech du jour", 70, 250, 940, 60, { role: "surtitre", police: 44, graisse: 600, couleur: "#A7F3D0", anim: A("fondu", 0.1) }),
     T("Le titre qui arrête le pouce", 70, 320, 940, 220, { role: "titre", police: 96, interligne: 1.02, anim: A("glisser-haut", 0.3) }),
     C(560, 1450, 440, 214, { titre: "À retenir", etat: "Important", texte: "Une info clé en une phrase.", bouton: "Lire", icone: "ia" }, { role: "carte1", anim: A("pop", 1.4, "flotter") }),
-    Pa(`Suivez ${MEDIA_NOM}`, 290, 1740, 500, 90, { role: "bouton", police: 40, ombre: "neon", anim: A("pop", 2, "pulser") }),
+    Pa(`Suivez ${marqueActive.nom}`, 290, 1740, 500, 90, { role: "bouton", police: 40, ombre: "neon", anim: A("pop", 2, "pulser") }),
   ]),
   V("r-machine", "Machine à écrire", "Le titre se tape lettre par lettre, curseur qui clignote.", 9, NOIR, () => [
     ...logoS(),
@@ -372,7 +372,7 @@ const VIDEOS: Maquette[] = [
     ...["3", "2", "1"].map((n, i) => T(n, 0, 560, 1080, 700, { nom: `Chiffre ${n}`, police: 680, align: "center", anim: A("pop", i, "aucune", 0.5, i + 0.95) })),
     F(240, 560, 600, 600, OR, { nom: "Explosion", forme: "etoile", anim: A("pop", 3, "tourner", 0.6) }),
     T("C'est\nparti !", 240, 700, 600, 330, { role: "titre", police: 130, align: "center", interligne: 1, anim: A("pop", 3.1) }),
-    T(`Le nouveau rendez-vous tech de ${MEDIA_NOM}`, 70, 1300, 940, 220, { role: "sous", police: 64, align: "center", interligne: 1.1, anim: A("glisser-haut", 3.6) }),
+    T(`Le nouveau rendez-vous tech de ${marqueActive.nom}`, 70, 1300, 940, 220, { role: "sous", police: 64, align: "center", interligne: 1.1, anim: A("glisser-haut", 3.6) }),
     Pa("Activez les notifications", 170, 1700, 740, 96, { role: "bouton", police: 40, fond: BLANC, couleur: B, anim: A("pop", 4.2, "pulser") }),
   ]),
   V("r-glitch", "Glitch intro", "Écran qui bugue, titre qui tremble : effet « breaking news ».", 8, NOIR, () => [
@@ -389,21 +389,21 @@ const VIDEOS: Maquette[] = [
     C(720, 400, 320, 214, { titre: "Lundi 7h", etat: "À suivre", texte: "Une nouvelle semaine d'actu.", bouton: "Rappel", icone: "cal", couleur: NOIR }, { role: "carte3", rot: 3, ombre: "neon", anim: A("pop", 1, "balancer") }),
     T("Bon week-end", 60, 1380, 960, 120, { role: "titre", police: 110, align: "center", couleur: "lin:#FFFFFF,#FFE6A3,180", ombre: "forte", anim: A("glisser-haut", 1.4) }),
     Pa("prudents en ligne", 120, 1510, 840, 120, { role: "fort", police: 92, fond: `lin:${B},${CIEL},90`, rayon: 14, marge: 6, ombre: "neon", anim: A("pop", 1.8) }),
-    Pa(`Suivez ${MEDIA_NOM}`, 330, 1730, 420, 86, { role: "bouton", police: 38, ombre: "neon", anim: A("pop", 2.3, "pulser") }),
+    Pa(`Suivez ${marqueActive.nom}`, 330, 1730, 420, 86, { role: "bouton", police: 38, ombre: "neon", anim: A("pop", 2.3, "pulser") }),
   ]),
   V("r-flash", "Flash info défilant", "Bandeaux qui défilent façon chaîne d'info, titre au centre.", 8, NOIR, () => [
     I(PH.dos, 0, 300, 1080, 1100, { nom: "Photo", anim: A("zoom", 0, "aucune", 8) }), F(0, 300, 1080, 1100, "lin:rgba(0,0,0,0.2),rgba(0,0,0,0.75),180", { nom: "Voile" }), ...logoS(),
     F(0, 220, 1080, 80, OR, { nom: "Bandeau du haut" }), T("FLASH TECH • IA • CYBER • MOBILE MONEY • STARTUPS • ", 0, 232, 1080, 70, { role: "bandeau1", police: 44, anim: A("aucune", 0, "defiler") }),
     Pa("EN DIRECT", 70, 1180, 330, 80, { nom: "Direct", police: 38, fond: OR, anim: A("pop", 0.3, "clignoter") }),
     T("Le titre de l'info, en gros et en court", 70, 1290, 940, 260, { role: "titre", police: 88, interligne: 1.05, anim: A("glisser-gauche", 0.6) }),
-    F(0, 1620, 1080, 110, B, { nom: "Bandeau du bas" }), T(`Toute l'actu tech sur ${MEDIA_SIGNATURE} • Suivez ${MEDIA_NOM} • `, 0, 1640, 1080, 80, { role: "bandeau2", police: 44, anim: A("aucune", 0, "defiler") }),
+    F(0, 1620, 1080, 110, B, { nom: "Bandeau du bas" }), T(`Toute l'actu tech sur ${marqueActive.signature} • Suivez ${marqueActive.nom} • `, 0, 1640, 1080, 80, { role: "bandeau2", police: 44, anim: A("aucune", 0, "defiler") }),
   ]),
   V("r-kenburns", "Zoom cinéma", "Lent zoom sur la photo, titres qui apparaissent comme au cinéma.", 10, NOIR, () => [
     I(PH.saut, -200, 0, 1480, 1920, { nom: "Photo", anim: A("zoom", 0, "aucune", 10) }), F(0, 0, 1080, 1920, "lin:rgba(0,0,0,0.1),rgba(0,0,0,0.85),180", { nom: "Voile" }),
     F(0, 0, 1080, 170, NOIR, { nom: "Bande cinéma haut" }), F(0, 1750, 1080, 170, NOIR, { nom: "Bande cinéma bas" }), ...logo(70, 56),
     T("CHAPITRE 1", 70, 1100, 940, 60, { nom: "Chapitre", police: 40, graisse: 700, couleur: CIEL, espacement: 10, anim: A("fondu", 1) }),
     T("La jeunesse qui code l'Afrique", 70, 1180, 940, 300, { role: "titre", police: 100, interligne: 1.02, anim: A("fondu", 2, "aucune", 1.4) }),
-    T(`Une série ${MEDIA_NOM}`, 70, 1520, 940, 60, { role: "sous", police: 42, graisse: 600, couleur: "#D1FAE5", anim: A("fondu", 3.5) }),
+    T(`Une série ${marqueActive.nom}`, 70, 1520, 940, 60, { role: "sous", police: 42, graisse: 600, couleur: "#D1FAE5", anim: A("fondu", 3.5) }),
   ]),
   V("r-duel", "Duel animé", "Les deux camps arrivent de chaque côté, le VS tombe au milieu.", 7, NOIR, () => [
     F(0, 0, 540, 1920, `lin:${B},${NUIT},180`, { nom: "Moitié gauche", anim: A("glisser-droite", 0, "aucune", 0.7) }), F(540, 0, 540, 1920, `lin:${OR},#7A2603,180`, { nom: "Moitié droite", anim: A("glisser-gauche", 0, "aucune", 0.7) }), ...logoS(),
@@ -419,7 +419,7 @@ const VIDEOS: Maquette[] = [
     T("week-end", 60, 480, 960, 200, { role: "fort", police: 190, align: "center", couleur: BLANC, ombre: "forte", anim: A("glisser-haut", 0.5) }),
     F(700, 1150, 300, 300, OR, { nom: "Badge", forme: "etoile", anim: A("pop", 1.2, "tourner") }), T("ON SE\nREPOSE", 700, 1240, 300, 130, { nom: "Texte du badge", police: 46, align: "center", interligne: 1, anim: A("pop", 1.2) }),
     T("Et lundi, on revient avec l'actu tech qui compte.", 70, 1500, 940, 200, { role: "sous", police: 56, align: "center", couleur: NUIT, interligne: 1.15, anim: A("fondu", 1.8) }),
-    Pa(`Suivez ${MEDIA_NOM}`, 330, 1750, 420, 90, { role: "bouton", police: 40, ombre: "forte", anim: A("pop", 2.4, "pulser") }),
+    Pa(`Suivez ${marqueActive.nom}`, 330, 1750, 420, 90, { role: "bouton", police: 40, ombre: "forte", anim: A("pop", 2.4, "pulser") }),
   ]),
 ];
 

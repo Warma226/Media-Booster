@@ -2,17 +2,18 @@
 // Slides du « Récap tech de la semaine » (carrousel 4:5, 1080 × 1350), même identité que le visuel #ActuTech.
 // Règle du moteur de rendu : tout bloc qui contient plusieurs enfants doit être en display: flex.
 import { LogoMark } from "./visual";
-import { MEDIA_COURT, MEDIA_NOM, MEDIA_SIGNATURE } from "@/lib/brand";
 
 const BLEU = "#047857";
 const M = "Montserrat";
 const W = 1080;
 const H = 1350;
 
-export type SlideData =
+export type MarqueSlide = { nom: string; court: string; signature: string };
+export type SlideData = (
   | { kind: "cover"; periode: string; count: number; photos?: string[]; categories?: string[]; titres?: string[]; assets?: string }
   | { kind: "item"; index: number; total: number; categorie: string; texte: string; photo?: string; source?: string; autres?: { photo?: string; categorie: string }[] }
-  | { kind: "end"; assets?: string };
+  | { kind: "end"; assets?: string }
+) & { marque?: MarqueSlide };
 
 function fit(text: string, max: number) {
   return text.length > max ? text.slice(0, max - 1).trimEnd() + "…" : text;
@@ -24,7 +25,7 @@ function autoSize(text: string, steps: [number, number][]): number {
 export function renderSlide(d: SlideData) {
   if (d.kind === "cover") return cover(d);
   if (d.kind === "item") return item(d);
-  return fin(d.assets ?? "");
+  return fin(d.assets ?? "", d);
 }
 
 // ─── Slide d'actu (modèle « photo plein cadre ») : photo assombrie, logo en haut, grand texte blanc,
@@ -86,7 +87,7 @@ function Carte({ photo, titre, sous, w, h, opacity = 1, r = 0 }: { photo?: strin
   );
 }
 
-function item(d: { index: number; total: number; categorie: string; texte: string; photo?: string; source?: string; autres?: { photo?: string; categorie: string }[] }) {
+function item(d: { index: number; total: number; categorie: string; texte: string; photo?: string; source?: string; autres?: { photo?: string; categorie: string }[]; marque?: MarqueSlide }) {
   const info = fit(d.texte, 220);
   const size = autoSize(info, [[90, 50], [130, 46], [170, 42], [999, 38]]);
   const cat = fit(d.categorie || "Actu tech", 20);
@@ -97,7 +98,7 @@ function item(d: { index: number; total: number; categorie: string; texte: strin
       <Assombri />
       {/* Logo */}
       <div style={{ position: "absolute", left: 0, top: 66, width: W, display: "flex", justifyContent: "center" }}>
-        <LogoMark size={40} color="#FFFFFF" dot={BLEU} />
+        <LogoMark size={40} color="#FFFFFF" dot={BLEU} texte={d.marque?.court} />
       </div>
 
       {/* Grand texte */}
@@ -116,7 +117,7 @@ function item(d: { index: number; total: number; categorie: string; texte: strin
             <div style={{ position: "absolute", left: 690, top: 790, display: "flex" }}><Carte photo={side(2).photo} titre={side(2).categorie} w={190} h={220} opacity={0.85} r={2} /></div>
             <div style={{ position: "absolute", left: 860, top: 815, display: "flex" }}><Carte photo={side(3).photo} titre={side(3).categorie} w={150} h={180} opacity={0.55} r={3} /></div>
             <div style={{ position: "absolute", left: 425, top: 720, display: "flex" }}>
-              <Carte photo={d.photo} titre={cat} sous={d.source ?? MEDIA_NOM} w={250} h={340} />
+              <Carte photo={d.photo} titre={cat} sous={d.source ?? d.marque?.nom ?? ""} w={250} h={340} />
             </div>
           </div>
         );
@@ -128,25 +129,25 @@ function item(d: { index: number; total: number; categorie: string; texte: strin
       </div>
       <div style={{ position: "absolute", right: 110, top: 1075, display: "flex", fontFamily: SERIF, fontStyle: "italic", fontSize: 84, color: "#FFFFFF" }}>{`${d.index}/${d.total}`}</div>
       <div style={{ position: "absolute", left: 210, top: 1150, display: "flex" }}>
-        <Mention text={d.source ? `« Source : ${fit(d.source, 26)} »` : `« ${MEDIA_NOM} »`} size={33} pinceau={150} />
+        <Mention text={d.source ? `« Source : ${fit(d.source, 26)} »` : `« ${d.marque?.nom ?? ""} »`} size={33} pinceau={150} />
       </div>
     </div>
   );
 }
 
 // ─── Slide de fin : la même photo, la feuille porte l'appel à s'abonner ───
-function fin(base: string) {
+function fin(base: string, d: { marque?: MarqueSlide } = {}) {
   return (
     <div style={{ width: W, height: H, display: "flex", position: "relative", overflow: "hidden", fontFamily: M, background: "#0B2A8A" }}>
       <img src={`${base}/recap/base.jpg`} alt="" width={W} height={H} style={{ position: "absolute", left: 0, top: 0, width: W, height: H }} />
       <div style={{ position: "absolute", left: FEUILLE.left, top: FEUILLE.top, width: FEUILLE.w, height: FEUILLE.h, display: "flex", flexDirection: "column", alignItems: "center", paddingTop: 70, transform: `rotate(${FEUILLE.angle}deg)` }}>
         <div style={{ display: "flex", padding: "26px 40px", background: "#FFFFFF", borderRadius: 18, boxShadow: "0 6px 16px rgba(0,0,0,0.12)" }}>
-          <LogoMark size={70} color="#1A1A1A" />
+          <LogoMark size={70} color="#1A1A1A" texte={d.marque?.court} />
         </div>
         <div style={{ display: "flex", marginTop: 50, fontFamily: M, fontSize: 56, fontWeight: 800, color: "#111111" }}>Toute l'actu tech,</div>
         <div style={{ display: "flex", fontFamily: M, fontSize: 56, fontWeight: 800, color: BLEU }}>chaque jour.</div>
-        <div style={{ display: "flex", marginTop: 30, padding: "14px 30px", borderRadius: 40, background: BLEU, fontFamily: M, fontSize: 30, fontWeight: 700, color: "#FFFFFF" }}>{`Abonnez-vous à ${MEDIA_NOM}`}</div>
-        <div style={{ display: "flex", marginTop: 22, fontFamily: M, fontSize: 28, fontWeight: 700, color: "#151515" }}>{MEDIA_SIGNATURE}</div>
+        <div style={{ display: "flex", marginTop: 30, padding: "14px 30px", borderRadius: 40, background: BLEU, fontFamily: M, fontSize: 30, fontWeight: 700, color: "#FFFFFF" }}>{`Abonnez-vous à ${d.marque?.nom ?? ""}`}</div>
+        <div style={{ display: "flex", marginTop: 22, fontFamily: M, fontSize: 28, fontWeight: 700, color: "#151515" }}>{d.marque?.signature ?? ""}</div>
       </div>
       <img src={`${base}/recap/front.png`} alt="" width={W} height={H} style={{ position: "absolute", left: 0, top: 0, width: W, height: H }} />
       <div style={{ position: "absolute", left: 120, top: 1030, width: 940, display: "flex", flexDirection: "column", alignItems: "center", opacity: 0.9 }}>
@@ -154,7 +155,7 @@ function fin(base: string) {
         <div style={{ display: "flex", fontFamily: M, fontSize: 96, fontWeight: 800, letterSpacing: -3, lineHeight: 1.05, color: "#0F2463", textShadow: "1px 1px 0 rgba(255,255,255,0.35), -1px -1px 1px rgba(0,0,0,0.30)" }}>prochaine</div>
       </div>
       <div style={{ position: "absolute", left: 0, top: 46, width: W, display: "flex", justifyContent: "center" }}>
-        <LogoMark size={44} color="#FFFFFF" dot="#FFFFFF" />
+        <LogoMark size={44} color="#FFFFFF" dot="#FFFFFF" texte={d.marque?.court} />
       </div>
     </div>
   );
@@ -184,7 +185,7 @@ function Vignette({ photo, categorie, w, h }: { photo?: string; categorie?: stri
 // Géométrie de la feuille sur la photo (1080 × 1350) : coin haut gauche (34, 231), inclinaison −4,16°.
 const FEUILLE = { left: 54.5, top: 196.7, w: 924, h: 600, angle: -4.16 };
 
-function cover(d: { periode: string; count: number; photos?: string[]; categories?: string[]; titres?: string[]; assets?: string }) {
+function cover(d: { periode: string; count: number; photos?: string[]; categories?: string[]; titres?: string[]; assets?: string; marque?: MarqueSlide }) {
   const photos = d.photos ?? [];
   const cats = d.categories ?? [];
   const base = d.assets ?? "";
@@ -205,7 +206,7 @@ function cover(d: { periode: string; count: number; photos?: string[]; categorie
             <Vignette key={i} photo={photos[i]} categorie={cats[i]} w={tw} h={th} />
           ))}
         </div>
-        <div style={{ display: "flex", marginTop: 16, fontFamily: M, fontSize: 26, fontWeight: 700, color: "#151515" }}>{`${MEDIA_COURT}:\\Récap\\${fit(d.periode, 26)}`}</div>
+        <div style={{ display: "flex", marginTop: 16, fontFamily: M, fontSize: 26, fontWeight: 700, color: "#151515" }}>{`${d.marque?.court || "MEDIA"}:\\Récap\\${fit(d.periode, 26)}`}</div>
       </div>
 
       {/* 3. Premier plan détouré : poche de l'enveloppe et mains (le bas de la feuille passe dedans) */}
@@ -219,7 +220,7 @@ function cover(d: { periode: string; count: number; photos?: string[]; categorie
 
       {/* 5. Logo en haut */}
       <div style={{ position: "absolute", left: 0, top: 46, width: W, display: "flex", justifyContent: "center" }}>
-        <LogoMark size={44} color="#FFFFFF" dot="#FFFFFF" />
+        <LogoMark size={44} color="#FFFFFF" dot="#FFFFFF" texte={d.marque?.court} />
       </div>
     </div>
   );

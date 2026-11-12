@@ -1,7 +1,7 @@
 // Rédaction des posts avec Claude (API Messages d'Anthropic).
-import { STYLE_GUIDE, RUBRIQUES, WP_CATEGORIES_AUTO, type RubriqueId, type TriggerFormat } from "./config";
+import { styleGuide, WP_CATEGORIES_AUTO, type RubriqueId, type TriggerFormat } from "./config";
+import { completerMarque, infoRubrique, type MarqueComplete, type RubriqueClient } from "./marque";
 import { convertirTout } from "./devises";
-import { MEDIA_HASHTAG, MEDIA_NOM } from "@/lib/brand";
 
 export type Generated = {
   variantes: string[];
@@ -26,11 +26,14 @@ export type GenerateInput = {
   articleTitle?: string;
   articleText?: string;
   articleSummary?: string;
-  categorie?: string; // thème détecté par la veille (bandeau du visuel #ActuTech)
+  categorie?: string; // thème détecté par la veille (bandeau du visuel d'actualité)
   // Pour les portraits : infos fournies et validées par la personne
   portrait?: { nom: string; specialite: string; infos: string };
   // Pour les citations : texte exact, auteur, fonction, contexte donné par l'éditeur
   citation?: { texte: string; auteur: string; fonction: string; contexte: string };
+  // Média du client (nom, ton, public…) et ses rubriques : fournis par l'appelant (route ou tâche planifiée).
+  marque?: MarqueComplete;
+  rubriques?: RubriqueClient[];
 };
 
 export type RewriteAction = "raccourcir" | "reformuler" | "expliquer" | "ton" | "traduire" | "ajuster";
@@ -241,14 +244,14 @@ export async function sameStoryAs(title: string, summary: string, recentTitles: 
 // ─── Récap tech de la semaine ──────────────────────────────────────
 export type RecapItem = { title: string; text: string; source: string | null };
 
-export async function generateRecap(items: RecapItem[], periode: string): Promise<{ facebook: string; linkedin: string; titre: string; points: { texte: string; n: number }[] }> {
+export async function generateRecap(items: RecapItem[], periode: string, M: MarqueComplete = completerMarque(null)): Promise<{ facebook: string; linkedin: string; titre: string; points: { texte: string; n: number }[] }> {
   const liste = items
     .map((it, i) => `${i + 1}. ${it.title}\n${it.text.replace(/#\S+/g, "").slice(0, 700)}\nSource : ${it.source ?? "?"}`)
     .join("\n\n");
   const out = await callClaude(
-    STYLE_GUIDE,
-    `Rédige le « Récap tech de la semaine » de ${MEDIA_NOM} (${periode}) à partir des posts publiés cette semaine, ci-dessous.
-Sélectionne EXACTEMENT 5 sujets différents (tous s'il y en a moins de 5), les plus importants pour le public africain francophone, du plus important au moins important.
+    styleGuide(M),
+    `Rédige le « Récap de la semaine » de ${M.nom} (${periode}) à partir des posts publiés cette semaine, ci-dessous.
+Sélectionne EXACTEMENT 5 sujets différents (tous s'il y en a moins de 5), les plus importants pour ${M.public}, du plus important au moins important.
 Ne rien inventer : n'utilise que les informations des posts.
 
 Posts de la semaine :
@@ -284,30 +287,31 @@ Montants : écris-les sous la forme [[MONTANT:valeur numérique complète:code I
   if (points.length === 0) throw new Error("Récap vide");
   const sources = Array.from(new Set(items.map((i) => i.source).filter(Boolean))).join(", ");
   const corps = [
-    "Le récap tech de la semaine",
+    "Le récap de la semaine",
     await convertirTout(String(g.intro ?? "").trim()),
     points.map((p) => `• ${p}`).join("\n\n"),
     await convertirTout(String(g.chute ?? "").trim()),
     sources ? `Sources : ${sources}` : "",
   ].filter(Boolean);
   return {
-    facebook: [...corps, `#RécapTech #ActuTech ${MEDIA_HASHTAG}`].join("\n\n"),
-    linkedin: [...corps, "#RécapTech #Tech #Afrique"].join("\n\n"),
+    facebook: [...corps, `#Récap ${M.hashtag}`].join("\n\n"),
+    linkedin: [...corps, `#Récap ${M.hashtag}`].join("\n\n"),
     titre: String(g.titre ?? "Récap tech de la semaine"),
     points: details,
   };
 }
 
 export async function generatePost(input: GenerateInput): Promise<Generated> {
-  const rub = RUBRIQUES.find((r) => r.id === input.rubrique) ?? RUBRIQUES[0];
+  const M = input.marque ?? completerMarque(null);
+  const rub = infoRubrique(input.rubriques, input.rubrique);
   const consignesRubrique: Record<RubriqueId, string> = {
-    actu: "Rubrique #ActuTech : résume l'information de façon factuelle (faits, chiffres, contexte, portée), cite la source. visuel_titre = la catégorie en 1 ou 2 mots (Cybersécurité, IA, Smartphones, Startups, Télécoms, Numérique…), visuel_texte = l'info en 1 ou 2 phrases (35 mots maximum).",
+    actu: "Rubrique d'actualité : résume l'information de façon factuelle (faits, chiffres, contexte, portée), cite la source. visuel_titre = la catégorie en 1 ou 2 mots (Cybersécurité, IA, Smartphones, Startups, Télécoms, Numérique…), visuel_texte = l'info en 1 ou 2 phrases (35 mots maximum).",
     cyberbase:
-      "Rubrique #CyberBase (comprendre les notions basiques de la tech) : définis la notion en 2 courts paragraphes, simples et concrets, avec un exemple du quotidien. visuel_titre = le nom de la notion (2 à 4 mots), visuel_texte = la définition (2 paragraphes, 60 mots maximum au total).",
+      "Rubrique « notion du jour » (expliquer une notion simplement) : définis la notion en 2 courts paragraphes, simples et concrets, avec un exemple du quotidien. visuel_titre = le nom de la notion (2 à 4 mots), visuel_texte = la définition (2 paragraphes, 60 mots maximum au total).",
     portrait:
-      "Rubrique #Portrait (experts tech) : présente la personne uniquement à partir des infos fournies, sans rien inventer. visuel_titre = son nom, visuel_texte = sa spécialité en une ligne.",
+      "Rubrique portrait : présente la personne uniquement à partir des infos fournies, sans rien inventer. visuel_titre = son nom, visuel_texte = sa spécialité en une ligne.",
     citation:
-      "Rubrique #Citation : reprends la citation mot pour mot, entre guillemets « », sans la modifier ni la raccourcir (retire seulement les ** de mise en forme), suivie de « — Auteur, fonction ». Ajoute ensuite 1 ou 2 phrases de contexte, uniquement à partir du contexte fourni et de l'article source : n'invente ni date, ni lieu, ni circonstance, et ne prends pas position. visuel_titre = le nom de l'auteur, visuel_texte = la citation exacte.",
+      "Rubrique citation : reprends la citation mot pour mot, entre guillemets « », sans la modifier ni la raccourcir (retire seulement les ** de mise en forme), suivie de « — Auteur, fonction ». Ajoute ensuite 1 ou 2 phrases de contexte, uniquement à partir du contexte fourni et de l'article source : n'invente ni date, ni lieu, ni circonstance, et ne prends pas position. visuel_titre = le nom de l'auteur, visuel_texte = la citation exacte.",
   };
   const format =
     input.format === "explication"
@@ -317,7 +321,7 @@ export async function generatePost(input: GenerateInput): Promise<Generated> {
         : "Privilégie un résumé clair.";
 
   const parts: string[] = [];
-  parts.push(`Rubrique : ${rub.label} (${rub.hashtag}).`, consignesRubrique[rub.id], format);
+  parts.push(`Rubrique : ${rub.nom} (${rub.hashtag}).`, consignesRubrique[input.rubrique] ?? consignesRubrique.actu, format);
   if (input.idea) parts.push(`Idée ou angle donné par l'éditeur : ${input.idea}`);
   if (input.articleTitle) parts.push(`Titre de l'article source : ${input.articleTitle}`);
   if (input.categorie) parts.push(`Thème détecté par la veille : ${input.categorie}`);
@@ -350,7 +354,7 @@ export async function generatePost(input: GenerateInput): Promise<Generated> {
   "visuel_texte": "texte court pour le visuel (40 mots maximum)"
 }`);
 
-  const text = await callClaude(STYLE_GUIDE, parts.join("\n\n"), 4000, true);
+  const text = await callClaude(styleGuide(M), parts.join("\n\n"), 4000, true);
   const g = extractJson<Partial<Generated>>(text);
   // Montants convertis en FCFA au taux du jour (« … dollars, soit environ … FCFA »).
   const cv = (v: unknown) => convertirTout(String(v ?? ""));
@@ -370,18 +374,18 @@ export async function generatePost(input: GenerateInput): Promise<Generated> {
   };
 }
 
-export async function rewrite(action: RewriteAction, text: string, platform: string, cible?: { min: number; max: number }): Promise<string> {
+export async function rewrite(action: RewriteAction, text: string, platform: string, cible?: { min: number; max: number }, M: MarqueComplete = completerMarque(null)): Promise<string> {
   const c = cible ?? { min: 0, max: 0 };
   const consignes: Record<RewriteAction, string> = {
     ajuster: `Ajuste la longueur de ce texte entre ${c.min} et ${c.max} caractères (espaces compris) : ${text.length > c.max ? "resserre en gardant l'essentiel, l'accroche et la source" : "développe avec du contexte utile et vérifiable tiré du texte lui-même, sans rien inventer"}. Garde l'accroche dans les 125 premiers caractères et les hashtags en fin de texte.`,
     raccourcir: "Raccourcis ce texte de moitié en gardant l'essentiel et la source.",
     reformuler: "Reformule ce texte avec une autre accroche, même sens, même longueur.",
     expliquer: "Ajoute une explication très simple de ce que ça change concrètement pour le lecteur.",
-    ton: `Réécris ce texte dans le ton ${MEDIA_NOM} : neutre, factuel, rigoureux, à la troisième personne, sans tutoiement ni familiarité.`,
+    ton: `Réécris ce texte dans le ton de ${M.nom}, tel que décrit dans tes consignes.`,
     traduire: "Réécris ce texte entièrement en bon français (traduis tout passage dans une autre langue), même sens, même ton.",
   };
   const out = await callClaude(
-    STYLE_GUIDE,
+    styleGuide(M),
     `${consignes[action]} Plateforme : ${platform}. Réponds uniquement avec le nouveau texte, sans guillemets ni commentaire.\n\nTexte :\n${text}`,
     1500
   );
@@ -391,7 +395,8 @@ export async function rewrite(action: RewriteAction, text: string, platform: str
 // Brouillon sans IA (quand aucune clé d'IA n'est configurée) : structure prête à compléter,
 // construite uniquement à partir du titre, de l'idée et de la source. Rien n'est recopié de l'article.
 export function draftWithoutAI(input: GenerateInput): Generated {
-  const rub = RUBRIQUES.find((r) => r.id === input.rubrique) ?? RUBRIQUES[0];
+  const M = input.marque ?? completerMarque(null);
+  const rub = infoRubrique(input.rubriques, input.rubrique);
   const source = input.sourceName ? `Source : ${input.sourceName}` : "";
   const lien = input.sourceUrl ? `\n${input.sourceUrl}` : "";
   if (input.rubrique === "portrait" && input.portrait) {
@@ -399,8 +404,8 @@ export function draftWithoutAI(input: GenerateInput): Generated {
     const base = `${nom}, ${specialite}.${infos ? `\n\n${infos}` : ""}`;
     return {
       variantes: [`Portrait : ${nom}`, `${nom}, ${specialite}`, `Qui est ${nom} ?`],
-      facebook: `${base}\n\n#Portrait #ExpertsTech ${MEDIA_HASHTAG}`,
-      linkedin: `Portrait d'expert : ${base}\n\n#Portrait #ExpertsTech ${MEDIA_HASHTAG}`,
+      facebook: `${base}\n\n${rub.hashtag} ${M.hashtag}`,
+      linkedin: `Portrait d'expert : ${base}\n\n${rub.hashtag} ${M.hashtag}`,
       tiktok: `Portrait : ${nom}, ${specialite}`.slice(0, 150),
       wp_title: `Portrait : ${nom}, ${specialite}`,
       wp_body: `<p>${base.replace(/\n\n/g, "</p><p>")}</p>`,
@@ -414,8 +419,8 @@ export function draftWithoutAI(input: GenerateInput): Generated {
     const corps = `« ${texte} »\n— ${auteur}, ${fonction}${contexte ? `\n\n${contexte}` : ""}${source ? `\n\n${source}${lien}` : ""}`;
     return {
       variantes: [`« ${texte} »`, `${auteur} : « ${texte} »`, `Que pensez-vous de cette déclaration de ${auteur} ?`],
-      facebook: `${corps}\n\n#Citation #Tech ${MEDIA_HASHTAG}`,
-      linkedin: `${corps}\n\n#Citation #Tech ${MEDIA_HASHTAG}`,
+      facebook: `${corps}\n\n${rub.hashtag} ${M.hashtag}`,
+      linkedin: `${corps}\n\n${rub.hashtag} ${M.hashtag}`,
       tiktok: `« ${texte} » — ${auteur}`.slice(0, 150),
       wp_title: `${auteur} : « ${texte.length > 80 ? texte.slice(0, 79).trimEnd() + "…" : texte} »`,
       wp_body: `<blockquote><p>${texte}</p></blockquote><p>— ${auteur}, ${fonction}</p>${contexte ? `<p>${contexte}</p>` : ""}${input.sourceName ? `<p>Source : ${input.sourceName}${input.sourceUrl ? ` (<a href="${input.sourceUrl}">${input.sourceUrl}</a>)` : ""}</p>` : ""}`,
@@ -428,9 +433,9 @@ export function draftWithoutAI(input: GenerateInput): Generated {
     const a_completer = "[Définition en 2 phrases simples, avec un exemple du quotidien.]";
     return {
       variantes: [`${notion} : la notion à connaître`, `${notion}, expliqué simplement`, `C'est quoi, ${notion} ?`],
-      facebook: `#CyberBase · ${notion}\n\n${a_completer}\n\n#CyberBase #Tech ${MEDIA_HASHTAG}`,
-      linkedin: `#CyberBase · ${notion}\n\n${a_completer}\n\n#CyberBase #Cybersécurité ${MEDIA_HASHTAG}`,
-      tiktok: `${notion}, expliqué en 30 secondes #CyberBase`.slice(0, 150),
+      facebook: `${rub.hashtag} · ${notion}\n\n${a_completer}\n\n${rub.hashtag} ${M.hashtag}`,
+      linkedin: `${rub.hashtag} · ${notion}\n\n${a_completer}\n\n${rub.hashtag} ${M.hashtag}`,
+      tiktok: `${notion}, expliqué en 30 secondes ${rub.hashtag}`.slice(0, 150),
       wp_title: `${notion} : comprendre la notion simplement`,
       wp_body: `<p>${a_completer}</p>`,
       visuel_titre: notion,
@@ -442,8 +447,8 @@ export function draftWithoutAI(input: GenerateInput): Generated {
   const a_completer = "[Résumé de l’information en 2 ou 3 phrases.]";
   return {
     variantes: [titre, `Ce qu'il faut retenir : ${titre}`, `${titre} : les enjeux`],
-    facebook: `${titre}${angle}\n\n${a_completer}\n\n${source}${lien}\n\n${rub.hashtag} #Tech ${MEDIA_HASHTAG}`.trim(),
-    linkedin: `${titre}${angle}\n\n${a_completer}\n\n${source}${lien}\n\n${rub.hashtag} #Tech #Innovation`.trim(),
+    facebook: `${titre}${angle}\n\n${a_completer}\n\n${source}${lien}\n\n${rub.hashtag} ${M.hashtag}`.trim(),
+    linkedin: `${titre}${angle}\n\n${a_completer}\n\n${source}${lien}\n\n${rub.hashtag}`.trim(),
     tiktok: `${titre} ${rub.hashtag}`.slice(0, 150),
     wp_title: titre,
     wp_body: `<p>${a_completer}</p>`,

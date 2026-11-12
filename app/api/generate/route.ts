@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { generatePost, rewrite, draftWithoutAI, aiConfigured, type GenerateInput, type RewriteAction } from "@/lib/claude";
 import { fetchArticle } from "@/lib/veille";
+import { profilEspace } from "@/lib/marque-serveur";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 120;
@@ -10,15 +11,16 @@ export const maxDuration = 120;
 export async function POST(req: Request) {
   try {
     const body = await req.json();
+    const profil = await profilEspace(); // marque et rubriques du média de ce client
     if (body.mode === "rewrite") {
       if (!aiConfigured()) {
-        return NextResponse.json({ error: "L'assistant de réécriture a besoin de l'IA : ajoute GEMINI_API_KEY (gratuit) ou ANTHROPIC_API_KEY dans Vercel." }, { status: 400 });
+        return NextResponse.json({ error: "L'assistant de réécriture est momentanément indisponible. Réessayez dans quelques minutes." }, { status: 400 });
       }
       const cible = body.cible && Number(body.cible.max) > 0 ? { min: Number(body.cible.min) || 0, max: Number(body.cible.max) } : undefined;
-      const text = await rewrite(body.action as RewriteAction, String(body.text ?? ""), String(body.platform ?? ""), cible);
+      const text = await rewrite(body.action as RewriteAction, String(body.text ?? ""), String(body.platform ?? ""), cible, profil.marque);
       return NextResponse.json({ text });
     }
-    const input = body as GenerateInput;
+    const input = { ...(body as GenerateInput), marque: profil.marque, rubriques: profil.rubriques };
     let image = "";
     if (input.sourceUrl) {
       const art = await fetchArticle(input.sourceUrl).catch(() => ({ text: "", image: "" }));
@@ -29,7 +31,7 @@ export async function POST(req: Request) {
       return NextResponse.json({
         image,
         generated: draftWithoutAI(input),
-        notice: "Brouillon préparé sans IA : complète les passages entre crochets dans l'éditeur. Ajoute GEMINI_API_KEY (gratuit) ou ANTHROPIC_API_KEY dans Vercel pour la rédaction automatique.",
+        notice: "Brouillon préparé sans IA (rédaction automatique momentanément indisponible) : complète les passages entre crochets dans l'éditeur.",
       });
     }
     try {

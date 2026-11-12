@@ -26,6 +26,9 @@ async function safeImage(url: string | null): Promise<string | undefined> {
   }
 }
 
+// Marque du média, transmise dans le lien signé (le visuel est public : pas de session pour la lire).
+const marqueDe = (p: URLSearchParams) => ({ nom: p.get("mq") ?? "", court: p.get("co") ?? "", signature: p.get("sg") ?? "" });
+
 async function recap(params: URLSearchParams) {
   const k = params.get("k");
   let data: SlideData;
@@ -38,6 +41,7 @@ async function recap(params: URLSearchParams) {
       photos: photos.map((p) => p ?? ""),
       categories: Array.from({ length: 8 }, (_, i) => params.get(`c${i}`) ?? ""),
       assets: appUrl(),
+      marque: marqueDe(params),
     };
   } else if (k === "item") {
     data = {
@@ -49,11 +53,12 @@ async function recap(params: URLSearchParams) {
       photo: await safeImage(params.get("ph")),
       source: params.get("src") ?? undefined,
       autres: await Promise.all(
-        Array.from({ length: 4 }, async (_, i) => ({ photo: await safeImage(params.get(`ap${i}`)), categorie: params.get(`ac${i}`) ?? "Actu tech" }))
+        Array.from({ length: 4 }, async (_, i) => ({ photo: await safeImage(params.get(`ap${i}`)), categorie: params.get(`ac${i}`) ?? "Actualité" }))
       ),
+      marque: marqueDe(params),
     };
   } else {
-    data = { kind: "end", assets: appUrl() };
+    data = { kind: "end", assets: appUrl(), marque: marqueDe(params) };
   }
   const fonts = [...(await montserratFonts()), ...(await serifItalicFonts()), ...(await archivoFonts())];
   return new ImageResponse(renderSlide(data), {
@@ -84,6 +89,8 @@ export async function GET(req: Request) {
     specialite: params.get("sp") ?? undefined,
     photo: params.get("ph") ?? undefined,
     source: params.get("src") ?? undefined,
+    signature: params.get("sg") ?? undefined,
+    court: params.get("co") ?? undefined,
   };
   // Citation : photo chargée ici (formats non pris en charge → visuel sans photo), police Montserrat.
   if (data.rubrique === "citation") data.photo = await safeImage(data.photo ?? null);

@@ -10,7 +10,7 @@ import { PLATFORMS, RUBRIQUES, TOPICS, type Platform } from "@/lib/config";
 import { PLATFORM_LABEL } from "@/lib/labels";
 import type { Post } from "@/lib/store";
 import { loadPost, savePost, visuelsDe } from "@/lib/client";
-import { MEDIA_HASHTAG, MEDIA_SITE } from "@/lib/brand";
+import { marqueActive } from "@/lib/marque";
 
 type Tab = "commun" | Platform;
 type TextKey = "commun" | "facebook" | "linkedin" | "tiktok" | "wp_body";
@@ -60,7 +60,7 @@ function suggestHashtags(post: Post, text: string): string[] {
   if (rub) out.push(rub.hashtag);
   out.push("#Tech");
   TOPICS.filter((t) => t.poids > 0 && t.keywords.some((k) => low.includes(k))).forEach((t) => out.push(`#${t.label.normalize("NFD").replace(/[^A-Za-z0-9]/g, "")}`));
-  out.push(MEDIA_HASHTAG);
+  out.push(marqueActive.hashtag);
   return Array.from(new Set(out)).slice(0, 6);
 }
 
@@ -492,7 +492,7 @@ function Editeur() {
               <div className="row"><h2 id="t-apercu" className="tv-h2" style={{ fontSize: 17, flex: 1 }}>Aperçu en direct</h2><span className="tv-gris" style={{ fontSize: 12 }}>{tab === "wordpress" ? "Google" : `${tab === "commun" ? "Facebook" : NOM[tab]} · téléphone`}</span></div>
               {tab === "wordpress" ? (
                 <div className="tv-google">
-                  <span style={{ fontSize: 12, color: "#33425C" }}>{MEDIA_SITE || "votre-site"} › actualites</span>
+                  <span style={{ fontSize: 12, color: "#33425C" }}>{marqueActive.site || "votre-site"} › actualites</span>
                   <strong>{titreWp.length > 60 ? `${titreWp.slice(0, 58).replace(/\s+\S*$/, "")} …` : titreWp || "Titre de l'article"}</strong>
                   <span style={{ fontSize: 13, color: "#33425C", lineHeight: 1.5 }}>{meta ? (meta.length > 158 ? `${meta.slice(0, 155).replace(/\s+\S*$/, "")} …` : meta) : "Ajoutez une méta-description : c'est le texte affiché sous le titre dans Google."}</span>
                 </div>

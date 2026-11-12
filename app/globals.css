@@ -1120,3 +1120,43 @@ button.tv-etape-fixe:hover:not([aria-current="step"]) { background: rgba(15,23,4
   .mb-auth-zone { justify-content: center; margin-top: 0; padding: 40px; }
   .mb-auth-carte { padding: 32px 30px; }
 }
+
+/* Pages légales */
+.mb-legal { max-width: 760px; margin: 0 auto; padding: calc(32px + env(safe-area-inset-top)) 20px 80px; line-height: 1.65; font-size: 16px; color: var(--encre); }
+.mb-legal h1 { font-size: 28px; }
+.mb-legal h2 { font-size: 18px; margin-top: 28px; margin-bottom: 6px; }
+.mb-legal-date { color: #78716C; }
+.mb-legal ul { padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
+
+/* Écrans de configuration (Ma marque, Rubriques, Thèmes, Démarrage) */
+.mb-form input[type="text"], .mb-form textarea, .mb-form select { width: 100%; min-height: 46px; padding: 10px 12px; border: 1px solid #D6D3CB; border-radius: 12px; background: #fff; font-size: 16px; font-weight: 400; }
+.mb-form textarea { resize: vertical; line-height: 1.45; }
+.mb-form input:focus, .mb-form textarea:focus, .mb-form select:focus { outline: none; border-color: var(--emeraude); box-shadow: 0 0 0 3px rgba(4,120,87,.15); }
+.mb-choix { border: 0; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+.mb-choix legend { font-size: 14px; font-weight: 600; margin-bottom: 6px; }
+.mb-choix-ligne { display: flex; gap: 10px; align-items: flex-start; padding: 12px; border: 1px solid #E7E5DE; border-radius: 12px; background: #fff; cursor: pointer; }
+.mb-choix-ligne:has(input:checked) { border-color: var(--emeraude); background: var(--emeraude-pale); }
+.mb-choix-ligne input { margin-top: 3px; accent-color: var(--emeraude); }
+.mb-choix-ligne span { display: flex; flex-direction: column; gap: 2px; }
+.mb-choix-ligne small { color: #57534E; font-size: 13px; }
+.mb-rub.on { border-color: var(--emeraude); box-shadow: inset 4px 0 0 var(--emeraude); }
+.mb-demarrage { gap: 16px; }
+.mb-demarrage-tete { display: flex; align-items: center; gap: 14px; padding-top: 8px; }
+.mb-demarrage-tete h1 { font-size: 24px; }
+.mb-demarrage-tete p { color: #57534E; margin-top: 2px; }
+.mb-progression { height: 8px; border-radius: 4px; background: var(--sable-2); overflow: hidden; }
+.mb-progression span { display: block; height: 100%; background: var(--emeraude); border-radius: 4px; transition: width .3s; }
+.mb-etapes { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
+.mb-etape { display: flex; align-items: center; gap: 14px; padding: 14px; border-radius: 16px; background: #fff; border: 1px solid #E7E5DE; text-decoration: none; color: var(--encre); }
+.mb-etape:hover { border-color: var(--emeraude); color: var(--encre); }
+.mb-etape-num { flex-shrink: 0; width: 34px; height: 34px; border-radius: 50%; background: var(--sable-2); color: var(--encre); font-weight: 800; display: inline-flex; align-items: center; justify-content: center; }
+.mb-etape.fait .mb-etape-num { background: var(--emeraude); color: #fff; }
+.mb-etape-texte { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.mb-etape-texte span { font-size: 13.5px; color: #57534E; line-height: 1.4; }
+.mb-etape-texte small { font-weight: 500; color: #78716C; }
+.mb-etape-fleche { font-size: 24px; color: #A8A29E; }
+.mb-bandeau-config { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 16px; background: var(--emeraude-pale); border: 1px solid #A7F3D0; color: var(--encre); text-decoration: none; }
+.mb-bandeau-config > span:first-child { flex: 1; display: flex; flex-direction: column; gap: 3px; }
+.mb-bandeau-config > span:first-child span { font-size: 13.5px; color: #065F46; }
+.mb-bandeau-config > span:last-child { font-size: 24px; color: var(--emeraude); }
+.mb-bandeau-config:hover { color: var(--encre); border-color: var(--emeraude); }

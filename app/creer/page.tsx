@@ -10,12 +10,14 @@ import type { RubriqueId } from "@/lib/config";
 import type { Post } from "@/lib/store";
 import { listPosts } from "@/lib/client";
 import { joursManquants } from "@/lib/schedule";
+import { useProfil } from "@/components/Profil";
+import { rubriquesActives } from "@/lib/marque";
 
 const DESC: Record<RubriqueId, [string, string]> = {
-  actu: ["Une info tech de la veille ou votre idée, résumée en français, montants en FCFA.", "Pilote auto · 6 h – 20 h"],
-  citation: ["Une phrase vérifiable d'une voix tech, avec la photo de son auteur.", "Toutes les 2 h"],
-  cyberbase: ["Une notion de cybersécurité expliquée simplement, pour tout le monde.", "Chaque jour à heure fixe"],
-  portrait: ["Un expert d'ici ou d'ailleurs, raconté avec son accord.", "Sur accord de la personne"],
+  actu: ["Une info de la veille, un lien ou votre idée, résumée et sourcée par l'IA.", "Pilote automatique possible"],
+  citation: ["Une phrase vérifiable d'une personnalité, avec sa photo.", "Toutes les 2 h"],
+  cyberbase: ["Une notion expliquée simplement, une par jour.", "Chaque jour à heure fixe"],
+  portrait: ["Une personne présentée à partir des infos qu'elle a validées.", "Sur accord de la personne"],
 };
 
 export default function Page() {
@@ -44,6 +46,8 @@ function Choix() {
   useEffect(() => {
     listPosts().then(setPosts).catch(() => setPosts([]));
   }, []);
+  const profil = useProfil();
+  const actives = rubriquesActives(profil?.rubriques);
   const brouillons = (posts ?? []).filter((p) => p.status === "brouillon").slice(0, 40);
   const vBr = useVoirPlus(brouillons);
   if (redirection) return null;
@@ -79,20 +83,27 @@ function Choix() {
           </div>
         </div>
 
+        {profil && actives.length === 0 ? (
+          <div className="notice" style={{ fontSize: 15, display: "flex", flexDirection: "column", gap: 10, alignItems: "flex-start" }}>
+            <span>Vous n&apos;avez pas encore de rubrique. Choisissez les types de publications de votre média et donnez-leur votre nom.</span>
+            <Link href="/rubriques" className="btn primary small">Créer mes rubriques</Link>
+          </div>
+        ) : null}
         <div className="tv-hub">
-          {(Object.keys(RUB) as RubriqueId[]).map((r) => {
+          {actives.map((ru) => {
+            const r = ru.id as RubriqueId;
             const [txt, c] = etat(r);
             return (
               <Link key={r} href={`/creer/${r}`} className="tv-hub-carte">
                 <Tuile rub={r} taille={88} />
                 <span style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 8 }}>
-                  <strong style={{ fontFamily: "var(--font-mont)", fontSize: 24, fontWeight: 800, letterSpacing: "-0.02em" }}>{RUB[r].nom}</strong>
-                  <span style={{ fontSize: 15, lineHeight: 1.5, color: "#33425C" }}>{DESC[r][0]}</span>
+                  <strong style={{ fontFamily: "var(--font-mont)", fontSize: 24, fontWeight: 800, letterSpacing: "-0.02em" }}>{ru.nom} <small style={{ fontSize: 14, color: "#047857" }}>{ru.hashtag}</small></strong>
+                  <span style={{ fontSize: 15, lineHeight: 1.5, color: "#33425C" }}>{ru.description || DESC[r][0]}</span>
                   <span className="row" style={{ flexWrap: "wrap", gap: 8, fontSize: 13 }}>
                     <span className="tv-pill">{DESC[r][1]}</span>
                     <span style={{ color: c, fontWeight: 700 }}>{txt}</span>
                   </span>
-                  <span style={{ marginTop: 2, fontSize: 14, fontWeight: 800, color: "#047857" }}>Ouvrir l'atelier {RUB[r].nom} →</span>
+                  <span style={{ marginTop: 2, fontSize: 14, fontWeight: 800, color: "#047857" }}>Ouvrir l'atelier {ru.nom} →</span>
                 </span>
               </Link>
             );

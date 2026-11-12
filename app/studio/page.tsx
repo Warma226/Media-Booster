@@ -17,7 +17,7 @@ import { STYLES, VOIX, type StyleVoix } from "@/lib/voix-liste";
 import { useVoirPlus } from "@/components/VoirPlus";
 import { logo as elementsLogo } from "@/lib/creation";
 import { listPosts } from "@/lib/client";
-import { MEDIA_COURT, MEDIA_NOM } from "@/lib/brand";
+import { marqueActive } from "@/lib/marque";
 
 const CLE_BROUILLON = "mb-studio-brouillon";
 const ENTREES: [Entree, string][] = [["aucune", "Aucune"], ["fondu", "Fondu"], ["glisser-haut", "Glisse du bas"], ["glisser-bas", "Glisse du haut"], ["glisser-gauche", "Glisse de la droite"], ["glisser-droite", "Glisse de la gauche"], ["zoom", "Zoom"], ["pop", "Pop (rebond)"], ["machine", "Machine à écrire"]];
@@ -88,7 +88,7 @@ function controler(doc: Doc): Point[] {
   }
   const faibles = textes.filter(({ e, p }) => { const c = contraste(e.couleur ?? "#FFFFFF", e.fond ?? p.fond); return c !== null && c < ((e.police ?? 0) * vu >= 18 ? 3 : 4.5); });
   out.push({ ok: faibles.length === 0, texte: faibles.length ? `Contraste trop faible : « ${(faibles[0].e.texte ?? "").slice(0, 24)}… »` : "Contraste suffisant sur les fonds unis", el: faibles[0]?.e.id, page: faibles[0]?.i });
-  const sansLogo = doc.pages.findIndex((p) => !p.elements.some((e) => (e.nom ?? "").startsWith("Logo") || (e.texte ?? "").trim().toUpperCase() === MEDIA_COURT));
+  const sansLogo = doc.pages.findIndex((p) => !p.elements.some((e) => (e.nom ?? "").startsWith("Logo") || (e.texte ?? "").trim().toUpperCase() === marqueActive.court));
   out.push({ ok: sansLogo === -1 || (doc.pages.length > 1 && sansLogo > 0), texte: sansLogo === -1 ? "Logo du média présent" : sansLogo === 0 ? "Logo du média absent de la première page" : "Logo du média sur la couverture", page: sansLogo === 0 ? 0 : undefined });
   const z = ZONE[doc.format];
   const hors = doc.pages.flatMap((p, i) => p.elements.filter((e) => ["texte", "icone", "carte"].includes(e.type) && (e.x < W * z.g - 2 || e.y < H * z.h - 2 || e.x + e.w > W * (1 - z.d) + 2 || e.y + e.h > H * (1 - z.b) + 2)).map((e) => ({ e, i })));
@@ -701,7 +701,7 @@ export default function Studio() {
                   <span className="barre" />
                   <span className="post-fantome" />
                   <div className="post">
-                    <span className="row" style={{ gap: 6, padding: 6 }}><span style={{ width: 16, height: 16, borderRadius: 8, background: "#0F172A" }} /><span style={{ fontSize: 9, fontWeight: 700 }}>{MEDIA_NOM}</span></span>
+                    <span className="row" style={{ gap: 6, padding: 6 }}><span style={{ width: 16, height: 16, borderRadius: 8, background: "#0F172A" }} /><span style={{ fontSize: 9, fontWeight: 700 }}>{marqueActive.nom}</span></span>
                     <span style={{ display: "block", padding: "0 6px 6px", fontSize: 8, lineHeight: 1.35, color: "#050505" }}>{(legende || "Le texte du post apparaît ici.").slice(0, 70)}{legende.length > 70 ? "… " : " "}<span style={{ color: "#65676B" }}>Voir plus</span></span>
                     <Miniature page={page} format={doc.format} images={images.current} version={version} actif={false} onClick={() => undefined} numero={pageIdx + 1} largeur={168} />
                   </div>

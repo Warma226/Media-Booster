@@ -3,6 +3,7 @@ import { Inter, Archivo, Montserrat } from "next/font/google";
 import "./globals.css";
 import { BottomNav } from "@/components/BottomNav";
 import { Pwa } from "@/components/Pwa";
+import { ChargeurProfil } from "@/components/Profil";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 const mont = Montserrat({ subsets: ["latin"], weight: ["600", "700", "800"], variable: "--font-mont", display: "swap" });
@@ -35,6 +36,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <BottomNav />
         </div>
         <Pwa />
+        <ChargeurProfil />
       </body>
     </html>
   );

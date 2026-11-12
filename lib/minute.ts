@@ -1,7 +1,7 @@
 // La minute cyber : épisodes vidéo de 60 s maximum. Une histoire réaliste, puis la technique d'attaque révélée à la fin,
 // et les bons réflexes. Ce fichier décrit un épisode et le transforme en vidéo du Studio (une page = une scène).
 import { anim as A, logo, nouveau, page, type Doc, type El } from "./creation";
-import { MEDIA_COURT, MEDIA_NOM } from "@/lib/brand";
+import { marqueActive } from "@/lib/marque";
 
 export type TypeScene = "accroche" | "histoire" | "message" | "appel" | "revelation" | "technique" | "reflexes" | "fin";
 export type Scene = {
@@ -127,11 +127,10 @@ function scene(s: Scene, i: number, e: Episode, n: number) {
       return page(`rad:#3B6CF0,#1D3A9E,#060B1A`, [
         nouveau.rayons({ x: -410, y: 10, couleur: "rgba(200,220,255,0.2)" }),
         F(415, 520, 250, 250, B, { nom: "Logo (carré)", anim: A("pop", 0.1) }),
-        T(MEDIA_COURT, 415, 600, 250, 70, { nom: "Logo (sigle)", police: 56, align: "center", anim: A("pop", 0.1) }),
-        T("TECH MEDIA", 415, 680, 250, 40, { nom: "Logo (mention)", police: 22, couleur: "#A7F3D0", align: "center", espacement: 3, anim: A("pop", 0.1) }),
+        T(marqueActive.court, 415, 600, 250, 70, { nom: "Logo (sigle)", police: 56, align: "center", anim: A("pop", 0.1) }),
         T(ecran || "Partagez pour protéger vos proches.", 70, 880, 940, 300, { role: "titre", police: taille(ecran, 72, 52, 36), align: "center", interligne: 1.08, anim: A("glisser-haut", 0.5) }),
         Pa("LA MINUTE CYBER", 290, 1300, 500, 84, { nom: "Bandeau", police: 36, fond: OR, anim: A("pop", 0.9) }),
-        Pa(`Abonnez-vous à ${MEDIA_NOM}`, 220, 1460, 640, 96, { role: "bouton", police: 40, fond: BLANC, couleur: B, anim: A("pop", 1.2, "pulser") }),
+        Pa(`Abonnez-vous à ${marqueActive.nom}`, 220, 1460, 640, 96, { role: "bouton", police: 40, fond: BLANC, couleur: B, anim: A("pop", 1.2, "pulser") }),
       ]);
     default: { // histoire
       const ic = ICONE_HISTOIRE[i % ICONE_HISTOIRE.length];

@@ -3,7 +3,6 @@ import { categorieWp, type Platform } from "./config";
 import type { Post, PublishResult } from "./store";
 import { imageFor } from "./visual-url";
 import { publishPhotos, tiktokConfigured, tiktokUser } from "./tiktok";
-import { MEDIA_NOM } from "@/lib/brand";
 
 type Publisher = (post: Post) => Promise<Omit<PublishResult, "at">>;
 
@@ -29,11 +28,11 @@ export function connectionStatus(): Record<Platform, { configured: boolean; deta
     },
     linkedin: {
       configured: Boolean(process.env.LINKEDIN_WEBHOOK_URL || (process.env.LINKEDIN_TOKEN && process.env.LINKEDIN_AUTHOR)),
-      detail: process.env.LINKEDIN_WEBHOOK_URL ? `Page ${MEDIA_NOM} via Make` : process.env.LINKEDIN_AUTHOR ?? "LINKEDIN_WEBHOOK_URL (Make)",
+      detail: process.env.LINKEDIN_WEBHOOK_URL ? "Votre page via Make" : process.env.LINKEDIN_AUTHOR ?? "LINKEDIN_WEBHOOK_URL (Make)",
     },
     tiktok: {
       configured: tiktokConfigured(),
-      detail: tiktokConfigured() ? `Compte ${MEDIA_NOM} via Content Posting API` : "TIKTOK_CLIENT_KEY, TIKTOK_CLIENT_SECRET",
+      detail: tiktokConfigured() ? "Votre compte via Content Posting API" : "TIKTOK_CLIENT_KEY, TIKTOK_CLIENT_SECRET",
     },
   };
 }

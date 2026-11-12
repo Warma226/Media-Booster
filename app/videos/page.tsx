@@ -6,7 +6,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Trait } from "@/components/BottomNav";
 import { useVoirPlus } from "@/components/VoirPlus";
 import type { Chaine, Extrait, Genre, Licence, LigneVideo } from "@/lib/youtube";
-import { MEDIA_COURT } from "@/lib/brand";
+import { marqueActive } from "@/lib/marque";
 
 const mmss = (s: number) => `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
 const ilya = (iso: string) => {
@@ -351,8 +351,7 @@ function Decoupe({ videoId, extrait, credit, titre: titre0, fermer }: { videoId:
         ctx.fillStyle = "#fff"; ls.forEach((l, i) => ctx.fillText(l, W / 2, yb + 70 + i * 70));
       }
       ctx.fillStyle = "#047857"; ctx.beginPath(); ctx.roundRect(70, 90, 150, 150, 38); ctx.fill();
-      ctx.fillStyle = "#fff"; ctx.font = "800 38px Montserrat, sans-serif"; ctx.fillText(MEDIA_COURT, 145, 175);
-      ctx.fillStyle = "#A7F3D0"; ctx.font = "700 15px Montserrat, sans-serif"; ctx.fillText("TECH MEDIA", 145, 205);
+      ctx.fillStyle = "#fff"; ctx.font = "800 38px Montserrat, sans-serif"; ctx.fillText(marqueActive.court, 145, 175);
       ctx.fillStyle = "#CBD5E1"; ctx.font = "600 30px Inter, sans-serif"; ctx.fillText(credit, W / 2, H - 120);
       ctx.fillStyle = "rgba(255,255,255,0.18)"; ctx.fillRect(0, H - 14, W, 14);
       ctx.fillStyle = "#D97706"; ctx.fillRect(0, H - 14, W * p, 14);
@@ -406,7 +405,7 @@ function Decoupe({ videoId, extrait, credit, titre: titre0, fermer }: { videoId:
       }
       // logo et crédit discrets
       ctx.fillStyle = "#047857"; ctx.beginPath(); ctx.roundRect(W - 190, 60, 130, 52, 14); ctx.fill();
-      ctx.fillStyle = "#fff"; ctx.font = "800 28px Montserrat, sans-serif"; ctx.textAlign = "center"; ctx.fillText(MEDIA_COURT, W - 125, 96);
+      ctx.fillStyle = "#fff"; ctx.font = "800 28px Montserrat, sans-serif"; ctx.textAlign = "center"; ctx.fillText(marqueActive.court, W - 125, 96);
       ctx.fillStyle = "rgba(255,255,255,0.85)"; ctx.font = "600 28px Inter, sans-serif"; ctx.fillText(credit, W / 2, H - 70);
       ctx.fillStyle = "rgba(255,255,255,0.2)"; ctx.fillRect(0, H - 12, W, 12);
       ctx.fillStyle = "#D97706"; ctx.fillRect(0, H - 12, W * p, 12);
@@ -450,8 +449,8 @@ function Decoupe({ videoId, extrait, credit, titre: titre0, fermer }: { videoId:
       // logo du média discret, crédit, progression
       ctx.textAlign = "center";
       ctx.fillStyle = "#047857"; ctx.fillRect(W - 220, 110, 150, 46);
-      ctx.fillStyle = "#fff"; ctx.font = "900 30px Montserrat, sans-serif"; ctx.fillText(MEDIA_COURT, W - 145, 144);
-      ctx.fillStyle = "rgba(255,255,255,0.9)"; ctx.font = "600 22px Inter, sans-serif"; ctx.fillText("TECH MEDIA", W - 145, 96);
+      ctx.fillStyle = "#fff"; ctx.font = "900 30px Montserrat, sans-serif"; ctx.fillText(marqueActive.court, W - 145, 144);
+      
       ctx.fillStyle = "rgba(255,255,255,0.8)"; ctx.font = "600 24px Inter, sans-serif"; ctx.shadowColor = "rgba(0,0,0,0.8)"; ctx.shadowBlur = 6; ctx.fillText(credit, W / 2, H - 60); ctx.shadowBlur = 0;
       ctx.fillStyle = "#D97706"; ctx.fillRect(0, H - 8, W * p, 8);
     };

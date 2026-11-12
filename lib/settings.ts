@@ -1,5 +1,6 @@
 // Réglages de l'app (sans dépendance serveur : utilisable dans le navigateur).
 import { SOURCES, TRIGGERS, type Source, type Trigger } from "./config";
+import type { Marque, RubriqueClient, Theme } from "./marque";
 
 export type Settings = {
   autopilot: boolean;
@@ -10,6 +11,12 @@ export type Settings = {
   customSources: Source[];
   // Garde-fous réglables depuis l'écran Déclencheurs (sinon valeurs par défaut de GUARDRAILS)
   garde?: Garde;
+  // Renseignés par le client : sa marque, ses rubriques, les thèmes suivis par la veille
+  marque?: Marque;
+  rubriques?: RubriqueClient[];
+  themes?: Theme[];
+  // Guide de démarrage terminé ou fermé
+  demarrageFini?: boolean;
 };
 export type Garde = { debut?: number; fin?: number; maxParJour?: number; ecart?: number; scoreMin?: number };
 
@@ -30,5 +37,9 @@ export function mergeSettings(base: Partial<Settings>, patch: Partial<Settings> 
     triggers: patch.triggers !== undefined ? patch.triggers : base.triggers ?? null,
     customSources: patch.customSources !== undefined ? patch.customSources : base.customSources ?? [],
     garde: { ...(base.garde ?? {}), ...(patch.garde ?? {}) },
+    marque: { ...(base.marque ?? {}), ...(patch.marque ?? {}) },
+    rubriques: patch.rubriques !== undefined ? patch.rubriques : base.rubriques ?? [],
+    themes: patch.themes !== undefined ? patch.themes : base.themes ?? [],
+    demarrageFini: typeof patch.demarrageFini === "boolean" ? patch.demarrageFini : base.demarrageFini ?? false,
   };
 }

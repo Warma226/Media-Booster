@@ -2,6 +2,7 @@
 import { signParams, appUrl } from "./sign";
 import type { Post } from "./store";
 import type { VisualFormat } from "./formats";
+import { marqueActive } from "./marque";
 
 export function visualUrl(post: Pick<Post, "rubrique" | "visual" | "source_name">, format: VisualFormat, absolute = false): string {
   const p = new URLSearchParams();
@@ -13,6 +14,12 @@ export function visualUrl(post: Pick<Post, "rubrique" | "visual" | "source_name"
   if (post.visual.specialite) p.set("sp", post.visual.specialite);
   if (post.visual.photo) p.set("ph", post.visual.photo);
   if (post.source_name) p.set("src", post.source_name);
+  // Bas du visuel : signature du média (enregistrée dans le post, sinon celle de la marque chargée dans le navigateur).
+  const navigateur = typeof window !== "undefined";
+  const sg = post.visual.signature || (navigateur ? marqueActive.signature : "");
+  const co = post.visual.court || (navigateur ? marqueActive.court : "");
+  if (sg) p.set("sg", sg);
+  if (co) p.set("co", co);
   p.set("sig", signParams(p));
   return `${absolute ? appUrl() : ""}/api/visuel?${p.toString()}`;
 }

@@ -14,6 +14,7 @@ import { draftWithoutAI, type Generated, type GenerateInput } from "@/lib/claude
 import type { RubriqueId, Platform } from "@/lib/config";
 import type { Post } from "@/lib/store";
 import { listPosts, postAction, savePost, visuelsDe } from "@/lib/client";
+import { useProfil } from "@/components/Profil";
 
 const RUBS: RubriqueId[] = ["actu", "citation", "cyberbase", "portrait"];
 const DEFAUT: Record<RubriqueId, Platform[]> = {
@@ -105,7 +106,10 @@ function AtelierRubrique({ rub }: { rub: RubriqueId }) {
 
   const srcNameFinal = rub === "actu" ? sourceName : rub === "citation" ? srcName.trim() || null : null;
   const srcUrlFinal = rub === "actu" ? sourceUrl : rub === "citation" ? srcUrl.trim() || null : null;
+  const profil = useProfil();
   const entree: GenerateInput = {
+    marque: profil?.marque,
+    rubriques: profil?.rubriques,
     rubrique: rub, idea, sourceUrl: srcUrlFinal, sourceName: srcNameFinal, articleTitle, articleSummary, categorie,
     portrait: rub === "portrait" ? { nom, specialite, infos } : undefined,
     citation: rub === "citation" ? { texte: citTexte.trim(), auteur: auteur.trim(), fonction: fonction.trim(), contexte: contexte.trim() } : undefined,

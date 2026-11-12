@@ -5,6 +5,8 @@ import type { RubriqueId } from "@/lib/config";
 import type { Post } from "@/lib/store";
 import { Trait } from "./BottomNav";
 import { heureFixe } from "@/lib/schedule";
+import { useProfil } from "./Profil";
+import { infoRubrique } from "@/lib/marque";
 
 export const RUB: Record<RubriqueId, { nom: string; titre: string; c: [string, string]; d: string; pastille: [string, string] }> = {
   actu: { nom: "Actualité", titre: "Nouvelle actualité", c: ["#60A5FA", "#065F46"], d: "M4 5h16v14H4zM8 9h8M8 13h5", pastille: ["#D1FAE5", "#065F46"] },
@@ -25,13 +27,15 @@ export function Tuile({ rub, taille = 52 }: { rub: RubriqueId; taille?: number }
 export type Etape = { id: string; l: string; etat: "fait" | "cours" | "" };
 
 export function AtelierEntete({ rub, etapes, enregistre }: { rub: RubriqueId; etapes: Etape[]; enregistre?: string }) {
+  const profil = useProfil();
+  const info = profil ? infoRubrique(profil.rubriques, rub) : null;
   return (
     <div className="tv-entete">
       <div style={{ flex: "1 1 340px", display: "flex", flexDirection: "column", gap: 6 }}>
         <Link href="/creer" className="tv-gris" style={{ textDecoration: "none", fontWeight: 600 }}>← Créer</Link>
         <div className="row" style={{ gap: 14 }}>
           <Tuile rub={rub} />
-          <h1 className="tv-titre">{RUB[rub].titre}</h1>
+          <h1 className="tv-titre">{info ? info.nom : RUB[rub].nom}</h1>
         </div>
         {enregistre ? <span className="tv-gris" style={{ fontSize: 13 }}>{enregistre}</span> : null}
       </div>

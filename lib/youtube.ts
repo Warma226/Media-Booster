@@ -3,7 +3,8 @@
 // autorisation (case « Autorisation obtenue »). Sinon, on la commente, on cite une phrase courte et on renvoie vers l'original.
 import { aiJson } from "./claude";
 import { db } from "./store";
-import { MEDIA_NOM, MEDIA_PUBLIC } from "@/lib/brand";
+import { marqueServeur } from "./marque-serveur";
+import type { MarqueComplete } from "@/lib/marque";
 
 export type Genre = "actu" | "interview" | "docu";
 export type Licence = "cc" | "autorisee" | "reservee";
@@ -15,25 +16,8 @@ export type Chaine = { handle: string; nom: string; type: TypeChaine; id?: strin
 
 // « tech » : toute la chaîne parle de tech. « info » : chaîne d'actualité générale, on ne garde que les sujets tech.
 // « interview » : émissions de personnalités (longs entretiens) ; on garde les épisodes où la tech ou le numérique est central.
-export const CHAINES_DEFAUT: Chaine[] = [
-  { handle: "@Micode", nom: "Micode", type: "tech" },
-  { handle: "@Underscore_", nom: "Underscore_", type: "tech" },
-  { handle: "@FRANCE24", nom: "FRANCE 24", type: "info" },
-  { handle: "@franceinfo", nom: "franceinfo", type: "info" },
-  { handle: "@BBCAfrique", nom: "BBC News Afrique", type: "info" },
-  { handle: "@TV5MONDEInfo", nom: "TV5MONDE Info", type: "info" },
-  { handle: "@HugoDecrypte", nom: "HugoDécrypte", type: "info" },
-  { handle: "@lemondefr", nom: "Le Monde", type: "info" },
-  { handle: "@artefr", nom: "ARTE", type: "info" },
-  { handle: "@lesnumeriques", nom: "Les Numériques", type: "tech" },
-  { handle: "@frandroid", nom: "Frandroid", type: "tech" },
-  { handle: "@MonsieurBidouille", nom: "Monsieur Bidouille", type: "tech" },
-  { handle: "@rabbindesbois", nom: "Rabbin des bois", type: "tech" },
-  { handle: "@LEGEND", nom: "LEGEND (Guillaume Pley, ex-Le QG)", type: "interview" },
-  { handle: "@LeQG", nom: "Le QG", type: "interview" },
-  { handle: "@thinkerview", nom: "Thinkerview", type: "interview" },
-  { handle: "@GDIY", nom: "Génération Do It Yourself", type: "interview" },
-];
+// Aucune chaîne par défaut : chaque client ajoute les siennes (écran Vidéos).
+export const CHAINES_DEFAUT: Chaine[] = [];
 
 // Mots qui signalent un sujet tech dans une chaîne d'info générale.
 const SIGLES = /\b(IA|5G|IoT|ChatGPT|OpenAI|Nvidia|TikTok|WhatsApp|Starlink|SpaceX|Tesla|Meta|Google|Apple|Microsoft|Amazon|Huawei|Samsung|Xiaomi|Pegasus)\b/; // sensibles à la casse (« IA », pas « ia »)
@@ -72,12 +56,7 @@ export async function lireChaines(): Promise<Chaine[]> {
   const d = data?.data as { chaines?: Chaine[]; version?: number } | null;
   const l = d?.chaines;
   if (!Array.isArray(l) || !l.length) return CHAINES_DEFAUT;
-  const liste = l.filter((c) => !RETIREES.includes(c.handle));
-  if ((d?.version ?? 1) < VERSION_LISTE) { // nouvelles chaînes par défaut ajoutées une seule fois
-    for (const c of CHAINES_DEFAUT) if (!liste.some((x) => x.handle.toLowerCase() === c.handle.toLowerCase())) liste.push(c);
-    await ecrireChaines(liste);
-  }
-  return liste;
+  return l.filter((c) => !RETIREES.includes(c.handle));
 }
 async function ecrireChaines(chaines: Chaine[]) { await db().from("settings").upsert({ id: 7, data: { chaines, version: VERSION_LISTE } }); }
 
@@ -179,12 +158,13 @@ export async function rafraichir(): Promise<number> {
 
 // Tri final par l'IA, strict : actualité tech en français uniquement. Sans IA disponible, seuls les filtres ci-dessus s'appliquent.
 async function trier(videos: VideoYT[]): Promise<Set<string>> {
+  const M = await marqueServeur();
   const garder = new Set<string>();
   for (let i = 0; i < videos.length; i += 40) {
     const lot = videos.slice(i, i + 40);
     try {
       const r = await aiJson<{ garder?: string[] }>(
-        `Tu es rédacteur en chef de ${MEDIA_NOM}, un média d'actualité tech francophone. Tu tries des vidéos YouTube avec rigueur : dans le doute, tu écartes.
+        `Tu es rédacteur en chef de ${M.nom}, un média d'actualité tech francophone. Tu tries des vidéos YouTube avec rigueur : dans le doute, tu écartes.
 GARDER seulement si les deux conditions sont vraies :
 1. La vidéo est en français.
 2. Son sujet principal est l'actualité de la tech et du numérique : IA, cybersécurité et arnaques en ligne, réseaux sociaux et plateformes, géants de la tech et leurs dirigeants, télécoms et mobile money, startups, spatial, data centers, crypto (sous l'angle technologique), lois et politique du numérique, sorties et annonces de produits tech, enquêtes, documentaires et interviews sur la tech. Pour un entretien avec une personnalité (hacker, entrepreneur du numérique, dirigeant tech, chercheur en IA…), garde-le si la tech, le numérique, la cybersécurité ou l'IA occupe une place centrale dans l'échange.
@@ -218,13 +198,14 @@ export async function lister(): Promise<{ videos: LigneVideo[]; chaines: Chaine[
 
 // Gemini regarde la vidéo (lien YouTube public) : moments chocs pour une interview ou un documentaire, extraits forts pour une actu.
 export async function reperer(id: string): Promise<Extrait[]> {
+  const M = await marqueServeur();
   const cle = process.env.GEMINI_API_KEY;
   if (!cle) throw new Error("Le repérage des extraits demande GEMINI_API_KEY dans Vercel.");
   const { data } = await db().from("videos_yt").select("info").eq("id", id).maybeSingle();
   const info = data?.info as VideoYT | undefined;
   if (!info) throw new Error("Vidéo inconnue.");
   const choc = info.genre !== "actu";
-  const consigne = `Tu es éditeur vidéo pour ${MEDIA_NOM}, un média tech francophone (public : ${MEDIA_PUBLIC}) qui publie des Reels, TikTok et carrousels.
+  const consigne = `Tu es éditeur vidéo pour ${M.nom}, un média tech francophone (public : ${M.public}) qui publie des Reels, TikTok et carrousels.
 Vidéo : « ${info.titre} » (chaîne ${info.chaine}, ${info.genre === "docu" ? "documentaire" : info.genre === "interview" ? "interview" : "actualité"}).
 ${choc
   ? `Repère les 4 moments les plus CHOCS : une révélation, un aveu, un chiffre qui frappe, une prise de position tranchée, une phrase qu'on a envie de partager. Pour une interview, garde la parole de l'invité, pas les questions. `

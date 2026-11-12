@@ -1,6 +1,6 @@
-// Configuration éditoriale de Media Booster : sources, rubriques, déclencheurs, garde-fous.
-// Modifie ce fichier pour ajouter une source ou un déclencheur.
-import { IDENTITE_MEDIA, MEDIA_PUBLIC } from "@/lib/brand";
+// Configuration éditoriale : modèles de rubriques, déclencheurs, garde-fous, consigne de rédaction.
+// Rien n'est prérempli pour le client : il ajoute lui-même ses sources, thèmes, déclencheurs et rubriques dans l'app.
+import type { MarqueComplete, Theme } from "./marque";
 
 export type Platform = "facebook" | "linkedin" | "tiktok" | "wordpress";
 export const PLATFORMS: { id: Platform; label: string; limit: number }[] = [
@@ -32,85 +32,16 @@ export type Source = {
   note: string;
 };
 
-export const SOURCES: Source[] = [
-  {
-    id: "thehackernews",
-    name: "The Hacker News",
-    domain: "thehackernews.com",
-    lang: "en",
-    theme: "Cybersécurité",
-    feed: "https://feeds.feedburner.com/TheHackersNews",
-    enabledByDefault: true,
-    note: "Résumé traduit en français.",
-  },
-  {
-    id: "frandroid",
-    name: "Frandroid",
-    domain: "frandroid.com",
-    lang: "fr",
-    theme: "Smartphones · Tech",
-    feed: "https://www.frandroid.com/feed",
-    enabledByDefault: true,
-    note: "Mobiles, Android, tests produits.",
-  },
-  {
-    id: "techcrunch",
-    name: "TechCrunch",
-    domain: "techcrunch.com",
-    lang: "en",
-    theme: "Startups · IA",
-    feed: "https://techcrunch.com/feed/",
-    enabledByDefault: true,
-    note: "Levées de fonds, IA. Résumé traduit.",
-  },
-  {
-    id: "cybersecuritymag",
-    name: "Cybersecurity Mag Africa",
-    domain: "cybersecuritymag.africa",
-    lang: "fr",
-    theme: "Cybersécurité Afrique",
-    feed: null,
-    enabledByDefault: false,
-    note: "Le site bloque la lecture automatique : à brancher via un flux RSS ou une newsletter s'ils en proposent.",
-  },
-  {
-    id: "digitalmag",
-    name: "Digital Mag Côte d'Ivoire",
-    domain: "digitalmag.ci",
-    lang: "fr",
-    theme: "Numérique · Afrique de l'Ouest",
-    feed: "https://digitalmag.ci/feed/",
-    enabledByDefault: true,
-    note: "Média ivoirien 100 % digital : cybersécurité, fintech, télécoms et startups en Afrique.",
-  },
-  {
-    id: "sikafinance",
-    name: "Sikafinance",
-    domain: "sikafinance.com",
-    lang: "fr",
-    theme: "Économie Afrique de l'Ouest",
-    // Pas de flux RSS public : recherche Google Actualités limitée au site.
-    feed: "https://news.google.com/rss/search?q=site:sikafinance.com&hl=fr&gl=FR&ceid=FR:fr",
-    enabledByDefault: true,
-    filterKeywords: ["télécom", "telecom", "fintech", "numérique", "digital", "mobile money", "orange", "mtn", "moov", "internet", "cyber", "startup", "technolog", "data", "ia "],
-    note: "Site financier : seuls les sujets télécoms, fintech et numérique sont gardés.",
-  },
-];
+// Aucune source par défaut : le client ajoute les siennes (écran Sources).
+export const SOURCES: Source[] = [];
 
 // `poids` : points de pertinence ajoutés quand le thème est détecté (la veille classe les actus avec).
 // Les annonces de nouveaux smartphones intéressent peu le public du média : elles ne sont pas mises en avant.
-export const TOPICS: { id: string; label: string; keywords: string[]; poids: number }[] = [
-  { id: "burkina", label: "Burkina Faso", poids: 35, keywords: ["burkina", "burkinabè", "burkinabe", "ouaga", "ouagadougou", "bobo-dioulasso", "koudougou", "faso"] },
-  { id: "evenements", label: "Événements tech", poids: 20, keywords: ["forum ia", "cyber africa", "africa tech summit", "innov africa", "gitex", "hackathon", "salon du numérique", "semaine du numérique", "sitic"] },
-  { id: "afrique", label: "Afrique & télécoms", poids: 25, keywords: ["afrique", "africa", "african", "sénégal", "senegal", "côte d'ivoire", "ivory coast", "burkina", "mali", "niger", "bénin", "togo", "ghana", "nigeria", "kenya", "cameroun", "uemoa", "cedeao", "orange money", "mobile money", "wave", "mtn", "moov", "airtel", "télécom", "telecom", "opérateur"] },
-  { id: "cyber", label: "Cybersécurité", poids: 15, keywords: ["faille", "vulnérabilit", "vulnerability", "malware", "ransomware", "phishing", "arnaque", "scam", "hack", "cve-", "zero-day", "exploit", "cyber", "breach", "fuite"] },
-  { id: "ia", label: "IA", poids: 15, keywords: ["intelligence artificielle", " ia ", "ai ", " ai,", "llm", "chatgpt", "openai", "anthropic", "claude", "gemini", "machine learning", "modèle"] },
-  { id: "crypto", label: "Crypto & blockchain", poids: 10, keywords: ["crypto", "blockchain", "bitcoin", "ethereum", "web3", "stablecoin", "binance"] },
-  { id: "reseaux", label: "Réseaux sociaux", poids: 10, keywords: ["réseaux sociaux", "social media", "facebook", "tiktok", "whatsapp", "instagram", "youtube", " meta ", "linkedin", "x (ex-twitter)"] },
-  { id: "robotique", label: "Robotique", poids: 10, keywords: ["robot", "robotique", "robotics", "drone", "humanoïde", "humanoid", "automatisation"] },
-  { id: "startups", label: "Startups", poids: 15, keywords: ["startup", "start-up", "levée", "raises", "funding", "series a", "series b", "seed", "fintech"] },
-  { id: "smartphones", label: "Smartphones", poids: 0, keywords: ["android", "iphone", "ios", "smartphone", "samsung", "galaxy", "pixel", "xiaomi", "tecno", "infinix", "itel"] },
-];
+// Aucun thème par défaut : le client définit les siens (écran Thèmes). Voir themesDe().
+export const TOPICS: Theme[] = [];
+export function themesDe(s?: { themes?: Theme[] } | null): Theme[] {
+  return Array.isArray(s?.themes) ? (s?.themes as Theme[]) : TOPICS;
+}
 
 export type TriggerFormat = "resume" | "explication" | "les-deux";
 export type TriggerMode = "general" | "manuel";
@@ -129,52 +60,8 @@ export type Trigger = {
   enabledByDefault: boolean;
 };
 
-export const TRIGGERS: Trigger[] = [
-  {
-    id: "faille-critique",
-    name: "Faille de sécurité critique",
-    sources: ["thehackernews", "cybersecuritymag"],
-    keywords: ["critical", "critique", "zero-day", "0-day", "actively exploited", "exploitée", "urgent"],
-    minScore: 80,
-    format: "explication",
-    platforms: ["facebook", "linkedin"],
-    mode: "manuel",
-    enabledByDefault: true,
-  },
-  {
-    id: "android-ios",
-    name: "Nouvelle version Android / iOS",
-    sources: ["frandroid", "techcrunch"],
-    keywords: ["android 1", "ios 1", "ios 2", "mise à jour", "one ui", "hyperos"],
-    minScore: 70,
-    format: "resume",
-    platforms: ["facebook", "linkedin", "wordpress"],
-    mode: "general",
-    enabledByDefault: false, // nouveaux smartphones : peu suivis par le public du média
-  },
-  {
-    id: "ia-modele",
-    name: "Lancement d'un modèle d'IA",
-    sources: ["techcrunch", "frandroid"],
-    keywords: ["launches", "lance", "new model", "nouveau modèle", "releases", "dévoile"],
-    minScore: 75,
-    format: "explication",
-    platforms: ["linkedin", "facebook"],
-    mode: "general",
-    enabledByDefault: true,
-  },
-  {
-    id: "startup-afrique",
-    name: "Levée de fonds startup africaine",
-    sources: ["techcrunch", "sikafinance"],
-    keywords: ["africa", "afrique", "nigeria", "kenya", "sénégal", "senegal", "côte d'ivoire", "ghana", "burkina"],
-    minScore: 70,
-    format: "resume",
-    platforms: ["linkedin", "wordpress"],
-    mode: "general",
-    enabledByDefault: false,
-  },
-];
+// Aucun déclencheur par défaut : le client crée les siens (écran Déclencheurs).
+export const TRIGGERS: Trigger[] = [];
 
 // Les déclencheurs modifiés dans l'app remplacent la liste par défaut ci-dessus.
 export function allTriggers(custom?: Trigger[] | null): Trigger[] {
@@ -231,30 +118,32 @@ export function gardeFous(g?: { debut?: number; fin?: number; maxParJour?: numbe
   };
 }
 
-// Guide de style donné à l'IA à chaque rédaction
-export const STYLE_GUIDE = `
-Tu écris pour ${IDENTITE_MEDIA}
-Mission : « On décode la tech pour que chacun puisse s'en servir, pas juste la subir. » Conviction : la technologie n'a de valeur que si elle est comprise, et d'impact que si elle est partagée.
-Ligne éditoriale : uniquement la tech, traduite, ancrée dans les réalités locales et expliquée sans jargon, pour un public jeune. Priorité à ${MEDIA_PUBLIC}, puis au reste du continent et au monde : cybersécurité et arnaques, IA, crypto et blockchain, mobile money et télécoms, réseaux sociaux, robotique, startups, et les grands rendez-vous tech africains (Forum IA Ouaga, Forum Cyber Africa, Africa Tech Summit, Innov Africa…).
-Quand une actu mondiale a un effet concret pour les lecteurs africains (prix, accès, sécurité, emploi), dis-le en une phrase, sans rien inventer.
-Les annonces de nouveaux smartphones n'intéressent que si elles concernent l'Afrique (prix, disponibilité, modèles vendus localement) : sinon, reste bref.
-Ton : celui d'un média d'information tech sérieux. Neutre, factuel, rigoureux, à la troisième personne : pas de tutoiement, pas d'interpellation du lecteur, pas de formule familière.
-Le post résume l'information : qui, quoi, quand, chiffres clés, conséquences. Pas de conseils au lecteur sauf si l'info l'exige (ex. mise à jour de sécurité urgente), formulés sobrement.
-Public : lecteurs francophones, en particulier ${MEDIA_PUBLIC} ; explique brièvement le jargon.
-Langue : écris TOUJOURS en français, même quand l'article source est en anglais (traduis et reformule). Garde seulement les noms propres et de marques tels quels ; les hashtags sont en français ou des noms de marques.
+// Guide de style donné à l'IA à chaque rédaction, propre au média du client.
+export function styleGuide(M: MarqueComplete): string {
+  const ton = {
+    neutre: "Neutre, factuel, rigoureux, à la troisième personne : pas de tutoiement, pas d'interpellation du lecteur, pas de formule familière.",
+    chaleureux: "Chaleureux et accessible, en vouvoyant le lecteur, toujours exact et sourcé ; pas de familiarité excessive.",
+    dynamique: "Vif et direct, phrases courtes, accroches fortes, toujours exact et sourcé ; jamais racoleur.",
+  }[M.ton] ?? "";
+  return `
+Tu écris pour ${M.identite}
+Ligne éditoriale : ${M.ligne} Explique sans jargon, ancre l'information dans le quotidien de ${M.public} quand c'est pertinent, sans rien inventer.
+Ton : ${ton}
+Le post résume l'information : qui, quoi, quand, chiffres clés, conséquences. Pas de conseils au lecteur sauf si l'info l'exige, formulés sobrement.
+Langue : écris TOUJOURS en français, même quand l'article source est dans une autre langue (traduis et reformule). Garde seulement les noms propres et de marques tels quels.
 Règles :
 - Toujours reformuler avec tes propres mots. Ne jamais recopier l'article (aucune phrase reprise, citation de 15 mots maximum).
 - Toujours citer la source (nom du média) et ne rien inventer : si une info n'est pas dans l'article, ne l'écris pas.
 - Distinguer clairement ce qui est officiel, une fuite ou une rumeur.
 - Pas de sensationnalisme, pas de point d'exclamation, pas d'émoji.
-- Les chiffres en chiffres, les noms de marques avec leur casse officielle.
-- Tout montant en devise étrangère est suivi de sa conversion en francs CFA : « … dollars, soit environ … FCFA ».
+- Les chiffres en chiffres, les noms de marques avec leur casse officielle.${M.devise ? `\n- Tout montant dans une autre devise est suivi de sa conversion : « …, soit environ … ${M.devise} ».` : ""}
 Qualité professionnelle, niveau rédaction d'un média sérieux :
-- Première phrase forte et précise (le fait principal), pas de formule creuse (« Grosse nouvelle », « Vous n'allez pas y croire »…).
+- Première phrase forte et précise (le fait principal), pas de formule creuse.
 - Chaque phrase apporte une info ou une explication utile ; pas de remplissage ni de répétition.
 - Orthographe, accords et ponctuation française impeccables (espace avant « : ; ? ! », guillemets « »).
-- Termine par une chute journalistique sobre : une phrase qui met l'info en perspective ou pose l'enjeu à venir, sans ironie ni familiarité, jamais un résumé ni une consigne. Puis la source.
+- Termine par une phrase qui met l'info en perspective, sans ironie ni familiarité, jamais un résumé ni une consigne. Puis la source.
 `.trim();
+}
 
 // Catégories du site WordPress pour l'actualité (Portrait et Exclusivité restent manuelles).
 export const WP_CATEGORIES_AUTO = ["CyberActu", "IA", "Robotique", "Réseaux Sociaux", "Apps"] as const;

@@ -1,57 +1,77 @@
-// Rubriques : chaque rubrique a son gabarit, rendu en direct avec un exemple.
-import Link from "next/link";
+"use client";
+// Rubriques : le client choisit parmi quatre modèles ceux qu'il veut utiliser, et leur donne son propre nom,
+// hashtag, description et horaire. Rien n'est activé tant qu'il ne l'a pas décidé.
+import { useEffect, useState } from "react";
 import { TopBar } from "@/components/BottomNav";
-import { RUBRIQUES, type RubriqueId } from "@/lib/config";
-import { visualUrl } from "@/lib/visual-url";
+import { useProfil } from "@/components/Profil";
+import { Message, useEnregistrer } from "@/components/Reglages";
+import { MODELES, ORDRE_MODELES, hashtagPropre, type RubriqueClient } from "@/lib/marque";
 
-export const dynamic = "force-dynamic";
-
-const EXEMPLES: Record<RubriqueId, { titre: string; texte: string; nom?: string; specialite?: string; source?: string }> = {
-  actu: { titre: "Smartphones", texte: "Android 17 arrive sur les premiers modèles : batterie, sécurité et photos, voici ce qui change pour toi.", source: "Frandroid" },
-  cyberbase: {
-    titre: "Social Engineering",
-    texte:
-      "L'ingénierie sociale est une méthode d'attaque qui exploite la psychologie humaine plutôt que la technologie.\n\nLes cybercriminels manipulent leurs cibles pour obtenir des accès ou des informations confidentielles (par exemple, en se faisant passer pour un collègue ou un service légitime).",
-  },
-  portrait: { titre: "Nom de l'expert", texte: "Spécialité de l'expert", nom: "Nom de l'expert", specialite: "Spécialité de l'expert" },
-  citation: { titre: "Prénom Nom", texte: "La citation exacte de la personne, **les mots forts en bleu**, telle qu'elle a été prononcée.", nom: "Prénom Nom", specialite: "Fonction de la personne" },
-};
+const vide = (id: RubriqueClient["id"]): RubriqueClient => ({ id, nom: "", hashtag: "", description: "", heure: MODELES[id].heureParDefaut ?? null, active: false });
 
 export default function Rubriques() {
+  const profil = useProfil();
+  const [liste, setListe] = useState<RubriqueClient[] | null>(null);
+  const { busy, msg, erreur, enregistrer } = useEnregistrer();
+  const [alerte, setAlerte] = useState("");
+
+  useEffect(() => {
+    if (profil && !liste) setListe(ORDRE_MODELES.map((id) => profil.rubriques.find((r) => r.id === id) ?? vide(id)));
+  }, [profil, liste]);
+
+  const maj = (id: string, p: Partial<RubriqueClient>) => setListe((l) => (l ?? []).map((r) => (r.id === id ? { ...r, ...p } : r)));
+
+  async function sauver() {
+    if (!liste) return;
+    const manque = liste.find((r) => r.active && !r.nom.trim());
+    setAlerte(manque ? `Donnez un nom à la rubrique « ${MODELES[manque.id].modele} » avant de l'activer.` : "");
+    if (manque) return;
+    const propre = liste.map((r) => ({ ...r, nom: r.nom.trim().slice(0, 40), hashtag: hashtagPropre(r.hashtag || r.nom), description: r.description.trim().slice(0, 200) }));
+    await enregistrer({ rubriques: propre }, `${propre.filter((r) => r.active).length} rubrique(s) active(s) enregistrée(s).`);
+    setListe(propre);
+  }
+
   return (
     <>
-      <TopBar title="Rubriques" back="/creer" wide />
-      <main className="page sub wide" style={{ paddingTop: 4 }}>
-        <p className="muted">Chaque rubrique a son rythme et ses règles. L'Actualité et la Citation ont un visuel généré ; pour #CyberBase et #Portrait, tu ajoutes ton propre visuel.</p>
-        <div className="cards">
-        {RUBRIQUES.map((r) => {
-          const ex = EXEMPLES[r.id];
-          const src = visualUrl({ rubrique: r.id, visual: { titre: ex.titre, texte: ex.texte, nom: ex.nom, specialite: ex.specialite }, source_name: ex.source ?? null }, "portrait");
-          return (
-            <Link key={r.id} href={`/creer/${r.id}`} className="card link" style={{ flexDirection: "row", gap: 14, padding: 12 }} aria-label={`Créer un post ${r.hashtag}`}>
-              {r.id === "actu" || r.id === "citation" ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={src} alt="" loading="lazy" style={{ width: 112, aspectRatio: "4 / 5", objectFit: "cover", borderRadius: 10, background: "var(--gris-1)", flexShrink: 0 }} />
-              ) : (
-                <span aria-hidden="true" style={{ width: 112, aspectRatio: "4 / 5", borderRadius: 10, border: "1px dashed var(--gris-3)", background: "var(--gris-1)", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", textAlign: "center", fontSize: 12, fontWeight: 600, color: "var(--texte-2)", padding: 8 }}>
-                  Ton visuel
-                </span>
-              )}
-              <span className="stack" style={{ gap: 6, minWidth: 0, paddingTop: 4 }}>
-                <span style={{ fontFamily: "var(--font-archivo)", fontWeight: 800, fontSize: 17 }}>{r.id === "actu" ? r.label : r.hashtag}</span>
-                <span className="small" style={{ fontSize: 13, color: "var(--texte-3)", lineHeight: 1.45 }}>{r.description}</span>
-                <span className="wrap">
-                  <span className="badge">{r.id === "actu" || r.id === "citation" ? "Visuel généré" : "Ton visuel"}</span>
-                  {r.heure !== undefined ? <span className="badge bleu">Chaque jour à {r.heure} h</span> : null}
-                  {r.alwaysManual ? <span className="badge vert">Toujours manuel</span> : <span className="badge bleu">Suit le mode général</span>}
-                  {r.id === "portrait" ? <span className="badge ambre">Accord de la personne</span> : null}
-                  {r.id === "citation" ? <span className="badge ambre">Source obligatoire</span> : null}
-                </span>
-              </span>
-            </Link>
-          );
-        })}
-        </div>
+      <TopBar title="Rubriques" back="/demarrage" />
+      <main className="page sub">
+        <p className="muted">Activez les types de publications que votre média propose, puis nommez-les à votre façon. Chaque type a son atelier et ses règles.</p>
+        {!liste ? <p className="muted">Chargement…</p> : (
+          <div className="stack" style={{ gap: 14 }}>
+            {liste.map((r) => {
+              const m = MODELES[r.id];
+              return (
+                <section key={r.id} className={`card mb-rub${r.active ? " on" : ""}`}>
+                  <div className="row" style={{ alignItems: "flex-start", gap: 12 }}>
+                    <span style={{ flex: 1, minWidth: 0 }}>
+                      <strong style={{ fontSize: 16 }}>{m.modele}</strong>
+                      <span className="muted small" style={{ display: "block", marginTop: 4 }}>{m.explication}</span>
+                    </span>
+                    <button type="button" role="switch" aria-checked={r.active} aria-label={`Activer ${m.modele}`} className={`switch${r.active ? " on" : ""}`} onClick={() => maj(r.id, { active: !r.active, nom: r.nom || m.exempleNom, hashtag: r.hashtag || m.exempleHashtag })}><span /></button>
+                  </div>
+                  {r.active ? (
+                    <div className="stack mb-form" style={{ gap: 12, marginTop: 6 }}>
+                      <div className="grid2">
+                        <label className="field">Nom affiché<input type="text" maxLength={40} placeholder={m.exempleNom} value={r.nom} onChange={(e) => maj(r.id, { nom: e.target.value })} /></label>
+                        <label className="field">Hashtag<input type="text" maxLength={30} placeholder={m.exempleHashtag} value={r.hashtag} onChange={(e) => maj(r.id, { hashtag: e.target.value })} onBlur={(e) => maj(r.id, { hashtag: hashtagPropre(e.target.value) })} /></label>
+                      </div>
+                      <label className="field">Description (pour vous et votre équipe)<input type="text" maxLength={200} placeholder="Ce que contient cette rubrique" value={r.description} onChange={(e) => maj(r.id, { description: e.target.value })} /></label>
+                      {r.id === "cyberbase" ? (
+                        <label className="field">Heure de publication chaque jour
+                          <select value={r.heure ?? 7} onChange={(e) => maj(r.id, { heure: Number(e.target.value) })}>
+                            {Array.from({ length: 18 }, (_, i) => i + 5).map((h) => <option key={h} value={h}>{h} h</option>)}
+                          </select>
+                        </label>
+                      ) : null}
+                    </div>
+                  ) : null}
+                </section>
+              );
+            })}
+            <Message msg={alerte || msg} erreur={Boolean(alerte) || erreur} />
+            <button type="button" className="btn primary" disabled={busy} onClick={sauver}>{busy ? "Enregistrement…" : "Enregistrer les rubriques"}</button>
+          </div>
+        )}
       </main>
     </>
   );

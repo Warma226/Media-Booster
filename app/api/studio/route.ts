@@ -1,18 +1,18 @@
 import { NextResponse } from "next/server";
 import { aiJson, aiConfigured } from "@/lib/claude";
 import { emptyPost, savePost } from "@/lib/store";
-import { IDENTITE_MEDIA } from "@/lib/brand";
+import { marqueServeur } from "@/lib/marque-serveur";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
-const IDENTITE = IDENTITE_MEDIA.replace(/\.$/, "");
 
 type ElTexte = { id: string; role: string; type: "texte" | "carte"; texte?: string; carte?: { titre: string; etat: string; texte: string; bouton: string } };
 
 // POST { action: "textes", sujet, elements } → { textes: { id: texte | carte }, legende }
 // POST { action: "creation", images, video?, legende, titre, quand? } → { id } (post « à valider » ou programmé)
 export async function POST(req: Request) {
+  const IDENTITE = (await marqueServeur()).identite.replace(/\.$/, "");
   try {
     const b = (await req.json()) as { action: string; sujet?: string; elements?: ElTexte[]; images?: string[]; video?: string; legende?: string; titre?: string; quand?: string };
 

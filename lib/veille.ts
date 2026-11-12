@@ -1,6 +1,7 @@
 // Veille : lecture des flux RSS, filtrage selon la ligne éditoriale, regroupement des doublons.
 import Parser from "rss-parser";
-import { TOPICS, GUARDRAILS, type Source, type Trigger } from "./config";
+import { GUARDRAILS, type Source, type Trigger } from "./config";
+import type { Theme } from "./marque";
 
 export type VeilleItem = {
   id: string;
@@ -62,7 +63,8 @@ function matchTrigger(t: Trigger, item: { sourceId: string; text: string }): boo
 }
 
 // `sources` et `triggers` : uniquement ceux qui sont activés.
-export async function fetchVeille(sources: Source[], triggers: Trigger[]): Promise<{ items: VeilleItem[]; errors: string[] }> {
+// themes : thèmes suivis par le client (écran Thèmes), qui rapportent des points de pertinence.
+export async function fetchVeille(sources: Source[], triggers: Trigger[], themes: Theme[] = []): Promise<{ items: VeilleItem[]; errors: string[] }> {
   const active = sources.filter((s) => s.feed);
   const errors: string[] = [];
   const raw: Omit<VeilleItem, "sameStoryCount">[] = [];
@@ -81,7 +83,7 @@ export async function fetchVeille(sources: Source[], triggers: Trigger[]): Promi
       const summary = clean(entry.contentSnippet ?? entry.content ?? entry.summary).slice(0, 400);
       const text = ` ${title} ${summary} `.toLowerCase();
       if (s.filterKeywords && !s.filterKeywords.some((k) => text.includes(k))) continue;
-      const found = TOPICS.filter((t) => t.keywords.some((k) => text.includes(k)));
+      const found = themes.filter((t) => t.keywords.some((k) => k && text.includes(k.toLowerCase())));
       const topics = found.map((t) => t.id);
       const poidsThemes = found.reduce((sum, t) => sum + t.poids, 0);
       const matched = triggers.filter((t) => matchTrigger(t, { sourceId: s.id, text })).map((t) => t.id);

@@ -8,11 +8,11 @@ export const maxDuration = 30;
 
 async function run(sources: Source[], triggers: Trigger[]) {
   try {
-    const { items, errors } = await fetchVeille(sources, triggers);
+    const { items, errors } = await fetchVeille(sources, triggers, (await getSettings()).themes ?? []);
     // Plus de 2 jours : retirée de la veille, publiée ou non.
     const limite = Date.now() - 48 * 3.6e6;
     const fraiches = items.filter((i) => !i.publishedAt || new Date(i.publishedAt).getTime() >= limite).slice(0, 80);
-    // Déjà reprise dans une publication Media Booster : on le signale.
+    // Déjà reprise dans une publication du média : on le signale.
     const repris = await postsParUrl(fraiches.map((i) => i.url)).catch(() => new Map());
     for (const i of fraiches) {
       const p = repris.get(urlNette(i.url));

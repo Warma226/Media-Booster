@@ -426,7 +426,7 @@ function sCru(ctx, t, I) {
   const k = sp(t, 6.55, 'bouncy');
   if (k > 0) text3(ctx, 'Adama.', { x: -460, y: 160 + (1 - k) * 120, z: 1300 - 300 * (1 - k), size: 200, color: C.ambre, glow: 'rgba(225,29,116,0.8)', ry: deg(-8), alpha: clamp(k * 1.4) });
   const k2 = sp(t, 6.9, 'snappy');
-  if (k2 > 0) text3(ctx, 'jeune diplômé · Ouagadougou', { x: -430, y: 330, z: 1250, size: 40, weight: 600, fam: UI, color: C.gris, alpha: clamp(k2), ry: deg(-8) });
+  if (k2 > 0) text3(ctx, 'jeune diplômé', { x: -430, y: 330, z: 1250, size: 40, weight: 600, fam: UI, color: C.gris, alpha: clamp(k2), ry: deg(-8) });
   if (t > 6.6) flare(ctx, W * 0.3, 1060, 1 - ease(t, 6.6, 7.5));
 }
 

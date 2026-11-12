@@ -4,7 +4,6 @@
 
 export { FORMATS, type VisualFormat } from "./formats";
 import { FORMATS, type VisualFormat } from "./formats";
-import { MEDIA_SIGNATURE } from "@/lib/brand";
 
 export type VisualData = {
   rubrique: "actu" | "cyberbase" | "portrait" | "citation";
@@ -13,34 +12,26 @@ export type VisualData = {
   nom?: string;
   specialite?: string;
   photo?: string;
+  signature?: string; // site ou nom du média, en bas du visuel
+  court?: string; // sigle du média, pour le logo texte
   source?: string;
 };
 
 const BLEU = "#047857";
 
-function Lambda({ size, color }: { size: number; color: string }) {
-  return (
-    <svg width={size * 0.72} height={size * 0.74} viewBox="0 0 72 74">
-      <path d="M4 72 L36 4 L68 72" fill="none" stroke={color} strokeWidth={14} strokeLinejoin="miter" />
-    </svg>
-  );
-}
-
-export function LogoMark({ size, color, dot = BLEU }: { size: number; color: string; dot?: string }) {
+// Logo texte du média sur les visuels : son sigle (ex. « DTI ») suivi d'un point de couleur.
+// Si LOGO_URL est réglé (image PNG du logo), il est utilisé à la place.
+export function LogoMark({ size, color, dot = BLEU, texte = "" }: { size: number; color: string; dot?: string; texte?: string }) {
   const logoUrl = process.env.LOGO_URL;
   if (logoUrl) {
     return <img src={logoUrl} alt="" height={size * 1.6} style={{ height: size * 1.6, objectFit: "contain" }} />;
   }
+  const t = texte.trim().toUpperCase().slice(0, 8);
+  const taille = t.length > 5 ? size * (5 / t.length) : size;
   return (
-    <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
-      <div style={{ display: "flex", alignItems: "center", fontSize: size, fontWeight: 800, color, lineHeight: 1 }}>
-        <span>TUV</span>
-        <div style={{ width: size * 0.74, height: size * 0.74, borderRadius: size, background: dot, margin: `0 ${size * 0.04}px` }} />
-        <Lambda size={size} color={color} />
-      </div>
-      <div style={{ display: "flex", fontSize: size * 0.42, fontWeight: 300, color, letterSpacing: size * 0.05, marginTop: size * 0.08, paddingLeft: size * 0.5 }}>
-        TECH MEDIA
-      </div>
+    <div style={{ display: "flex", alignItems: "center", fontSize: taille * 1.1, fontWeight: 800, color, lineHeight: 1, letterSpacing: -taille * 0.02 }}>
+      {t ? <span>{t}</span> : null}
+      <div style={{ width: taille * 0.42, height: taille * 0.42, borderRadius: taille, background: dot, marginLeft: t ? taille * 0.12 : 0 }} />
     </div>
   );
 }
@@ -109,7 +100,7 @@ function citation(d: VisualData, w: number, h: number) {
       {d.photo ? <img src={d.photo} alt="" width={w} height={h * 0.72} style={{ position: "absolute", left: 0, top: 0, width: w, height: h * 0.72, objectFit: "cover" }} /> : null}
       <div style={{ position: "absolute", left: 0, top: 0, width: w, height: h, display: "flex", backgroundImage: "linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 30%, rgba(0,0,0,0.8) 44%, #000000 56%)" }} />
       <div style={at(st, 50, 50, { width: 100 * s, height: 100 * s, alignItems: "center", justifyContent: "center", background: BLEU })}>
-        <LogoMark size={20 * s} color="#FFFFFF" dot="#FFFFFF" />
+        <LogoMark size={20 * s} color="#FFFFFF" dot="#FFFFFF" texte={d.court} />
       </div>
       <div style={at(st, 50, 480, { width: 980 * s, height: 690 * s, flexDirection: "column", justifyContent: "flex-end" })}>
         <div style={{ display: "flex", height: 82 * s, marginBottom: 26 * s }}>
@@ -153,13 +144,13 @@ function actu(d: VisualData, w: number, h: number) {
       {d.photo ? <img src={d.photo} alt="" width={w} height={h} style={{ position: "absolute", left: 0, top: 0, width: w, height: h, objectFit: "cover" }} /> : null}
       <div style={{ position: "absolute", left: 0, top: 0, width: w, height: h, display: "flex", backgroundImage: "linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 46%, rgba(0,0,0,0.82) 66%, #000000 84%)" }} />
       <div style={at(st, 838, 30, { width: 194 * s, height: 194 * s, alignItems: "center", justifyContent: "center", background: "#FFFFFF", borderRadius: `0 0 0 ${100 * s}px` })}>
-        <LogoMark size={42 * s} color="#333333" />
+        <LogoMark size={42 * s} color="#333333" texte={d.court} />
       </div>
       <div style={at(st, 100, 793, { minWidth: 480 * s, height: 72 * s, alignItems: "center", padding: `0 ${40 * s}px 0 ${36 * s}px`, background: BLEU, fontSize: 42 * s, fontWeight: 800, color: "#FFFFFF" })}>
         {fit(categorie, 26)}
       </div>
       <div style={at(st, 102, 900, { width: 930 * s, fontSize: size * s, fontWeight: 800, color: "#FFFFFF", lineHeight: 1.3 })}>{info}</div>
-      <div style={at(st, 600, 1238, { width: 415 * s, justifyContent: "flex-end", fontSize: 46 * s, fontWeight: 800, color: "#FFFFFF" })}>{MEDIA_SIGNATURE}</div>
+      <div style={at(st, 600, 1238, { width: 415 * s, justifyContent: "flex-end", fontSize: 46 * s, fontWeight: 800, color: "#FFFFFF" })}>{d.signature ?? ""}</div>
     </div>
   );
 }

@@ -1,34 +1,35 @@
-// Politique de confidentialité de Media Booster (page publique, demandée par TikTok et Meta).
-import { MEDIA_NOM, MEDIA_SITE, MEDIA_URL } from "@/lib/brand";
-
+// Politique de confidentialité de Media Booster (page publique, demandée par Meta, LinkedIn, TikTok et CinetPay).
+// Modèle à faire relire par un juriste avant la mise en vente.
 export const metadata = { title: "Politique de confidentialité · Media Booster" };
 
 export default function Confidentialite() {
   return (
-    <main style={{ maxWidth: 760, margin: "0 auto", padding: "40px 20px 80px", lineHeight: 1.65, fontSize: 16 }}>
-      <h1 style={{ fontSize: 28 }}>Politique de confidentialité de Media Booster</h1>
-      <p style={{ color: "#667" }}>Dernière mise à jour : 5 novembre 2026</p>
+    <main className="mb-legal">
+      <h1>Politique de confidentialité</h1>
+      <p className="mb-legal-date">Dernière mise à jour : 12 novembre 2026</p>
 
-      <h2>1. Qui sommes-nous</h2>
-      <p>Media Booster est l'outil de publication interne de {MEDIA_NOM}. Il sert uniquement à publier les contenus de {MEDIA_NOM} sur ses propres comptes (site web, Facebook, LinkedIn, TikTok).</p>
-
-      <h2>2. Données traitées</h2>
+      <h2>Ce que nous conservons</h2>
       <ul>
-        <li><strong>Comptes reliés</strong> : lorsque {MEDIA_NOM} relie l'un de ses comptes (par exemple TikTok), l'outil reçoit et conserve les jetons d'accès fournis par la plateforme, l'identifiant du compte et son nom d'affichage. Ces informations servent uniquement à publier les contenus de {MEDIA_NOM} sur ce compte.</li>
-        <li><strong>Contenus</strong> : textes, visuels et photos préparés par l'équipe {MEDIA_NOM} pour publication.</li>
+        <li><strong>Votre compte</strong> : nom, e-mail, mot de passe (stocké sous forme chiffrée, jamais en clair), appareils connectés.</li>
+        <li><strong>Votre espace</strong> : nom et réglages du média, rubriques, sources, publications, visuels et fichiers importés.</li>
+        <li><strong>Comptes reliés</strong> : pour publier sur vos pages, les jetons d&apos;accès fournis par Facebook, LinkedIn ou TikTok, l&apos;identifiant et le nom de vos pages. Ils sont stockés côté serveur et ne sont jamais affichés dans le navigateur.</li>
+        <li><strong>Abonnement</strong> : formule, dates et références des paiements. Les données de carte ou de mobile money sont traitées par CinetPay, pas par Media Booster.</li>
+        <li><strong>Community manager</strong> : si vous l&apos;activez, les commentaires et messages publics reçus sur votre page, pour y répondre.</li>
       </ul>
-      <p>Media Booster ne collecte pas de données sur les abonnés ou visiteurs des comptes de {MEDIA_NOM}, n'affiche pas de publicité et ne vend ni ne partage aucune donnée.</p>
 
-      <h2>3. Conservation et sécurité</h2>
-      <p>Les jetons d'accès sont stockés côté serveur, dans une base de données protégée, et ne sont jamais affichés dans le navigateur. Ils sont conservés tant que le compte reste relié et supprimés lorsque {MEDIA_NOM} retire l'autorisation.</p>
+      <h2>Ce que nous ne faisons pas</h2>
+      <p>Nous ne vendons ni ne louons aucune donnée, n&apos;affichons pas de publicité et ne collectons pas de données sur les visiteurs de vos pages au-delà de ce qui sert à leur répondre. Les données d&apos;un espace ne sont jamais accessibles aux autres clients.</p>
 
-      <h2>4. Retrait de l'autorisation</h2>
-      <p>Le titulaire d'un compte relié peut retirer l'accès de Media Booster à tout moment depuis les paramètres de sécurité ou d'applications de la plateforme concernée (par exemple, dans TikTok : Paramètres et confidentialité › Sécurité › Applications et services).</p>
+      <h2>Prestataires</h2>
+      <p>Hébergement (Vercel), base de données et fichiers (Supabase), paiement (CinetPay), rédaction par intelligence artificielle (Google Gemini ou Anthropic Claude, qui reçoivent seulement les textes à rédiger), et les plateformes que vous reliez.</p>
 
-      <h2>5. Contact</h2>
-      <p>Pour toute question sur cette politique : {MEDIA_NOM}{MEDIA_URL ? <>, <a href={MEDIA_URL}>{MEDIA_SITE}</a></> : null}.</p>
+      <h2>Durée et suppression</h2>
+      <p>Vos données sont conservées tant que votre espace existe, puis 90 jours après la fin de l&apos;abonnement. Vous pouvez demander à tout moment l&apos;export ou la suppression de votre espace, et retirer l&apos;accès de Media Booster depuis les paramètres de Facebook, LinkedIn ou TikTok ; les jetons concernés sont alors inutilisables.</p>
 
-      <p style={{ marginTop: 32 }}><a href="/cgu">Conditions d'utilisation</a></p>
+      <h2>Contact</h2>
+      <p>Pour toute demande sur vos données, écrivez-nous depuis l&apos;application (écran Mon compte).</p>
+
+      <p style={{ marginTop: 32 }}><a href="/cgu">Conditions d&apos;utilisation</a> · <a href="/acces">Retour à la connexion</a></p>
     </main>
   );
 }

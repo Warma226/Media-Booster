@@ -9,6 +9,7 @@ import { LogoTuile, NAV_ICONS, Trait } from "@/components/BottomNav";
 import { Courbe, Disque, Dossiers, Repartition, type Jour, type Stockage } from "@/components/Tableau";
 import { getInfo, saveSettings, type Info } from "@/lib/client";
 import { useMoi } from "@/components/Moi";
+import { useProfil } from "@/components/Profil";
 
 type Compte = Partial<Record<"publie" | "planifie" | "a_valider" | "brouillon" | "erreur" | "annule" | "recap", number>>;
 type Donnees = {
@@ -53,6 +54,7 @@ export default function Dashboard() {
   const [error, setError] = useState("");
   const [now, setNow] = useState(() => new Date());
   const [q, setQ] = useState("");
+  const profil = useProfil();
 
   useEffect(() => {
     getInfo().then(setInfo).catch(() => {});
@@ -143,8 +145,9 @@ export default function Dashboard() {
       <header className="tv-hero-mobile tv-mobile">
         <div className="row">
           <LogoTuile taille={52} />
-          <span style={{ fontFamily: "var(--font-mont)", fontWeight: 700, fontSize: 12, letterSpacing: 2, color: "#94A3B8" }}>STUDIO</span>
+          <span style={{ fontFamily: "var(--font-mont)", fontWeight: 700, fontSize: 13, color: "#A7F3D0", minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{profil?.marque.nom ?? ""}</span>
           <span style={{ flex: 1 }} />
+          <Link href="/demarrage" className="tv-rond" aria-label="Configuration du média"><Trait d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z" size={18} stroke={2} /></Link>
           <Link href="/compte" className="tv-rond" aria-label="Mon compte"><Trait d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z" size={18} stroke={2} /></Link>
           <Link href="/calendrier" className="tv-rond" aria-label="Rechercher une publication"><Trait d="M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 20l-3.5-3.5" size={18} stroke={2} /></Link>
           <Link href="/calendrier?filtre=a_valider" className="tv-rond" aria-label={aValider ? `${pl(aValider, "post")} à valider` : "Posts à valider"}>
@@ -167,6 +170,12 @@ export default function Dashboard() {
       </header>
 
       <div className="tv-corps">
+        {profil && !profil.demarrageFini ? (
+          <Link href="/demarrage" className="mb-bandeau-config">
+            <span><strong>Terminez la configuration de {profil.marque.nom}</strong><span>Marque, rubriques, sources et pages : quelques minutes pour que tout publie.</span></span>
+            <span aria-hidden="true">›</span>
+          </Link>
+        ) : null}
         {/* Barre du haut (ordinateur) */}
         <div className="tv-desk" style={{ flexWrap: "wrap", alignItems: "center", gap: 12 }}>
           <form className="tv-recherche" role="search" onSubmit={chercher}>

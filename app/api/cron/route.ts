@@ -3,11 +3,13 @@
 import { NextResponse } from "next/server";
 import { avecEspace } from "@/lib/espace";
 import { espacesActifs } from "@/lib/comptes";
+import { profilEspace } from "@/lib/marque-serveur";
+import { rubriquesActives } from "@/lib/marque";
 import { fetchVeille, fetchArticle, similar } from "@/lib/veille";
 import { generatePost, generateRecap, aiConfigured, sameStoryAs } from "@/lib/claude";
 import { publishPost, connectionStatus } from "@/lib/publish";
 import { coverUrl, itemUrl, endUrl } from "@/lib/recap-url";
-import { GUARDRAILS, gardeFous, TOPICS, categorieWp, allSources, allTriggers, isOn, type Platform } from "@/lib/config";
+import { GUARDRAILS, gardeFous, themesDe, categorieWp, allSources, allTriggers, isOn, type Platform } from "@/lib/config";
 import { getSettings, filterUnseen, markSeen, savePost, emptyPost, duePosts, countAutoToday, recentAutoPosts, recentPosts, postedUrls, publishedSince, recapExists } from "@/lib/store";
 
 export const dynamic = "force-dynamic";
@@ -49,6 +51,7 @@ export async function GET(req: Request) {
 // force : ignore l'écart entre deux posts et la plage horaire ; now : publie tout de suite (sans délai d'annulation).
 async function run(log: string[], opts: { force: boolean; now: boolean } = { force: false, now: false }) {
   const settings = await getSettings();
+  const profil = await profilEspace();
 
   // ─── 1. Publication des posts arrivés à échéance ─────────────────
   for (const post of await duePosts()) {
@@ -68,7 +71,8 @@ async function run(log: string[], opts: { force: boolean; now: boolean } = { for
   }
 
   // ─── 2. Veille : l'autopilote choisit et publie seul ─────────────
-  if (aiConfigured()) {
+  // Pilote automatique : seulement si le client a activé une rubrique d'actualité.
+  if (aiConfigured() && rubriquesActives(profil.rubriques).some((r) => r.id === "actu")) {
     const triggers = allTriggers(settings.triggers).filter((t) => isOn(settings.triggersEnabled, t.id, t.enabledByDefault));
     const sources = allSources(settings.customSources).filter((x) => isOn(settings.sourcesEnabled, x.id, x.enabledByDefault));
     const conn = connectionStatus();
@@ -92,7 +96,7 @@ async function run(log: string[], opts: { force: boolean; now: boolean } = { for
     if (why) {
       log.push(`Autopilote en attente : ${why}.`);
     } else {
-      const { items, errors } = await fetchVeille(sources, triggers);
+      const { items, errors } = await fetchVeille(sources, triggers, themesDe(settings));
       const already = await recentPosts(24 * 14);
       errors.forEach((e) => log.push(e));
       // Actus fraîches (moins de 24 h), sur un thème suivi, sans sujet sensible ni doublon d'un post récent.
@@ -100,7 +104,7 @@ async function run(log: string[], opts: { force: boolean; now: boolean } = { for
         (it) =>
           !it.blocked &&
           (!it.publishedAt || Date.now() - new Date(it.publishedAt).getTime() < 24 * 3.6e6) &&
-          (it.triggers.length > 0 || it.topics.some((t) => (TOPICS.find((x) => x.id === t)?.poids ?? 0) > 0)) &&
+          (it.triggers.length > 0 || it.topics.some((t) => (themesDe(settings).find((x) => x.id === t)?.poids ?? 0) > 0)) &&
           it.score >= gf.scoreMin &&
           !already.some((p) => p.source_url === it.url || similar(p.title ?? "", it.title))
       );
@@ -141,6 +145,8 @@ async function run(log: string[], opts: { force: boolean; now: boolean } = { for
           }
           const articleText = article.text;
           const g = await generatePost({
+            marque: profil.marque,
+            rubriques: profil.rubriques,
             rubrique: "actu",
             idea: "",
             format: trigger?.format ?? "resume",
@@ -148,7 +154,7 @@ async function run(log: string[], opts: { force: boolean; now: boolean } = { for
             sourceUrl: item.url,
             articleTitle: item.title,
             articleText: articleText || item.summary,
-            categorie: TOPICS.find((t) => t.id === item.topics[0])?.label,
+            categorie: themesDe(settings).find((t) => t.id === item.topics[0])?.label,
           });
           const post = emptyPost({
             rubrique: "actu",
@@ -167,7 +173,7 @@ async function run(log: string[], opts: { force: boolean; now: boolean } = { for
               wp_excerpt: g.wp_excerpt,
             },
             visual: {
-              titre: g.visuel_titre || TOPICS.find((t) => t.id === item.topics[0])?.label || "Actu tech",
+              titre: g.visuel_titre || themesDe(settings).find((t) => t.id === item.topics[0])?.label || "Actu tech",
               texte: g.visuel_texte || item.title,
               image,
               // Catégorie WordPress choisie par l'IA, sinon déduite du titre et du texte.
@@ -227,18 +233,21 @@ async function weeklyRecap(log: string[], opts: { force: boolean; dry: boolean }
     const base = illustrees.length >= Math.min(3, week.length) ? illustrees : week;
     const r = await generateRecap(
       base.map((p) => ({ title: p.title, text: p.texts.facebook || p.texts.linkedin, source: p.source_name })),
-      periode
+      periode,
+      (await profilEspace()).marque
     );
     const recentes = [...week].reverse().filter((p) => images.has(p.id)).slice(0, 8);
     const court = (d: Date) => d.toLocaleDateString("fr-FR", { day: "numeric", month: "short", timeZone: "UTC" }).replace(/^1 /, "1er ");
     const total = r.points.length;
+    const mq = (await profilEspace()).marque;
+    const lienMarque = { nom: mq.nom, court: mq.court, signature: mq.signature };
     const slides = [
       coverUrl({
         periode: `${court(monday)} – ${court(now)}`,
         count: total,
         photos: recentes.map((p) => images.get(p.id) ?? ""),
-        categories: recentes.map((p) => p.visual.titre || "Actu tech"),
-      }),
+        categories: recentes.map((p) => p.visual.titre || "Actualité"),
+      }, lienMarque),
       ...r.points.map((pt, i) => {
         const src = base[pt.n - 1];
         return itemUrl({
@@ -249,9 +258,9 @@ async function weeklyRecap(log: string[], opts: { force: boolean; dry: boolean }
           photo: (src ? images.get(src.id) : undefined) ?? images.get(recentes[i % Math.max(1, recentes.length)]?.id ?? ""),
           source: src?.source_name ?? undefined,
           autres: recentes.filter((p) => p.id !== src?.id).slice(0, 4).map((p) => ({ photo: images.get(p.id), categorie: p.visual.titre || "Actu tech" })),
-        });
+        }, lienMarque);
       }),
-      endUrl(),
+      endUrl(lienMarque),
     ];
     const image = slides[0];
     if (opts.dry) return { ...r, image, slides, platforms, posts: week.length };
