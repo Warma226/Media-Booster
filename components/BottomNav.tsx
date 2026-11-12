@@ -58,6 +58,7 @@ const MENU: { href: string; label: string; d: string; badge?: "grin" }[] = [
   { href: "/declencheurs", label: "Déclencheurs", d: NAV_ICONS.eclair },
   { href: "/connexions", label: "Connexions", d: NAV_ICONS.cnx },
   { href: "/demarrage", label: "Configuration", d: NAV_ICONS.eclair },
+  { href: "/abonnement", label: "Abonnement", d: NAV_ICONS.cnx },
 ];
 
 const ONGLETS: { href: string; label: string; d: string }[] = [

@@ -1,8 +1,9 @@
 // Tâche planifiée (appelée toutes les 15 min par Supabase pg_cron) :
 // 1. autopilote : choisit la meilleure actu, la rédige et la planifie ; 2. publie les posts planifiés arrivés à échéance.
 import { NextResponse } from "next/server";
-import { avecEspace } from "@/lib/espace";
-import { espacesActifs } from "@/lib/comptes";
+import { avecEspace, espaceId } from "@/lib/espace";
+import { espacesActifs, lireEspace } from "@/lib/comptes";
+import { FORMULES } from "@/lib/abonnement";
 import { profilEspace } from "@/lib/marque-serveur";
 import { rubriquesActives } from "@/lib/marque";
 import { fetchVeille, fetchArticle, similar } from "@/lib/veille";
@@ -84,6 +85,9 @@ async function run(log: string[], opts: { force: boolean; now: boolean } = { for
     const pending = recent.some((p) => p.status === "planifie");
 
     const gf = gardeFous(settings.garde);
+    // Plafond de la formule d'abonnement du client
+    const esp = await lireEspace(await espaceId());
+    gf.maxParJour = Math.min(gf.maxParJour, FORMULES[esp?.formule ?? "demarrage"]?.postsAutoParJour ?? 3);
     const why =
       !settings.autopilot ? "autopilote coupé (Déclencheurs)"
       : opts.force ? ""

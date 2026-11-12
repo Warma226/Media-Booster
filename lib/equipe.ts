@@ -4,6 +4,8 @@ import { headers } from "next/headers";
 import { db, dbGlobal } from "./store";
 import { ROLES_MEMBRES, type Role } from "./roles";
 import { SESSION_DAYS } from "./session";
+import { espaceId } from "./espace";
+import { FORMULES } from "./abonnement";
 
 export type Membre = { id: string; espace_id?: string; nom: string; contact: string; role: Role; statut: "invite" | "actif" | "suspendu"; created_at: string; derniere_connexion: string | null; invitation_expire: string | null };
 const CHAMPS = "id,nom,contact,role,statut,created_at,derniere_connexion,invitation_expire";
@@ -60,6 +62,12 @@ export async function inviter(nom: string, contact: string, role: Role) {
   if (!nom.trim() || !contact.trim()) throw new Error("Indiquez le nom et l'e-mail ou le téléphone.");
   if (!ROLES_MEMBRES.includes(role)) throw new Error("Rôle inconnu.");
   if (await membreParContact(contact)) throw new Error("Ce contact a déjà un compte Media Booster.");
+  // Nombre de membres compris dans la formule (en plus du propriétaire)
+  const { lireEspace } = await import("./comptes");
+  const esp = await lireEspace(await espaceId());
+  const max = FORMULES[esp?.formule ?? "demarrage"]?.membres ?? 0;
+  const { count } = await db().from("membres").select("id", { count: "exact", head: true }).neq("role", "admin");
+  if ((count ?? 0) >= max) throw new Error(max === 0 ? "La formule Démarrage ne comprend pas de membres d'équipe : passez à la formule Pro (Abonnement)." : `Votre formule comprend ${max} membres d'équipe. Passez à la formule supérieure pour en ajouter.`);
   const j = nouveauJeton();
   const { data, error } = await db().from("membres").insert({ nom: nom.trim().slice(0, 60), contact: contact.trim().slice(0, 120), role, statut: "invite", invitation_hash: j.invitation_hash, invitation_expire: j.invitation_expire }).select("id").single();
   if (error) throw new Error(error.message);

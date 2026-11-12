@@ -56,4 +56,4 @@ export function accesOuvert(e: Pick<Espace, "statut" | "essai_fin" | "payee_jusq
 }
 
 /** Pages accessibles même quand l'abonnement est échu (pour pouvoir payer ou se déconnecter). */
-export const PAGES_SANS_ABONNEMENT = ["/abonnement", "/api/abonnement", "/api/logout", "/api/compte", "/compte", "/cgu", "/confidentialite"];
+export const PAGES_SANS_ABONNEMENT = ["/abonnement", "/api/abonnement", "/plateforme", "/api/plateforme", "/api/logout", "/api/compte", "/compte", "/cgu", "/confidentialite"];

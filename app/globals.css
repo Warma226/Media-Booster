@@ -1184,3 +1184,24 @@ button.tv-etape-fixe:hover:not([aria-current="step"]) { background: rgba(15,23,4
 .mb-cnx-actions { gap: 8px; flex-wrap: wrap; }
 .mb-whatsapp { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 48px; padding: 0 16px; border: 0; border-radius: 12px; background: #25D366; color: #06331A; font-weight: 700; font-size: 15px; cursor: pointer; }
 .mb-whatsapp:disabled { opacity: .7; }
+
+/* Abonnement */
+.mb-abo { gap: 16px; }
+.mb-abo-etat { display: flex; flex-direction: column; gap: 4px; padding: 16px; border-radius: 16px; }
+.mb-abo-etat strong { font-size: 17px; }
+.mb-abo-etat span { font-size: 14px; line-height: 1.5; }
+.mb-abo-etat.ok { background: var(--emeraude-pale); border: 1px solid #A7F3D0; color: #064E3B; }
+.mb-abo-etat.ko { background: #FEF3C7; border: 1px solid #FCD34D; color: #78350F; }
+.mb-formules { display: grid; grid-template-columns: 1fr; gap: 14px; }
+@media (min-width: 900px) { .mb-formules { grid-template-columns: repeat(3, 1fr); } }
+.mb-formule { position: relative; display: flex; flex-direction: column; gap: 10px; padding: 20px; border-radius: 20px; background: #fff; border: 1px solid #E7E5DE; }
+.mb-formule.vedette { border: 2px solid var(--emeraude); box-shadow: 0 14px 34px rgba(4,120,87,.12); }
+.mb-formule.actuelle { background: var(--emeraude-pale); }
+.mb-formule h2 { font-size: 20px; }
+.mb-formule-badge { position: absolute; top: -12px; left: 20px; padding: 3px 10px; border-radius: 999px; background: var(--ambre-vif); color: var(--encre); font-size: 12px; font-weight: 800; }
+.mb-formule-accroche { color: #57534E; font-size: 14px; }
+.mb-formule-prix { display: flex; align-items: baseline; gap: 6px; }
+.mb-formule-prix strong { font-family: var(--font-mont), sans-serif; font-size: 28px; color: var(--encre); }
+.mb-formule-prix span { color: #78716C; font-size: 14px; }
+.mb-formule ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 6px; font-size: 14px; color: #292524; flex: 1; }
+.mb-formule .btn { margin-top: 6px; }

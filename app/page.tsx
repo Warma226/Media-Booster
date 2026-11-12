@@ -170,6 +170,19 @@ export default function Dashboard() {
       </header>
 
       <div className="tv-corps">
+        {(() => {
+          const e = moi?.espace;
+          const fin = e?.essai_fin ? new Date(e.essai_fin).getTime() : 0;
+          const paye = e?.payee_jusqu && new Date(e.payee_jusqu).getTime() > Date.now();
+          if (!e || e.statut !== "essai" || paye || fin < Date.now()) return null;
+          const h = Math.max(1, Math.round((fin - Date.now()) / 3.6e6));
+          return (
+            <Link href="/abonnement" className="mb-bandeau-config" style={{ background: "#FEF3C7", borderColor: "#FCD34D" }}>
+              <span><strong>Essai gratuit : encore {h} h</strong><span style={{ color: "#78350F" }}>Choisissez une formule pour continuer après l&apos;essai.</span></span>
+              <span aria-hidden="true" style={{ color: "#B45309" }}>›</span>
+            </Link>
+          );
+        })()}
         {profil && !profil.demarrageFini ? (
           <Link href="/demarrage" className="mb-bandeau-config">
             <span><strong>Terminez la configuration de {profil.marque.nom}</strong><span>Marque, rubriques, sources et pages : quelques minutes pour que tout publie.</span></span>
