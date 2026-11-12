@@ -165,7 +165,7 @@ const wordpress: Publisher = async (post) => {
   const legendeUne = [v.legende || (post.source_name ? `Illustration · ${post.source_name}` : titre), creditUne].filter(Boolean).join(" · ");
   const altUne = v.alt || titre;
   let media = await wpMedia(une, `mb-${slug}`, legendeUne, altUne).catch(() => null);
-  // Photo indisponible : visuel de secours (visuel Media Booster).
+  // Photo indisponible : visuel de secours (visuel généré).
   if (!media && v.image_secours) media = await wpMedia(v.image_secours, `mb-${slug}`, v.legende || titre, altUne);
   let content = post.texts.wp_body || `<p>${escapeHtml(post.texts.facebook)}</p>`;
   const extras = v.wp_images ?? [];
@@ -284,7 +284,7 @@ const linkedinViaMake: Publisher = async (post) => {
 };
 
 const linkedin: Publisher = async (post) => {
-  // Page Media Booster via Make (aucune validation LinkedIn nécessaire) si le webhook est configuré.
+  // Page du média via Make (aucune validation LinkedIn nécessaire) si le webhook est configuré.
   if (process.env.LINKEDIN_WEBHOOK_URL) return linkedinViaMake(post);
   const headers = {
     Authorization: `Bearer ${process.env.LINKEDIN_TOKEN}`,

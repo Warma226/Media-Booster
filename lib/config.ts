@@ -98,7 +98,7 @@ export const SOURCES: Source[] = [
 ];
 
 // `poids` : points de pertinence ajoutés quand le thème est détecté (la veille classe les actus avec).
-// Les annonces de nouveaux smartphones intéressent peu le public de Media Booster : elles ne sont pas mises en avant.
+// Les annonces de nouveaux smartphones intéressent peu le public du média : elles ne sont pas mises en avant.
 export const TOPICS: { id: string; label: string; keywords: string[]; poids: number }[] = [
   { id: "burkina", label: "Burkina Faso", poids: 35, keywords: ["burkina", "burkinabè", "burkinabe", "ouaga", "ouagadougou", "bobo-dioulasso", "koudougou", "faso"] },
   { id: "evenements", label: "Événements tech", poids: 20, keywords: ["forum ia", "cyber africa", "africa tech summit", "innov africa", "gitex", "hackathon", "salon du numérique", "semaine du numérique", "sitic"] },
@@ -114,7 +114,7 @@ export const TOPICS: { id: string; label: string; keywords: string[]; poids: num
 
 export type TriggerFormat = "resume" | "explication" | "les-deux";
 export type TriggerMode = "general" | "manuel";
-// Image jointe au post : seul le visuel Media Booster généré est branché pour l'instant.
+// Image jointe au post : seul le visuel généré est branché pour l'instant.
 export type TriggerImage = "visuel" | "presse" | "banque";
 export type Trigger = {
   id: string;

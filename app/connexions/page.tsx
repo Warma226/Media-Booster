@@ -19,7 +19,7 @@ const HELP: Record<Platform, string[]> = {
     "Redéploie l'app (Deployments › Redeploy).",
   ],
   facebook: [
-    "Crée une application sur developers.facebook.com et relie ta Page Media Booster.",
+    "Crée une application sur developers.facebook.com et relie la Page Facebook de ton média.",
     "Obtiens un jeton de Page longue durée (pages_manage_posts, pages_read_engagement).",
     "Dans Vercel : FB_PAGE_ID et FB_PAGE_TOKEN, puis redéploie.",
   ],
@@ -27,14 +27,14 @@ const HELP: Record<Platform, string[]> = {
     "Sur make.com (gratuit), crée un scénario : module « Webhooks › Custom webhook », puis copie son adresse.",
     "Dans Vercel : LINKEDIN_WEBHOOK_URL = cette adresse, puis redéploie.",
     "Dans Make, sur le webhook : « Redetermine data structure », puis ici « Envoyer un exemple à Make ».",
-    "Ajoute « HTTP › Get a file » (URL : image_url) puis « LinkedIn › Create an Organization Image Post » (Page Media Booster, texte : text, image : le fichier). Active le scénario.",
+    "Ajoute « HTTP › Get a file » (URL : image_url) puis « LinkedIn › Create an Organization Image Post » (Page de ton média, texte : text, image : le fichier). Active le scénario.",
   ],
   tiktok: [
     "Sur developers.tiktok.com, crée une application « Media Booster » et ajoute les produits « Login Kit » et « Content Posting API » (avec « Direct Post »).",
     "Adresse de redirection (Login Kit) : https://ton-app.vercel.app/api/tiktok/callback. Autorisations : user.info.basic et video.publish.",
     "Vérifie l'adresse https://ton-app.vercel.app/ comme préfixe d'URL (Content Posting API › URL properties) : envoie-moi le fichier de vérification, je le mets en ligne.",
     "Dans Vercel : TIKTOK_CLIENT_KEY et TIKTOK_CLIENT_SECRET (onglet « Credentials » de l'app TikTok), puis redéploie.",
-    "Ouvre https://ton-app.vercel.app/api/tiktok/login et autorise le compte TikTok de Media Booster.",
+    "Ouvre https://ton-app.vercel.app/api/tiktok/login et autorise le compte TikTok de ton média.",
     "Tant que TikTok n'a pas validé l'app (audit), les publications sont visibles par toi seul. Demande l'audit dans le portail pour publier en public.",
   ],
 };

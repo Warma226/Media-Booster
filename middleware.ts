@@ -1,12 +1,12 @@
 // Protège toute l'application : sans session valide, on est envoyé vers l'écran de connexion (/acces).
 // Chaque membre de l'équipe n'ouvre que les pages et les actions de son rôle (lib/roles).
-// Exceptions : l'écran de connexion, l'invitation, la tâche planifiée (clé CRON_SECRET) et les visuels signés.
+// Exceptions : l'écran de connexion, l'invitation, les fichiers de l'app installable (manifeste, service worker, icônes, page hors ligne), la tâche planifiée (clé CRON_SECRET) et les visuels signés.
 import { NextResponse, type NextRequest } from "next/server";
 import { SESSION_COOKIE, readSession } from "@/lib/session";
 import { apiAutorisee, pageAutorisee } from "@/lib/roles";
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|icon.png|apple-icon.png|api/cron|api/cm-cron|api/visuel|api/login|api/vitrine|api/invitation|invitation|studio/|recap/|cyberbase/|citations/|wp/|api/wp-categories|api/media|cgu|confidentialite|tiktok).*)"],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|icon.png|apple-icon.png|manifest.webmanifest|sw.js|icons/|hors-ligne|api/cron|api/cm-cron|api/visuel|api/login|api/vitrine|api/invitation|invitation|studio/|recap/|cyberbase/|citations/|wp/|api/wp-categories|api/media|cgu|confidentialite|tiktok).*)"],
 };
 
 // Sessions encore ouvertes (déconnexion d'un appareil, membre suspendu ou retiré) : vérifié en base, gardé 60 s.

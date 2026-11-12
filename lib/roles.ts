@@ -26,7 +26,7 @@ export const peut = (role: Role, zone: Zone, ecrire = false) => {
 // Pages : préfixe → zone (null = ouvert à toute l'équipe)
 const PAGES: [string, Zone | null][] = [
   ["/compte", null], ["/apercu", null], ["/calendrier", "calendrier"], ["/veille", "veille"], ["/videos", "veille"], ["/rubriques", "creer"],
-  ["/creer", "creer"], ["/editeur", "creer"], ["/studio", "studio"], ["/minute-cyber", "studio"], ["/communaute", "grin"],
+  ["/creer", "creer"], ["/partage", "creer"], ["/editeur", "creer"], ["/studio", "studio"], ["/minute-cyber", "studio"], ["/communaute", "grin"],
   ["/mediatheque", "admin"], ["/connexions", "admin"], ["/declencheurs", "admin"], ["/sources", "admin"],
 ];
 export function zonePage(path: string): Zone | null | undefined {

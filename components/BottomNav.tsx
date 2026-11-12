@@ -77,13 +77,13 @@ export function BottomNav() {
   const moi = useMoi();
   const voit = (href: string) => !moi || lienVisible(moi.role, href);
   useEffect(() => {
-    if (path.startsWith("/acces") || path.startsWith("/invitation")) return;
+    if (path.startsWith("/acces") || path.startsWith("/invitation") || path.startsWith("/hors-ligne")) return;
     fetch("/api/tableau?leger=1", { cache: "no-store" })
       .then((r) => (r.ok ? r.json() : null))
       .then((d) => d && !d.error && !d.demo && setEtat({ autopilot: Boolean(d.autopilot), grin: d.grin?.aTraiter ?? 0 }))
       .catch(() => {});
   }, [path]);
-  if (path.startsWith("/acces") || path.startsWith("/invitation")) return null;
+  if (path.startsWith("/acces") || path.startsWith("/invitation") || path.startsWith("/hors-ligne")) return null;
   const actif = (href: string) => (href === "/" ? path === "/" : path.startsWith(href));
   const secondaire = SECONDAIRES.some((p) => path.startsWith(p));
   const media = actif("/mediatheque");

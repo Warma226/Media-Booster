@@ -285,7 +285,7 @@ function AtelierRubrique({ rub }: { rub: RubriqueId }) {
             <p className="tv-gris" style={{ fontSize: 13 }}>Partez d'une actu de la <Link href="/veille">veille</Link>, ou écrivez votre idée ci-dessous.</p>
           )}
           <label className="field">{sourceUrl ? "Votre angle (facultatif)" : "Votre idée"}
-            <textarea rows={3} value={idea} onChange={(e) => setIdea(e.target.value)} placeholder={sourceUrl ? "Ce que l'IA doit mettre en avant pour le public de Media Booster" : "Comment repérer une arnaque au mobile money"} />
+            <textarea rows={3} value={idea} onChange={(e) => setIdea(e.target.value)} placeholder={sourceUrl ? "Ce que l'IA doit mettre en avant pour votre public" : "Comment repérer une arnaque au mobile money"} />
           </label>
         </Carte>
         <Carte id="accroche" titre="2 · Choisissez l'accroche" extra={boutonIA("Rédiger avec l'IA")}>
