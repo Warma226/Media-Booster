@@ -1,4 +1,4 @@
--- Schéma de la base TUVOA (à coller dans Supabase › SQL Editor › Run)
+-- Schéma de la base Media Booster (à coller dans Supabase › SQL Editor › Run)
 
 create table if not exists posts (
   id uuid primary key,
@@ -50,11 +50,11 @@ insert into storage.buckets (id, name, public) values ('visuels', 'visuels', tru
 -- Remplace <ADRESSE> et <CRON_SECRET> (la même valeur que dans Vercel) avant de lancer ce bloc.
 -- create extension if not exists pg_cron with schema pg_catalog;
 -- create extension if not exists pg_net with schema extensions;
--- select vault.create_secret('<ADRESSE>', 'tuvoa_url');
--- select vault.create_secret('<CRON_SECRET>', 'tuvoa_cron_secret');
--- select cron.schedule('tuvoa-veille', '*/15 * * * *', $$
+-- select vault.create_secret('<ADRESSE>', 'mb_url');
+-- select vault.create_secret('<CRON_SECRET>', 'mb_cron_secret');
+-- select cron.schedule('mb-veille', '*/15 * * * *', $$
 --   select net.http_get(
---     url := (select decrypted_secret from vault.decrypted_secrets where name = 'tuvoa_url') || '/api/cron',
---     headers := jsonb_build_object('Authorization', 'Bearer ' || (select decrypted_secret from vault.decrypted_secrets where name = 'tuvoa_cron_secret')),
+--     url := (select decrypted_secret from vault.decrypted_secrets where name = 'mb_url') || '/api/cron',
+--     headers := jsonb_build_object('Authorization', 'Bearer ' || (select decrypted_secret from vault.decrypted_secrets where name = 'mb_cron_secret')),
 --     timeout_milliseconds := 60000);
 -- $$);

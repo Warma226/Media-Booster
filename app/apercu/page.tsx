@@ -214,7 +214,7 @@ function Apercu() {
                   <article className="post">
                     <div className="tete">
                       <span className="av">T</span>
-                      <span><strong>TUVOA</strong><small>{tab === "wordpress" ? "Article du site" : `${auHaut ? jourHeure(auHaut).j : "Brouillon"}${heure ? ` à ${heure}` : ""} · 🌐`}</small></span>
+                      <span><strong>Media Booster</strong><small>{tab === "wordpress" ? "Article du site" : `${auHaut ? jourHeure(auHaut).j : "Brouillon"}${heure ? ` à ${heure}` : ""} · 🌐`}</small></span>
                     </div>
                     {tab === "wordpress" ? <strong className="wp-titre">{current.texts.wp_title || "Sans titre"}</strong> : null}
                     {fullText ? <p>{court}{fullText.length > court.length ? <>… <span className="plus">Voir plus</span></> : null}</p> : <p className="tv-gris">Pas encore de texte pour {PLATFORM_LABEL[tab]}.</p>}

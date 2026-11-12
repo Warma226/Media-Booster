@@ -12,7 +12,7 @@ export function domaineDe(domain?: string | null, url?: string | null): string {
 export const initiales = (s: string) =>
   s.split(/[\s’'·.-]+/).filter((w) => /^[A-Za-zÀ-ÿ0-9]/.test(w)).slice(0, 3).map((w) => w[0].toUpperCase()).join("") || "?";
 
-export function SourceLogo({ name, domain, url, size = 40, radius, couleur = "#2563EB", label = false }: {
+export function SourceLogo({ name, domain, url, size = 40, radius, couleur = "#5B3DF5", label = false }: {
   name: string; domain?: string | null; url?: string | null; size?: number; radius?: number; couleur?: string; label?: boolean;
 }) {
   const d = domaineDe(domain, url);
@@ -22,7 +22,7 @@ export function SourceLogo({ name, domain, url, size = 40, radius, couleur = "#2
   const a11y = label ? { role: "img" as const, "aria-label": name, title: name } : { "aria-hidden": true as const, title: name };
   if (rate) {
     return (
-      <span {...a11y} style={{ ...commun, background: `linear-gradient(145deg, ${couleur}, #0A2A66)`, color: "#fff", fontFamily: "var(--font-mont), sans-serif", fontWeight: 800, fontSize: Math.max(9, Math.round(size * 0.28)) }}>
+      <span {...a11y} style={{ ...commun, background: `linear-gradient(145deg, ${couleur}, #1B0F4D)`, color: "#fff", fontFamily: "var(--font-mont), sans-serif", fontWeight: 800, fontSize: Math.max(9, Math.round(size * 0.28)) }}>
         {initiales(name)}
       </span>
     );

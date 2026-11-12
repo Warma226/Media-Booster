@@ -60,9 +60,9 @@ export function db(): SupabaseClient {
 
 type Mem = { posts: Post[]; settings: Settings; seen: Set<string> };
 function mem(): Mem {
-  const g = globalThis as unknown as { __tuvoa?: Mem };
-  if (!g.__tuvoa) g.__tuvoa = { posts: [], settings: structuredClone(DEFAULT_SETTINGS), seen: new Set() };
-  return g.__tuvoa;
+  const g = globalThis as unknown as { __mb?: Mem };
+  if (!g.__mb) g.__mb = { posts: [], settings: structuredClone(DEFAULT_SETTINGS), seen: new Set() };
+  return g.__mb;
 }
 
 export function newId() {
@@ -182,7 +182,7 @@ export async function postedUrls(urls: string[]): Promise<Set<string>> {
   return new Set((data ?? []).map((r: { source_url: string | null }) => r.source_url ?? ""));
 }
 
-// Publications TUVOA qui reprennent ces articles (adresse comparée sans paramètres ni « / » final).
+// Publications Media Booster qui reprennent ces articles (adresse comparée sans paramètres ni « / » final).
 export const urlNette = (u: string) => u.trim().replace(/[?#].*$/, "").replace(/\/+$/, "").replace(/^http:/, "https:").toLowerCase();
 export async function postsParUrl(urls: string[]): Promise<Map<string, { id: string; status: string; at: string | null }>> {
   const out = new Map<string, { id: string; status: string; at: string | null }>();

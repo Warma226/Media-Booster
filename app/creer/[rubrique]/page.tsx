@@ -117,7 +117,7 @@ function AtelierRubrique({ rub }: { rub: RubriqueId }) {
       if (!citTexte.trim() || !auteur.trim() || !fonction.trim()) return "Indiquez la citation exacte, son auteur et sa fonction.";
       if (!srcNameFinal) return "Indiquez la source de la citation (média, discours, compte officiel).";
       if (pourPublier && !photo.trim()) return "Ajoutez la photo de l'auteur : sans elle, la citation ne part pas.";
-      if (pourPublier && !droitPhoto) return "Confirmez que TUVOA a le droit d'utiliser cette photo.";
+      if (pourPublier && !droitPhoto) return "Confirmez que Media Booster a le droit d'utiliser cette photo.";
     } else if (rub === "portrait") {
       if (!nom.trim() || !specialite.trim()) return "Indiquez le nom et la spécialité de l'expert.";
       if (pourPublier && !(accord.photo && accord.infos && accord.relecture)) return "Les trois accords de la personne sont obligatoires avant de planifier.";
@@ -249,7 +249,7 @@ function AtelierRubrique({ rub }: { rub: RubriqueId }) {
       {gen.variantes.map((v, i) => (
         <button key={i} type="button" role="radio" aria-checked={picked === i} onClick={() => setPicked(i)}>
           <span className="row" style={{ gap: 8 }}><span className="radio" /><span style={{ fontSize: 11, fontWeight: 800, letterSpacing: 1, color: "#5B6B86" }}>{VERSIONS[i] ?? `VERSION ${i + 1}`}</span><span style={{ marginLeft: "auto", fontSize: 12, color: v.length > 125 ? "#B45309" : "#5B6B86" }}>{v.length} car.</span></span>
-          <span style={{ fontSize: 15, lineHeight: 1.45, fontWeight: 600, color: "#0B1A33" }}>{v}</span>
+          <span style={{ fontSize: 15, lineHeight: 1.45, fontWeight: 600, color: "#150E33" }}>{v}</span>
         </button>
       ))}
     </div>
@@ -268,7 +268,7 @@ function AtelierRubrique({ rub }: { rub: RubriqueId }) {
       { id: "diffusion", l: "Diffusion", etat: gen ? "cours" : "" },
     ];
     canauxDetails = { facebook: "Idéal ≤ 477 car. · pli à 125", linkedin: "Idéal 1 200 – 2 400 car.", wordpress: "Article ≥ 300 mots · titre ≤ 60", tiktok: "Légende 50 – 150 · vidéo requise" };
-    noteQuand = "VOA garde 30 minutes d'écart avec les autres publications.";
+    noteQuand = "NOVA garde 30 minutes d'écart avec les autres publications.";
     formulaire = (
       <>
         <Carte id="sujet" titre="1 · Le sujet">
@@ -285,7 +285,7 @@ function AtelierRubrique({ rub }: { rub: RubriqueId }) {
             <p className="tv-gris" style={{ fontSize: 13 }}>Partez d'une actu de la <Link href="/veille">veille</Link>, ou écrivez votre idée ci-dessous.</p>
           )}
           <label className="field">{sourceUrl ? "Votre angle (facultatif)" : "Votre idée"}
-            <textarea rows={3} value={idea} onChange={(e) => setIdea(e.target.value)} placeholder={sourceUrl ? "Ce que l'IA doit mettre en avant pour le public de TUVOA" : "Comment repérer une arnaque au mobile money"} />
+            <textarea rows={3} value={idea} onChange={(e) => setIdea(e.target.value)} placeholder={sourceUrl ? "Ce que l'IA doit mettre en avant pour le public de Media Booster" : "Comment repérer une arnaque au mobile money"} />
           </label>
         </Carte>
         <Carte id="accroche" titre="2 · Choisissez l'accroche" extra={boutonIA("Rédiger avec l'IA")}>
@@ -318,7 +318,7 @@ function AtelierRubrique({ rub }: { rub: RubriqueId }) {
     ];
     canauxDetails = { facebook: "Visuel + légende courte, 40 à 80 car.", linkedin: "Visuel + contexte, 300 à 600 car." };
     libreTitre = "Prochain créneau citation";
-    noteQuand = "Les citations partent toutes les 2 h, de 8 h à 22 h : VOA prend le premier créneau libre.";
+    noteQuand = "Les citations partent toutes les 2 h, de 8 h à 22 h : NOVA prend le premier créneau libre.";
     const lg = citTexte.replace(/\*\*/g, "").trim().length;
     formulaire = (
       <>
@@ -341,10 +341,10 @@ function AtelierRubrique({ rub }: { rub: RubriqueId }) {
             <label className="field">Nom<input type="text" value={auteur} onChange={(e) => setAuteur(e.target.value)} placeholder="Prénom Nom" /></label>
             <label className="field">Fonction<input type="text" value={fonction} onChange={(e) => setFonction(e.target.value)} placeholder="Fonction, organisation" /></label>
           </div>
-          <ImageField label="Photo de l'auteur" hint="Une photo dont TUVOA a le droit d'usage. Le visuel se met à jour dans l'aperçu." value={photo} onChange={setPhoto} />
+          <ImageField label="Photo de l'auteur" hint="Une photo dont Media Booster a le droit d'usage. Le visuel se met à jour dans l'aperçu." value={photo} onChange={setPhoto} />
           <label className="tv-accord">
             <input type="checkbox" checked={droitPhoto} onChange={(e) => setDroitPhoto(e.target.checked)} />
-            <span><strong>TUVOA a le droit d'utiliser cette photo</strong><br /><span style={{ color: "#9A3412", fontSize: 13 }}>Fournie par la personne, son service de presse, ou libre de droits. Sans photo, la citation ne part pas.</span></span>
+            <span><strong>Media Booster a le droit d'utiliser cette photo</strong><br /><span style={{ color: "#9A3412", fontSize: 13 }}>Fournie par la personne, son service de presse, ou libre de droits. Sans photo, la citation ne part pas.</span></span>
           </label>
         </Carte>
         <Carte id="diffusion" titre="3 · Diffusion" extra={boutonIA("Rédiger la légende")}>
@@ -373,7 +373,7 @@ function AtelierRubrique({ rub }: { rub: RubriqueId }) {
     ];
     canauxDetails = { facebook: "Visuel + 300 car.", linkedin: "Visuel + 600 car.", wordpress: "Fiche glossaire · 250 mots" };
     libreTitre = "Prochain jour sans #CyberBase";
-    noteQuand = "#CyberBase sort chaque jour à heure fixe : VOA prend le premier jour encore vide.";
+    noteQuand = "#CyberBase sort chaque jour à heure fixe : NOVA prend le premier jour encore vide.";
     formulaire = (
       <>
         <Carte id="notion" titre="1 · La notion du jour">

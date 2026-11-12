@@ -12,9 +12,9 @@ import type { Settings, Garde } from "@/lib/settings";
 import type { Post } from "@/lib/store";
 import type { VeilleItem } from "@/lib/veille";
 
-const COULEURS = ["#DC2626", "#2563EB", "#7C3AED", "#0E9F8E", "#E94A06", "#64748B"];
+const COULEURS = ["#DC2626", "#5B3DF5", "#7C3AED", "#0E9F8E", "#E11D74", "#64748B"];
 const ETAT: Record<string, [string, string]> = {
-  publie: ["Publié", "#16A34A"], planifie: ["Planifié", "#2563EB"], a_valider: ["Aperçu envoyé, à valider", "#2563EB"],
+  publie: ["Publié", "#16A34A"], planifie: ["Planifié", "#5B3DF5"], a_valider: ["Aperçu envoyé, à valider", "#5B3DF5"],
   brouillon: ["Préparé en brouillon", "#9AA8BE"], erreur: ["Erreur de publication", "#E11D2E"], annule: ["Annulé", "#9AA8BE"],
 };
 
@@ -101,7 +101,7 @@ export default function Declencheurs() {
   }
   const champGarde = (cle: keyof Garde, val: number, suffixe: string, min: number, max: number) => (
     <label className="row" style={{ gap: 6 }}>
-      <input type="number" min={min} max={max} value={val} onChange={(e) => save({ garde: { [cle]: Number(e.target.value) } as Garde })} style={{ width: 76, height: 38, padding: "0 8px", borderRadius: 10, border: "1px solid #C9D3E3", fontWeight: 800, color: "#0A2A66", textAlign: "center" }} />
+      <input type="number" min={min} max={max} value={val} onChange={(e) => save({ garde: { [cle]: Number(e.target.value) } as Garde })} style={{ width: 76, height: 38, padding: "0 8px", borderRadius: 10, border: "1px solid #C9D3E3", fontWeight: 800, color: "#1B0F4D", textAlign: "center" }} />
       <span style={{ fontSize: 12, color: "#5B6B86" }}>{suffixe}</span>
     </label>
   );
@@ -117,7 +117,7 @@ export default function Declencheurs() {
           </div>
           <div className="tv-pilote-carte">
             <span className={`tv-led${auto ? "" : " off"}`} />
-            <span style={{ display: "flex", flexDirection: "column", lineHeight: 1.2 }}><strong style={{ fontSize: 14 }}>Pilote automatique</strong><span style={{ fontSize: 12, color: "#C9D6F2" }}>{auto ? "publie seul quand une règle est remplie" : "tout passe par votre validation"}</span></span>
+            <span style={{ display: "flex", flexDirection: "column", lineHeight: 1.2 }}><strong style={{ fontSize: 14 }}>Pilote automatique</strong><span style={{ fontSize: 12, color: "#D9D2F2" }}>{auto ? "publie seul quand une règle est remplie" : "tout passe par votre validation"}</span></span>
             <button type="button" role="switch" aria-checked={auto} aria-label="Pilote automatique" className={`switch${auto ? " on" : ""}`} onClick={() => save({ autopilot: !auto })} disabled={!s}><span /></button>
           </div>
           <Link href="/declencheurs/modifier" className="tv-btn-nuit"><Trait d={NAV_ICONS.plus} size={16} stroke={2.2} />NOUVEAU DÉCLENCHEUR</Link>
@@ -150,7 +150,7 @@ export default function Declencheurs() {
                 return (
                   <article key={t.id} className="tv-regle-carte" data-off={!on}>
                     <div className="row" style={{ gap: 12, alignItems: "flex-start" }}>
-                      <span className="ico" style={{ background: `linear-gradient(145deg, ${c}, #0A2A66)` }}><Trait d={NAV_ICONS.eclair} size={20} stroke={2} /></span>
+                      <span className="ico" style={{ background: `linear-gradient(145deg, ${c}, #1B0F4D)` }}><Trait d={NAV_ICONS.eclair} size={20} stroke={2} /></span>
                       <span style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 3 }}>
                         <strong style={{ fontFamily: "var(--font-mont)", fontSize: 16 }}>{t.name}</strong>
                         <span style={{ fontSize: 12, color: "#5B6B86" }}>{t.keywords.length ? `« ${t.keywords.slice(0, 4).join(" », « ")} »${t.keywords.length > 4 ? "…" : ""}` : "Aucun mot-clé"}</span>
@@ -161,12 +161,12 @@ export default function Declencheurs() {
                     <div className="chiffres">
                       <span><strong>{st.prepares}</strong><small>préparées · 7 j</small></span>
                       <span><strong style={{ color: "#16A34A" }}>{st.publies}</strong><small>publiées</small></span>
-                      <span><strong style={{ color: "#2563EB" }}>{st.attente}</strong><small>en attente</small></span>
+                      <span><strong style={{ color: "#5B3DF5" }}>{st.attente}</strong><small>en attente</small></span>
                       <span style={{ flex: 1 }} />
                       <span aria-hidden="true" className="spark">{st.parJour.map((v, k) => <i key={k} style={{ height: Math.max(3, Math.round((v / max) * 28)), background: c }} />)}</span>
                     </div>
                     <div className="row" style={{ gap: 8, flexWrap: "wrap", fontSize: 12, alignItems: "center" }}>
-                      <span className="tv-pill" style={enAuto ? { background: "#D9F7E6", color: "#05603A" } : { background: "#FFE8DC", color: "#9A3412" }}>{t.mode === "manuel" ? "Toujours manuel" : enAuto ? "Automatique" : "Manuel (pilote coupé)"}</span>
+                      <span className="tv-pill" style={enAuto ? { background: "#D9F7E6", color: "#05603A" } : { background: "#FFE0EE", color: "#9A3412" }}>{t.mode === "manuel" ? "Toujours manuel" : enAuto ? "Automatique" : "Manuel (pilote coupé)"}</span>
                       <span className="tv-pill bleu">{t.platforms.length === 4 ? "Tous les canaux" : t.platforms.map((p) => PLATFORM_LABEL[p]).join(" · ")}</span>
                       <span className="tv-pill">{FORMAT_LABEL[t.format]} · pertinence ≥ {t.minScore}</span>
                       <span style={{ flex: 1 }} />
@@ -210,7 +210,7 @@ export default function Declencheurs() {
                     <div key={i.id} className="row" style={{ gap: 10, padding: "10px 0", borderTop: "1px solid #EDF1F7" }}>
                       <span className="tv-pill" style={ok ? { background: "#D9F7E6", color: "#05603A" } : {}}>{i.score}</span>
                       <span style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 2 }}>
-                        <a href={i.url} target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, fontWeight: 700, lineHeight: 1.35, color: "#0B1A33", textDecoration: "none" }}>{i.title}</a>
+                        <a href={i.url} target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, fontWeight: 700, lineHeight: 1.35, color: "#150E33", textDecoration: "none" }}>{i.title}</a>
                         <span style={{ fontSize: 11, color: "#5B6B86" }}>{i.sourceName}</span>
                       </span>
                       <span style={{ fontSize: 11, fontWeight: 800, color: ok ? "#05603A" : "#5B6B86" }}>{ok ? "Retenu" : i.blocked ? "Sujet sensible" : "Pertinence trop basse"}</span>
@@ -257,7 +257,7 @@ export default function Declencheurs() {
                       <span className="h">{new Date(p.created_at).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}</span>
                       <span className="trait" style={{ background: e[1] }} />
                       <span style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 2 }}>
-                        <Link href={p.status === "brouillon" ? `/editeur?id=${p.id}` : `/apercu?id=${p.id}`} style={{ fontSize: 13, fontWeight: 700, color: "#0B1A33", textDecoration: "none", lineHeight: 1.35 }}>{p.title || p.idea}</Link>
+                        <Link href={p.status === "brouillon" ? `/editeur?id=${p.id}` : `/apercu?id=${p.id}`} style={{ fontSize: 13, fontWeight: 700, color: "#150E33", textDecoration: "none", lineHeight: 1.35 }}>{p.title || p.idea}</Link>
                         <span style={{ fontSize: 12, color: "#5B6B86" }}>{t ? t.name : "Choix du pilote automatique"} · {e[0]}</span>
                       </span>
                     </li>

@@ -1,5 +1,6 @@
-// Configuration éditoriale de TUVOA : sources, rubriques, déclencheurs, garde-fous.
+// Configuration éditoriale de Media Booster : sources, rubriques, déclencheurs, garde-fous.
 // Modifie ce fichier pour ajouter une source ou un déclencheur.
+import { IDENTITE_MEDIA, MEDIA_PUBLIC } from "@/lib/brand";
 
 export type Platform = "facebook" | "linkedin" | "tiktok" | "wordpress";
 export const PLATFORMS: { id: Platform; label: string; limit: number }[] = [
@@ -97,7 +98,7 @@ export const SOURCES: Source[] = [
 ];
 
 // `poids` : points de pertinence ajoutés quand le thème est détecté (la veille classe les actus avec).
-// Les annonces de nouveaux smartphones intéressent peu le public de TUVOA : elles ne sont pas mises en avant.
+// Les annonces de nouveaux smartphones intéressent peu le public de Media Booster : elles ne sont pas mises en avant.
 export const TOPICS: { id: string; label: string; keywords: string[]; poids: number }[] = [
   { id: "burkina", label: "Burkina Faso", poids: 35, keywords: ["burkina", "burkinabè", "burkinabe", "ouaga", "ouagadougou", "bobo-dioulasso", "koudougou", "faso"] },
   { id: "evenements", label: "Événements tech", poids: 20, keywords: ["forum ia", "cyber africa", "africa tech summit", "innov africa", "gitex", "hackathon", "salon du numérique", "semaine du numérique", "sitic"] },
@@ -113,7 +114,7 @@ export const TOPICS: { id: string; label: string; keywords: string[]; poids: num
 
 export type TriggerFormat = "resume" | "explication" | "les-deux";
 export type TriggerMode = "general" | "manuel";
-// Image jointe au post : seul le visuel TUVOA généré est branché pour l'instant.
+// Image jointe au post : seul le visuel Media Booster généré est branché pour l'instant.
 export type TriggerImage = "visuel" | "presse" | "banque";
 export type Trigger = {
   id: string;
@@ -149,7 +150,7 @@ export const TRIGGERS: Trigger[] = [
     format: "resume",
     platforms: ["facebook", "linkedin", "wordpress"],
     mode: "general",
-    enabledByDefault: false, // nouveaux smartphones : peu suivis par le public de TUVOA
+    enabledByDefault: false, // nouveaux smartphones : peu suivis par le public du média
   },
   {
     id: "ia-modele",
@@ -232,14 +233,14 @@ export function gardeFous(g?: { debut?: number; fin?: number; maxParJour?: numbe
 
 // Guide de style donné à l'IA à chaque rédaction
 export const STYLE_GUIDE = `
-Tu écris pour TUVOA Tech Media (anciennement Warmachiner Tech), média burkinabè et africain d'infos et de formation en technologies, fondé en 2021 (site : www.tuvoa.media).
+Tu écris pour ${IDENTITE_MEDIA}
 Mission : « On décode la tech pour que chacun puisse s'en servir, pas juste la subir. » Conviction : la technologie n'a de valeur que si elle est comprise, et d'impact que si elle est partagée.
-Ligne éditoriale : uniquement la tech, traduite, ancrée dans les réalités locales et expliquée sans jargon, pour un public jeune. Priorité au Burkina Faso, puis à l'Afrique de l'Ouest et au continent : cybersécurité et arnaques, IA, crypto et blockchain, mobile money et télécoms, réseaux sociaux, robotique, startups, et les grands rendez-vous tech africains (Forum IA Ouaga, Forum Cyber Africa, Africa Tech Summit, Innov Africa…).
+Ligne éditoriale : uniquement la tech, traduite, ancrée dans les réalités locales et expliquée sans jargon, pour un public jeune. Priorité à ${MEDIA_PUBLIC}, puis au reste du continent et au monde : cybersécurité et arnaques, IA, crypto et blockchain, mobile money et télécoms, réseaux sociaux, robotique, startups, et les grands rendez-vous tech africains (Forum IA Ouaga, Forum Cyber Africa, Africa Tech Summit, Innov Africa…).
 Quand une actu mondiale a un effet concret pour les lecteurs africains (prix, accès, sécurité, emploi), dis-le en une phrase, sans rien inventer.
 Les annonces de nouveaux smartphones n'intéressent que si elles concernent l'Afrique (prix, disponibilité, modèles vendus localement) : sinon, reste bref.
-Ton : celui d'un média d'information tech sérieux. Neutre, factuel, rigoureux, à la troisième personne : pas de tutoiement, pas d'interpellation du lecteur, pas de formule familière, pas de « tu vois ? ».
+Ton : celui d'un média d'information tech sérieux. Neutre, factuel, rigoureux, à la troisième personne : pas de tutoiement, pas d'interpellation du lecteur, pas de formule familière.
 Le post résume l'information : qui, quoi, quand, chiffres clés, conséquences. Pas de conseils au lecteur sauf si l'info l'exige (ex. mise à jour de sécurité urgente), formulés sobrement.
-Public : lecteurs francophones, en particulier en Afrique de l'Ouest ; explique brièvement le jargon.
+Public : lecteurs francophones, en particulier ${MEDIA_PUBLIC} ; explique brièvement le jargon.
 Langue : écris TOUJOURS en français, même quand l'article source est en anglais (traduis et reformule). Garde seulement les noms propres et de marques tels quels ; les hashtags sont en français ou des noms de marques.
 Règles :
 - Toujours reformuler avec tes propres mots. Ne jamais recopier l'article (aucune phrase reprise, citation de 15 mots maximum).

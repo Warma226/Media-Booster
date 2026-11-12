@@ -1,0 +1,27 @@
+# Lance la veille et les publications planifiées de Media Booster toutes les 15 minutes.
+# À configurer dans GitHub › Settings › Secrets and variables › Actions :
+#   MB_URL         → l'adresse de l'app (ex. https://ton-app.vercel.app)
+#   MB_CRON_SECRET → la même valeur que CRON_SECRET dans Vercel
+name: Media Booster veille et publications
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Appeler la tâche Media Booster
+        env:
+          MB_URL: ${{ secrets.MB_URL }}
+          MB_CRON_SECRET: ${{ secrets.MB_CRON_SECRET }}
+        run: |
+          if [ -z "$MB_URL" ] || [ -z "$MB_CRON_SECRET" ]; then
+            echo "Secrets MB_URL et MB_CRON_SECRET à configurer."
+            exit 0
+          fi
+          curl -sS --fail-with-body --max-time 90 \
+            -H "Authorization: Bearer $MB_CRON_SECRET" \
+            "$MB_URL/api/cron"

@@ -1,16 +1,16 @@
-// VOA « Glitch », la mascotte de l'agent community manager : une boule bleue TUVOA à lunettes noires
+// NOVA « Glitch », la mascotte de l'agent community manager : une boule bleue Media Booster à lunettes noires
 // qui « bugue » quand elle s'énerve. Taquine, jamais méchante. Son humeur suit ce qui se passe sur la Page.
 export type Humeur = "veille" | "ecoute" | "parle" | "content" | "alerte" | "crise" | "dort" | "fete";
 
 export const HUMEURS: Record<Humeur, string> = {
-  veille: "VOA est au grin",
-  ecoute: "VOA écoute un nouveau message",
-  parle: "VOA répond à un abonné",
-  content: "VOA est ravie : tout est traité",
-  alerte: "VOA a repéré une arnaque",
-  crise: "VOA est inquiète : mode crise",
-  dort: "VOA est en pause",
-  fete: "VOA fait la fête",
+  veille: "NOVA est au grin",
+  ecoute: "NOVA écoute un nouveau message",
+  parle: "NOVA répond à un abonné",
+  content: "NOVA est ravie : tout est traité",
+  alerte: "NOVA a repéré une arnaque",
+  crise: "NOVA est inquiète : mode crise",
+  dort: "NOVA est en pause",
+  fete: "NOVA fait la fête",
 };
 
 const CSS = `
@@ -54,7 +54,7 @@ const CSS = `
 @media (prefers-reduced-motion: reduce){.voa svg *{animation:none !important}}
 `;
 
-const ENCRE = "#000000", NUIT = "#0A2A66", BLEU = "#2563EB", CIEL = "#6E9BFF", CYAN = "#00D1FF", ORANGE = "#E94A06";
+const ENCRE = "#000000", NUIT = "#1B0F4D", BLEU = "#5B3DF5", CIEL = "#A08BFF", CYAN = "#00D1FF", ORANGE = "#E11D74";
 const CORPS = { x: 34, y: 44, width: 132, height: 150, rx: 58 };
 
 export default function Voa({ humeur = "veille", taille = 120, decor = false }: { humeur?: Humeur; taille?: number; decor?: boolean }) {

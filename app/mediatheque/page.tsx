@@ -181,7 +181,7 @@ function Mediatheque() {
           <section className="tv-verre tv-media" aria-labelledby="dossier">
             <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 10 }}>
               <nav aria-label="Emplacement" style={{ flex: "1 1 260px", display: "flex", alignItems: "center", gap: 8, fontSize: 14, color: "#5B6B86", minWidth: 0 }}>
-                <button type="button" className="btn link" style={{ fontSize: 14 }} onClick={() => ouvrir(null)}>Stockage TUVOA (T:)</button>
+                <button type="button" className="btn link" style={{ fontSize: 14 }} onClick={() => ouvrir(null)}>Stockage (M:)</button>
                 <span aria-hidden="true">›</span>
                 <h2 id="dossier" className="tv-h2" style={{ fontSize: 18 }}>{cat.dossier}</h2>
                 <span>· {charge ? "…" : `${fichiers.length} élément${fichiers.length > 1 ? "s" : ""}`}</span>

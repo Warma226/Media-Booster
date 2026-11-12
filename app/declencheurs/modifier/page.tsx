@@ -15,7 +15,7 @@ const FORMATS: { id: TriggerFormat; label: string }[] = [
 ];
 
 const IMAGES: { id: TriggerImage; titre: string; texte: string; dispo: boolean }[] = [
-  { id: "visuel", titre: "Visuel TUVOA généré", texte: "Titre de l'actu sur le gabarit de la charte. Recommandé, sans risque de droits.", dispo: true },
+  { id: "visuel", titre: "Visuel Media Booster généré", texte: "Titre de l'actu sur le gabarit de la charte. Recommandé, sans risque de droits.", dispo: true },
   { id: "presse", titre: "Image officielle de presse", texte: "Prise dans l'espace presse de la marque, avec le crédit affiché.", dispo: false },
   { id: "banque", titre: "Banque d'images libre", texte: "Photo libre de droits choisie selon le sujet, avec l'auteur crédité.", dispo: false },
 ];
@@ -198,7 +198,7 @@ function Modifier() {
               </button>
             ))}
           </div>
-          <p className="muted small">Le texte est toujours reformulé dans le ton TUVOA, avec la source citée et le lien vers l'article.</p>
+          <p className="muted small">Le texte est toujours reformulé dans le ton Media Booster, avec la source citée et le lien vers l'article.</p>
         </section>
 
         <section className="stack" style={{ gap: 10 }}>

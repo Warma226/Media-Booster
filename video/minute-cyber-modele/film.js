@@ -6,7 +6,7 @@ import * as M from './lib/motion.js';
 
 const { W, H, E, prog, lerp, clamp, font, kf, hash01, noise1 } = M;
 const D = 'Display', UI = 'UI';
-const C = { noir: '#04060A', encre: '#0A0A0A', papier: '#F3F1EC', orange: '#E94A06', ambre: '#FF8A3D', bleu: '#2563EB', ciel: '#6E9BFF', gris: '#8A93A6', vert: '#22C55E', carte: '#141B2B' };
+const C = { noir: '#04060A', encre: '#0A0A0A', papier: '#F3F1EC', orange: '#E11D74', ambre: '#FF8A3D', bleu: '#5B3DF5', ciel: '#A08BFF', gris: '#8A93A6', vert: '#22C55E', carte: '#141B2B' };
 const B = (s) => s / 0.625;
 
 const PHRASES = [
@@ -254,7 +254,7 @@ function caption(ctx, t, p, { y = 1330, size = 74, color = '#fff', accent = C.am
         ctx.save(); ctx.globalAlpha = k * fo;
         ctx.translate(x + w.w / 2, y0 + li * lh); ctx.scale(z, z);
         if (k < 0.95) ctx.filter = `blur(${((1 - k) * 10).toFixed(1)}px)`;
-        if (glow) { ctx.shadowColor = w.a ? 'rgba(233,74,6,0.8)' : 'rgba(150,190,255,0.35)'; ctx.shadowBlur = size * 0.3; }
+        if (glow) { ctx.shadowColor = w.a ? 'rgba(225,29,116,0.8)' : 'rgba(150,190,255,0.35)'; ctx.shadowBlur = size * 0.3; }
         ctx.fillStyle = w.a ? accent : color; ctx.fillText(w.t, -w.w / 2, 0);
         ctx.restore();
       }
@@ -286,7 +286,7 @@ function chatCard(ctx, t, o) {
     c.fillStyle = '#C9D2E6'; c.font = font(36, 600, UI); c.fillText(label, 50, 290);
     if (money) {
       const v = moneyT ? lerp(from, money, E.outCubic(prog(t, moneyT[0], moneyT[1]))) : money;
-      c.save(); c.fillStyle = grey > 0.5 ? '#5B6476' : C.ambre; c.shadowColor = 'rgba(233,74,6,0.7)'; c.shadowBlur = grey > 0.5 ? 0 : 40;
+      c.save(); c.fillStyle = grey > 0.5 ? '#5B6476' : C.ambre; c.shadowColor = 'rgba(225,29,116,0.7)'; c.shadowBlur = grey > 0.5 ? 0 : 40;
       c.font = font(124, 800, D); c.fillText(`${fmt(v)} F`, 46, 440); c.restore();
     }
     if (statut) { c.fillStyle = C.gris; c.font = font(26, 600, UI); c.fillText(statut, 50, 560); }
@@ -424,7 +424,7 @@ function sCru(ctx, t, I) {
   text3(ctx, 'c’est ce', { x: -440, y: -260, z: 1500, size: 140, glow: 'rgba(150,190,255,0.4)', ry: deg(-10) });
   text3(ctx, 'qu’a cru', { x: -440, y: -100, z: 1500, size: 140, glow: 'rgba(150,190,255,0.4)', ry: deg(-10) });
   const k = sp(t, 6.55, 'bouncy');
-  if (k > 0) text3(ctx, 'Adama.', { x: -460, y: 160 + (1 - k) * 120, z: 1300 - 300 * (1 - k), size: 200, color: C.ambre, glow: 'rgba(233,74,6,0.8)', ry: deg(-8), alpha: clamp(k * 1.4) });
+  if (k > 0) text3(ctx, 'Adama.', { x: -460, y: 160 + (1 - k) * 120, z: 1300 - 300 * (1 - k), size: 200, color: C.ambre, glow: 'rgba(225,29,116,0.8)', ry: deg(-8), alpha: clamp(k * 1.4) });
   const k2 = sp(t, 6.9, 'snappy');
   if (k2 > 0) text3(ctx, 'jeune diplômé · Ouagadougou', { x: -430, y: 330, z: 1250, size: 40, weight: 600, fam: UI, color: C.gris, alpha: clamp(k2), ry: deg(-8) });
   if (t > 6.6) flare(ctx, W * 0.3, 1060, 1 - ease(t, 6.6, 7.5));
@@ -453,7 +453,7 @@ function chatWorld(ctx, t, I, camKeys, focus, extra = {}) {
 function sPresident(ctx, t, I) {
   chatWorld(ctx, t, I, [[7.5, [-500, 150, -400, deg(14), deg(-3), deg(2)]], [10.2, [0, 60, 0, deg(2), 0, 0]], [11.9, [700, 60, -100, deg(-6), 0, 0]]], [[7.5, 1900], [10.2, 1500]]);
   const k = sp(t, 10.35, 'bouncy');
-  if (k > 0) text3(ctx, '→ Voyez mon secrétaire', { x: -380, y: 230, z: 1250, size: 56, color: '#fff', glow: 'rgba(37,99,235,0.9)', alpha: clamp(k * 1.4), ry: deg(-6) });
+  if (k > 0) text3(ctx, '→ Voyez mon secrétaire', { x: -380, y: 230, z: 1250, size: 56, color: '#fff', glow: 'rgba(91,61,245,0.9)', alpha: clamp(k * 1.4), ry: deg(-6) });
   if (t > 10.0 && t < 10.9) flare(ctx, W * 0.55, 850, 1 - ease(t, 10.0, 10.9));
   for (const p of PHRASES.slice(3, 6)) caption(ctx, t, p, { y: 1460, size: 68, out: p[1] + 0.2 });
 }
@@ -480,8 +480,8 @@ function sCompare(ctx, t) {
   if (kB > 0) text3(ctx, '2 000 000', { x: 0, y: -260, z: 1400 - 500 * (1 - kB), size: 180, align: 'center', glow: 'rgba(150,190,255,0.5)', alpha: clamp(kB * 1.4) });
   const kS = sp(t, 17.25, 'snappy');
   const rien = ease(t, 19.6, 20.05, E.inBack);
-  if (kS > 0 && rien < 1) text3(ctx, '15 000', { x: 0, y: kB > 0 ? 40 : -260, z: kB > 0 ? 3000 + rien * 4000 : 1300, size: 220, color: C.ambre, align: 'center', glow: 'rgba(233,74,6,0.8)', alpha: clamp(kS * 1.4) * (1 - rien) });
-  if (t > 19.55) { const k = sp(t, 19.58, 'bouncy'); text3(ctx, 'Rien.', { x: 0, y: 260, z: 1250 + (1 - k) * 900, size: 200, color: C.ambre, align: 'center', glow: 'rgba(233,74,6,0.9)', alpha: clamp(k * 1.4) }); }
+  if (kS > 0 && rien < 1) text3(ctx, '15 000', { x: 0, y: kB > 0 ? 40 : -260, z: kB > 0 ? 3000 + rien * 4000 : 1300, size: 220, color: C.ambre, align: 'center', glow: 'rgba(225,29,116,0.8)', alpha: clamp(kS * 1.4) * (1 - rien) });
+  if (t > 19.55) { const k = sp(t, 19.58, 'bouncy'); text3(ctx, 'Rien.', { x: 0, y: 260, z: 1250 + (1 - k) * 900, size: 200, color: C.ambre, align: 'center', glow: 'rgba(225,29,116,0.9)', alpha: clamp(k * 1.4) }); }
   else caption(ctx, t, PHRASES[t < 18.0 ? 8 : 9], { y: 1460, size: 66 });
 }
 
@@ -491,7 +491,7 @@ function sPaie(ctx, t, amount, t0, total, phrase) {
   dust(ctx, 21, 120, '160,255,200');
   haze(ctx, W / 2, H * 0.42, 700, '34,197,94', 0.16);
   transfer3(ctx, t, t0, amount);
-  if (total) { const k = sp(t, t0 + 0.5, 'snappy'); if (k > 0) { text3(ctx, 'Total envoyé', { x: 0, y: 130, z: 1150, size: 40, weight: 600, fam: UI, color: C.gris, align: 'center', alpha: clamp(k) }); text3(ctx, `${fmt(lerp(15000, total, E.outCubic(prog(t, t0 + 0.5, t0 + 1.0))))} F`, { x: 0, y: 240, z: 1150, size: 130, color: C.ambre, glow: 'rgba(233,74,6,0.8)', align: 'center', alpha: clamp(k) }); } }
+  if (total) { const k = sp(t, t0 + 0.5, 'snappy'); if (k > 0) { text3(ctx, 'Total envoyé', { x: 0, y: 130, z: 1150, size: 40, weight: 600, fam: UI, color: C.gris, align: 'center', alpha: clamp(k) }); text3(ctx, `${fmt(lerp(15000, total, E.outCubic(prog(t, t0 + 0.5, t0 + 1.0))))} F`, { x: 0, y: 240, z: 1150, size: 130, color: C.ambre, glow: 'rgba(225,29,116,0.8)', align: 'center', alpha: clamp(k) }); } }
   caption(ctx, t, phrase, { y: 1430, size: 96 });
 }
 
@@ -589,7 +589,7 @@ function sCriminel(ctx, t, I) {
   const k = sp(t, 44.1, 'bouncy');
   if (k > 0) {
     text3(ctx, 'UN SEUL', { x: -400, y: -640, z: 1150 + (1 - k) * 600, size: 84, glow: 'rgba(255,255,255,0.4)', alpha: clamp(k * 1.4), ry: deg(8), dof: 0 });
-    text3(ctx, 'CYBERCRIMINEL', { x: -410, y: -520, z: 1150 + (1 - k) * 800, size: 92, color: C.ambre, glow: 'rgba(233,74,6,0.9)', alpha: clamp(k * 1.4), ry: deg(8), dof: 0 });
+    text3(ctx, 'CYBERCRIMINEL', { x: -410, y: -520, z: 1150 + (1 - k) * 800, size: 92, color: C.ambre, glow: 'rgba(225,29,116,0.9)', alpha: clamp(k * 1.4), ry: deg(8), dof: 0 });
   }
   const g = sp(t, 45.9, 'bouncy'), pt = sp(t, 47.25, 'snappy');
   if (g > 0) { text3(ctx, 'Promettre', { x: 440, y: 260, z: 1150, size: 64, align: 'right', alpha: clamp(g), dof: 0 }); text3(ctx, 'GROS.', { x: 440, y: 400, z: 1150 + (1 - g) * 700, size: 190, align: 'right', glow: 'rgba(255,255,255,0.4)', alpha: clamp(g * 1.4), dof: 0 }); }
@@ -641,10 +641,10 @@ function intro(ctx, t, I) {
   ctx.save(); ctx.translate(W / 2 + jx, H / 2 + jy); ctx.scale(z, z); ctx.rotate((hash01(k, 5) - 0.5) * 0.06); ctx.translate(-W / 2, -H / 2);
   if (type === 'img' && I[a]) {
     ctx.filter = 'contrast(1.25) saturate(0.6)'; coverImg(ctx, I[a], b, c2, 1.25); ctx.filter = 'none';
-    ctx.fillStyle = 'rgba(233,74,6,0.12)'; ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = 'rgba(225,29,116,0.12)'; ctx.fillRect(0, 0, W, H);
   } else if (type === 'txt') {
     ctx.textAlign = 'center'; ctx.font = font(a.length > 12 ? 104 : 150, 800, D);
-    ctx.shadowColor = b === '#fff' ? 'rgba(150,190,255,0.6)' : 'rgba(233,74,6,0.9)'; ctx.shadowBlur = 60; ctx.fillStyle = b; ctx.fillText(a, W / 2, H / 2 + 50);
+    ctx.shadowColor = b === '#fff' ? 'rgba(150,190,255,0.6)' : 'rgba(225,29,116,0.9)'; ctx.shadowBlur = 60; ctx.fillStyle = b; ctx.fillText(a, W / 2, H / 2 + 50);
   } else if (type === 'notif') {
     ctx.fillStyle = 'rgba(24,31,47,1)'; ctx.beginPath(); ctx.roundRect(90, 800, 900, 300, 46); ctx.fill();
     avatarDraw(ctx, I.cap, 190, 900, 60);
@@ -671,7 +671,7 @@ function intro(ctx, t, I) {
     ctx.save(); ctx.translate(W / 2, H / 2); const sc = 1.6 - 0.6 * kk; ctx.scale(sc, sc);
     ctx.textAlign = 'center'; ctx.globalAlpha = clamp(kk * 1.6);
     ctx.fillStyle = '#fff'; ctx.font = font(84, 800, D); ctx.fillText('LA MINUTE', 0, -40);
-    ctx.fillStyle = C.ambre; ctx.shadowColor = 'rgba(233,74,6,0.9)'; ctx.shadowBlur = 50; ctx.font = font(190, 800, D); ctx.fillText('CYBER', 0, 140);
+    ctx.fillStyle = C.ambre; ctx.shadowColor = 'rgba(225,29,116,0.9)'; ctx.shadowBlur = 50; ctx.font = font(190, 800, D); ctx.fillText('CYBER', 0, 140);
     ctx.restore();
     flare(ctx, W / 2, H / 2 + 80, 1 - ease(t, 1.62, 2.15));
     const out = ease(t, 2.0, INTRO, E.inCubic); if (out > 0) { ctx.fillStyle = `rgba(0,0,0,${out})`; ctx.fillRect(0, 0, W, H); }

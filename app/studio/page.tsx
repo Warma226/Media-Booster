@@ -1,7 +1,7 @@
 "use client";
-// Studio de VOA : éditeur visuel (façon Canva) pour les posts, carrousels et vidéos animées.
+// Studio de NOVA : éditeur visuel (façon Canva) pour les posts, carrousels et vidéos animées.
 // Glisser-déposer, poignée de redimensionnement, double-clic pour écrire, propriétés, animations, pages, export PNG/vidéo,
-// et envoi au calendrier. VOA peut réécrire tous les textes d'un modèle à partir d'un sujet.
+// et envoi au calendrier. NOVA peut réécrire tous les textes d'un modèle à partir d'un sujet.
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { Trait } from "@/components/BottomNav";
@@ -17,8 +17,9 @@ import { STYLES, VOIX, type StyleVoix } from "@/lib/voix-liste";
 import { useVoirPlus } from "@/components/VoirPlus";
 import { logo as elementsLogo } from "@/lib/creation";
 import { listPosts } from "@/lib/client";
+import { MEDIA_COURT, MEDIA_NOM } from "@/lib/brand";
 
-const CLE_BROUILLON = "tuvoa-studio-brouillon";
+const CLE_BROUILLON = "mb-studio-brouillon";
 const ENTREES: [Entree, string][] = [["aucune", "Aucune"], ["fondu", "Fondu"], ["glisser-haut", "Glisse du bas"], ["glisser-bas", "Glisse du haut"], ["glisser-gauche", "Glisse de la droite"], ["glisser-droite", "Glisse de la gauche"], ["zoom", "Zoom"], ["pop", "Pop (rebond)"], ["machine", "Machine à écrire"]];
 const BOUCLES: [Boucle, string][] = [["aucune", "Aucune"], ["flotter", "Flotter"], ["pulser", "Pulser"], ["balancer", "Balancer"], ["tourner", "Tourner"], ["defiler", "Défiler (bandeau)"], ["clignoter", "Clignoter"], ["trembler", "Trembler"]];
 const OMBRES: [Ombre, string][] = [["aucune", "Aucune"], ["douce", "Douce"], ["forte", "Forte"], ["neon", "Néon bleu"], ["verre", "Verre"]];
@@ -27,7 +28,7 @@ const INFO_GENRE: Record<Genre, { taille: string; sous: string; ideal: string[] 
   carrousel: { taille: "4:5 · 2 à 10 pages", sous: "Plusieurs pages à faire défiler", ideal: ["Réflexes", "Pas à pas", "Chiffres clés"] },
   video: { taille: "9:16 · 60 s max", sous: "Reel, story ou TikTok animé, avec voix off", ideal: ["Reel", "Story", "Narration"] },
 };
-const NUANCIER = ["#FFFFFF", "#0A0A0A", "#2563EB", "#6E9BFF", "#0A2A66", "#E94A06", "#F2B21B", "#DCE6FF", "#F3F4F6"];
+const NUANCIER = ["#FFFFFF", "#0A0A0A", "#5B3DF5", "#A08BFF", "#1B0F4D", "#E11D74", "#F2B21B", "#E6E0FF", "#F3F4F6"];
 
 type Glisse = { mode: "deplacer" | "redim"; id: string; x0: number; y0: number; el0: El } | null;
 
@@ -87,8 +88,8 @@ function controler(doc: Doc): Point[] {
   }
   const faibles = textes.filter(({ e, p }) => { const c = contraste(e.couleur ?? "#FFFFFF", e.fond ?? p.fond); return c !== null && c < ((e.police ?? 0) * vu >= 18 ? 3 : 4.5); });
   out.push({ ok: faibles.length === 0, texte: faibles.length ? `Contraste trop faible : « ${(faibles[0].e.texte ?? "").slice(0, 24)}… »` : "Contraste suffisant sur les fonds unis", el: faibles[0]?.e.id, page: faibles[0]?.i });
-  const sansLogo = doc.pages.findIndex((p) => !p.elements.some((e) => (e.nom ?? "").startsWith("Logo") || (e.texte ?? "").trim().toUpperCase() === "TUVOA"));
-  out.push({ ok: sansLogo === -1 || (doc.pages.length > 1 && sansLogo > 0), texte: sansLogo === -1 ? "Logo TUVOA présent" : sansLogo === 0 ? "Logo TUVOA absent de la première page" : "Logo TUVOA sur la couverture", page: sansLogo === 0 ? 0 : undefined });
+  const sansLogo = doc.pages.findIndex((p) => !p.elements.some((e) => (e.nom ?? "").startsWith("Logo") || (e.texte ?? "").trim().toUpperCase() === MEDIA_COURT));
+  out.push({ ok: sansLogo === -1 || (doc.pages.length > 1 && sansLogo > 0), texte: sansLogo === -1 ? "Logo du média présent" : sansLogo === 0 ? "Logo du média absent de la première page" : "Logo du média sur la couverture", page: sansLogo === 0 ? 0 : undefined });
   const z = ZONE[doc.format];
   const hors = doc.pages.flatMap((p, i) => p.elements.filter((e) => ["texte", "icone", "carte"].includes(e.type) && (e.x < W * z.g - 2 || e.y < H * z.h - 2 || e.x + e.w > W * (1 - z.d) + 2 || e.y + e.h > H * (1 - z.b) + 2)).map((e) => ({ e, i })));
   out.push({ ok: hors.length === 0, texte: hors.length ? `${hors.length} élément${hors.length > 1 ? "s" : ""} hors de la zone sûre (« ${hors[0].e.nom ?? hors[0].e.type} »)` : `Tout est dans la zone sûre${doc.format === "story" ? " de TikTok et des stories" : ""}`, el: hors[0]?.e.id, page: hors[0]?.i });
@@ -141,7 +142,7 @@ export default function Studio() {
   const elSel = page.elements.find((e) => e.id === sel) ?? null;
   const echelle = largeurVue / W;
 
-  // Police TUVOA pour le canvas
+  // Police de la charte pour le canvas
   useEffect(() => {
     POLICE.famille = `${montserrat.style.fontFamily}, Montserrat, sans-serif`;
     const f = montserrat.style.fontFamily.split(",")[0].replace(/['"]/g, "");
@@ -157,7 +158,7 @@ export default function Studio() {
         setBrouillon(d);
         if (new URLSearchParams(window.location.search).get("reprendre") === "1") {
           setDoc(d); setPageIdx(0); setEnVideo(d.genre === "video"); setEtape("editeur");
-          const l = localStorage.getItem("tuvoa-studio-legende"); if (l) { setLegende(l); localStorage.removeItem("tuvoa-studio-legende"); }
+          const l = localStorage.getItem("mb-studio-legende"); if (l) { setLegende(l); localStorage.removeItem("mb-studio-legende"); }
           window.history.replaceState(null, "", "/studio");
         }
       }
@@ -306,7 +307,7 @@ export default function Studio() {
     setBusy("png"); setError("");
     try {
       const liste = toutes ? doc.pages : [page];
-      for (const [i, p] of liste.entries()) telecharger(await versBlob(rendrePage(p)), `TUVOA_${toutes ? `page${i + 1}` : `page${pageIdx + 1}`}.png`);
+      for (const [i, p] of liste.entries()) telecharger(await versBlob(rendrePage(p)), `MediaBooster_${toutes ? `page${i + 1}` : `page${pageIdx + 1}`}.png`);
     } catch (e) { setError((e as Error).message); } finally { setBusy(""); }
   }
 
@@ -356,11 +357,11 @@ export default function Studio() {
   }
   async function exporterVideo() {
     setBusy("video"); setError("");
-    try { const v = await enregistrerVideo(); telecharger(v.blob, `TUVOA_video.${v.ext}`); }
+    try { const v = await enregistrerVideo(); telecharger(v.blob, `MediaBooster_video.${v.ext}`); }
     catch (e) { setError((e as Error).message); } finally { setBusy(""); setMsg(""); }
   }
 
-  // ─── VOA réécrit les textes ────────────────────────────────────
+  // ─── NOVA réécrit les textes ────────────────────────────────────
   async function rediger() {
     setBusy("rediger"); setError("");
     try {
@@ -432,7 +433,7 @@ export default function Studio() {
   const tousModeles = useMemo(() => (Object.keys(GALERIE) as Genre[]).flatMap((g) => GALERIE[g].map((m) => ({ m, d: m.doc(), g }))), []);
   const vModeles = useVoirPlus(tousModeles.filter((x) => filtreModeles === "tous" || x.g === filtreModeles), 12, filtreModeles);
   const vActus = useVoirPlus(actus, 3);
-  const depuisActu = (titre: string, g: Genre) => { ouvrir(GALERIE[g][0]); setSujet(titre); setMsg("Sujet repris : cliquez « Réécrire tous les textes avec VOA » pour adapter les textes."); };
+  const depuisActu = (titre: string, g: Genre) => { ouvrir(GALERIE[g][0]); setSujet(titre); setMsg("Sujet repris : cliquez « Réécrire tous les textes avec NOVA » pour adapter les textes."); };
   const reprendre = () => { if (!brouillon) return; setDoc(brouillon); setPageIdx(0); setSel(null); setEnVideo(brouillon.genre === "video"); setEtape("editeur"); };
   const minis = useMemo(() => doc.pages.map((p) => p.id), [doc.pages]);
   const directions = useMemo(() => GALERIE[doc.genre ?? "visuel"].slice(0, 3).map((m) => ({ m, d: m.doc() })), [doc.genre]);
@@ -449,7 +450,7 @@ export default function Studio() {
       <span className="label">{label}</span>
       <div className="row" style={{ flexWrap: "wrap", gap: 6 }}>
         {NUANCIER.map((c) => <button key={c} type="button" aria-label={`Couleur ${c}`} onClick={() => f(c)} style={{ width: 30, height: 30, borderRadius: 8, background: c, border: v === c ? "3px solid var(--bleu)" : "1px solid #CBD5E1", cursor: "pointer" }} />)}
-        <input type="text" aria-label={`${label} (code)`} value={v ?? ""} onChange={(e) => f(e.target.value)} placeholder="#2563EB ou lin:#a,#b,90" style={{ flex: 1, minWidth: 140 }} />
+        <input type="text" aria-label={`${label} (code)`} value={v ?? ""} onChange={(e) => f(e.target.value)} placeholder="#5B3DF5 ou lin:#a,#b,90" style={{ flex: 1, minWidth: 140 }} />
       </div>
     </div>
   );
@@ -461,7 +462,7 @@ export default function Studio() {
           <div style={{ flex: "1 1 300px", display: "flex", flexDirection: "column", gap: 4, minWidth: 0 }}>
             <Link href="/creer" className="tv-gris" style={{ textDecoration: "none", fontWeight: 600 }}>← Créer</Link>
             <h1 className="tv-titre" style={{ fontFamily: "var(--font-mont), sans-serif" }}>Studio</h1>
-            <span style={{ fontSize: 14, color: "#33425C" }}>Visuels, carrousels et vidéos aux couleurs de TUVOA</span>
+            <span style={{ fontSize: 14, color: "#33425C" }}>Visuels, carrousels et vidéos aux couleurs de votre média</span>
           </div>
         </header>
       ) : null}
@@ -473,7 +474,7 @@ export default function Studio() {
                 <Voa humeur="parle" taille={52} />
                 <span style={{ display: "flex", flexDirection: "column", gap: 2 }}>
                   <h2 id="t-sa-format" className="tv-h2" style={{ fontSize: 24 }}>Que voulez-vous créer ?</h2>
-                  <span className="tv-gris" style={{ fontSize: 13 }}>Choisissez un format : VOA propose 10 maquettes d&apos;inspiration, toutes modifiables.</span>
+                  <span className="tv-gris" style={{ fontSize: 13 }}>Choisissez un format : NOVA propose 10 maquettes d&apos;inspiration, toutes modifiables.</span>
                 </span>
               </div>
               <div className="tv-sa-formats">
@@ -513,7 +514,7 @@ export default function Studio() {
                   <h2 id="t-sa-actu" className="tv-h2" style={{ fontSize: 18, flex: 1 }}>Partir d&apos;une actu publiée</h2>
                   <Link href="/veille" style={{ fontSize: 13, fontWeight: 800, textDecoration: "none" }}>Toute la veille →</Link>
                 </div>
-                <span className="tv-gris" style={{ fontSize: 12, paddingBottom: 4 }}>La maquette s&apos;ouvre avec ce sujet : VOA réécrit les textes d&apos;un clic.</span>
+                <span className="tv-gris" style={{ fontSize: 12, paddingBottom: 4 }}>La maquette s&apos;ouvre avec ce sujet : NOVA réécrit les textes d&apos;un clic.</span>
                 {vActus.visibles.map((t) => (
                   <div key={t} className="tv-sa-actu">
                     <strong>{t}</strong>
@@ -529,7 +530,7 @@ export default function Studio() {
 
             <section aria-labelledby="t-sa-modeles" className="tv-carte">
               <div className="row" style={{ gap: 10, flexWrap: "wrap" }}>
-                <h2 id="t-sa-modeles" className="tv-h2" style={{ fontSize: 18, flex: 1 }}>Modèles TUVOA</h2>
+                <h2 id="t-sa-modeles" className="tv-h2" style={{ fontSize: 18, flex: 1 }}>Modèles Media Booster</h2>
                 <div className="tv-segments" role="tablist" aria-label="Filtrer les modèles">
                   {([["tous", "Tous"], ...GENRES.map((g) => [g.id, g.nom])] as [Genre | "tous", string][]).map(([k, l]) => (
                     <button key={k} type="button" role="tab" aria-selected={filtreModeles === k} aria-pressed={filtreModeles === k} onClick={() => setFiltreModeles(k)}>{l}</button>
@@ -557,7 +558,7 @@ export default function Studio() {
                   <span style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 3, textAlign: "left" }}>
                     <strong style={{ fontSize: 14 }}>{brouillon.titre || "Sans titre"}</strong>
                     <span style={{ fontSize: 12, color: "#5B6B86" }}>{GENRES.find((g) => g.id === (brouillon.genre ?? "visuel"))?.nom} · {brouillon.pages.length} page{brouillon.pages.length > 1 ? "s" : ""}{brouillon.audio ? " · voix off" : ""}</span>
-                    <span style={{ fontSize: 12, fontWeight: 800, color: "#2563EB" }}>Reprendre →</span>
+                    <span style={{ fontSize: 12, fontWeight: 800, color: "#5B3DF5" }}>Reprendre →</span>
                   </span>
                 </button>
                 <span className="tv-gris" style={{ fontSize: 12 }}>Gardée dans ce navigateur. Exportez ou envoyez-la au calendrier pour la retrouver ailleurs.</span>
@@ -565,14 +566,14 @@ export default function Studio() {
             ) : null}
             <section className="tv-carte-side" aria-labelledby="t-sa-charte">
               <h2 id="t-sa-charte" className="tv-h2" style={{ fontSize: 17 }}>La charte, toujours appliquée</h2>
-              <div className="row" style={{ gap: 8 }}>{[["Nuit", "#0A2A66"], ["Bleu", "#2563EB"], ["Orange", "#E94A06"], ["Noir", "#0A0A0A"], ["Blanc", "#FFFFFF"]].map(([n, c]) => <span key={n} title={n} style={{ width: 30, height: 30, borderRadius: 9, background: c, border: "1px solid rgba(0,0,0,0.08)" }} />)}</div>
-              <span style={{ fontSize: 13, color: "#33425C", lineHeight: 1.45 }}>Montserrat pour les titres, logo TUVOA en haut à gauche, zone sûre réservée aux interfaces de TikTok et des Reels.</span>
+              <div className="row" style={{ gap: 8 }}>{[["Nuit", "#1B0F4D"], ["Bleu", "#5B3DF5"], ["Orange", "#E11D74"], ["Noir", "#0A0A0A"], ["Blanc", "#FFFFFF"]].map(([n, c]) => <span key={n} title={n} style={{ width: 30, height: 30, borderRadius: 9, background: c, border: "1px solid rgba(0,0,0,0.08)" }} />)}</div>
+              <span style={{ fontSize: 13, color: "#33425C", lineHeight: 1.45 }}>Montserrat pour les titres, logo du média en haut à gauche, zone sûre réservée aux interfaces de TikTok et des Reels.</span>
             </section>
             <section className="tv-sa-voix" aria-labelledby="t-sa-voix">
               <Voa humeur="veille" taille={40} />
               <span style={{ display: "flex", flexDirection: "column", gap: 4 }}>
                 <strong id="t-sa-voix" style={{ fontSize: 14 }}>{VOIX.length} voix de narration</strong>
-                <span style={{ fontSize: 13, color: "#C9D6F2", lineHeight: 1.45 }}>Dans une vidéo, ouvrez « Ajouter une voix off » : choisissez la voix et le ton (conteur, flash info, pub), VOA enregistre.</span>
+                <span style={{ fontSize: 13, color: "#D9D2F2", lineHeight: 1.45 }}>Dans une vidéo, ouvrez « Ajouter une voix off » : choisissez la voix et le ton (conteur, flash info, pub), NOVA enregistre.</span>
               </span>
             </section>
           </aside>
@@ -615,7 +616,7 @@ export default function Studio() {
         <div className="tv-studio-barre">
           <button type="button" className="tv-verre-btn" aria-label="Revenir à l'accueil du Studio" onClick={() => setEtape("accueil")}><Trait d="M15 18l-6-6 6-6" size={20} stroke={2.2} /></button>
           <div style={{ flex: "1 1 260px", minWidth: 0, display: "flex", flexDirection: "column", gap: 2 }}>
-            <span className="tv-kicker" style={{ color: "#FFB48A", letterSpacing: 2 }}>STUDIO · {(GENRES.find((g) => g.id === (doc.genre ?? "visuel"))?.nom ?? "Création").toUpperCase()}</span>
+            <span className="tv-kicker" style={{ color: "#FF9CC6", letterSpacing: 2 }}>STUDIO · {(GENRES.find((g) => g.id === (doc.genre ?? "visuel"))?.nom ?? "Création").toUpperCase()}</span>
             <label><span className="sr-only">Nom de la création</span><input className="tv-studio-titre" value={doc.titre ?? ""} placeholder="Sans titre" onChange={(e) => changer((d) => ({ ...d, titre: e.target.value }), false)} /></label>
           </div>
           <div role="radiogroup" aria-label="Format" className="tv-studio-formats">
@@ -659,22 +660,22 @@ export default function Studio() {
               onPointerDown={toucher} onPointerMove={bouger} onPointerUp={lacher} onPointerCancel={lacher}
               onDoubleClick={() => { if (elSel && elSel.type === "texte") setEdition(elSel.id); }}>
               <canvas ref={canvasRef} width={W} height={H} style={{ width: "100%", height: "100%", display: "block" }} aria-label="Création en cours" />
-              {guide.v ? <div style={{ position: "absolute", left: largeurVue / 2, top: 0, bottom: 0, width: 1, background: "#E94A06" }} /> : null}
-              {guide.h ? <div style={{ position: "absolute", top: (H * echelle) / 2, left: 0, right: 0, height: 1, background: "#E94A06" }} /> : null}
+              {guide.v ? <div style={{ position: "absolute", left: largeurVue / 2, top: 0, bottom: 0, width: 1, background: "#E11D74" }} /> : null}
+              {guide.h ? <div style={{ position: "absolute", top: (H * echelle) / 2, left: 0, right: 0, height: 1, background: "#E11D74" }} /> : null}
               {zone && !lecture ? <div aria-hidden="true" style={{ position: "absolute", left: `${ZONE[doc.format].g * 100}%`, right: `${ZONE[doc.format].d * 100}%`, top: `${ZONE[doc.format].h * 100}%`, bottom: `${ZONE[doc.format].b * 100}%`, border: "1.5px dashed rgba(255,180,138,0.75)", borderRadius: 4, pointerEvents: "none" }} /> : null}
               {elSel && !lecture ? (
                 <div style={{ position: "absolute", left: elSel.x * echelle, top: elSel.y * echelle, width: elSel.w * echelle, height: elSel.h * echelle, border: "2px solid #60A5FA", pointerEvents: "none" }}>
-                  <div style={{ position: "absolute", right: -9, bottom: -9, width: 18, height: 18, background: "#FFFFFF", border: "2px solid #2563EB", borderRadius: 4 }} />
+                  <div style={{ position: "absolute", right: -9, bottom: -9, width: 18, height: 18, background: "#FFFFFF", border: "2px solid #5B3DF5", borderRadius: 4 }} />
                 </div>
               ) : null}
               {edition && elSel && elSel.id === edition ? (
                 <textarea autoFocus defaultValue={elSel.texte} onBlur={(e) => { majEl(elSel.id, { texte: e.target.value }); setEdition(null); }} onPointerDown={(e) => e.stopPropagation()}
-                  style={{ position: "absolute", left: elSel.x * echelle, top: elSel.y * echelle, width: Math.max(120, elSel.w * echelle), minHeight: Math.max(40, elSel.h * echelle), fontSize: Math.max(12, (elSel.police ?? 40) * echelle), fontWeight: elSel.graisse ?? 800, fontFamily: POLICE.famille, lineHeight: elSel.interligne ?? 1.1, textAlign: elSel.align ?? "left", background: "rgba(255,255,255,.92)", color: "#0A0A0A", border: "2px solid #2563EB", padding: 4, resize: "both" }} />
+                  style={{ position: "absolute", left: elSel.x * echelle, top: elSel.y * echelle, width: Math.max(120, elSel.w * echelle), minHeight: Math.max(40, elSel.h * echelle), fontSize: Math.max(12, (elSel.police ?? 40) * echelle), fontWeight: elSel.graisse ?? 800, fontFamily: POLICE.famille, lineHeight: elSel.interligne ?? 1.1, textAlign: elSel.align ?? "left", background: "rgba(255,255,255,.92)", color: "#0A0A0A", border: "2px solid #5B3DF5", padding: 4, resize: "both" }} />
               ) : null}
             </div>
             <div className="row" style={{ gap: 14, flexWrap: "wrap", justifyContent: "center" }}>
               <label className="row tv-studio-gris" style={{ gap: 8, fontSize: 12, fontWeight: 600, cursor: "pointer" }}>
-                <input type="checkbox" checked={zone} onChange={(e) => setZone(e.target.checked)} style={{ width: 16, height: 16, accentColor: "#E94A06" }} />
+                <input type="checkbox" checked={zone} onChange={(e) => setZone(e.target.checked)} style={{ width: 16, height: 16, accentColor: "#E11D74" }} />
                 Zone sûre
               </label>
               <span className="tv-studio-gris" style={{ fontSize: 12 }}>Glisser pour déplacer · poignée pour redimensionner · double-clic pour écrire</span>
@@ -700,7 +701,7 @@ export default function Studio() {
                   <span className="barre" />
                   <span className="post-fantome" />
                   <div className="post">
-                    <span className="row" style={{ gap: 6, padding: 6 }}><span style={{ width: 16, height: 16, borderRadius: 8, background: "#0A2A66" }} /><span style={{ fontSize: 9, fontWeight: 700 }}>TUVOA Tech Media</span></span>
+                    <span className="row" style={{ gap: 6, padding: 6 }}><span style={{ width: 16, height: 16, borderRadius: 8, background: "#1B0F4D" }} /><span style={{ fontSize: 9, fontWeight: 700 }}>{MEDIA_NOM}</span></span>
                     <span style={{ display: "block", padding: "0 6px 6px", fontSize: 8, lineHeight: 1.35, color: "#050505" }}>{(legende || "Le texte du post apparaît ici.").slice(0, 70)}{legende.length > 70 ? "… " : " "}<span style={{ color: "#65676B" }}>Voir plus</span></span>
                     <Miniature page={page} format={doc.format} images={images.current} version={version} actif={false} onClick={() => undefined} numero={pageIdx + 1} largeur={168} />
                   </div>
@@ -715,13 +716,13 @@ export default function Studio() {
               return (
                 <section className="tv-carte-side" aria-labelledby="t-qualite">
                   <div className="row" style={{ gap: 12 }}>
-                    <span role="img" aria-label={`Note de lisibilité ${note} sur 100`} className="tv-note" style={{ background: `conic-gradient(${note >= 80 ? "#22C55E" : "#E94A06"} 0 ${note}%, #EDF1F7 ${note}% 100%)` }}><span>{note}</span></span>
+                    <span role="img" aria-label={`Note de lisibilité ${note} sur 100`} className="tv-note" style={{ background: `conic-gradient(${note >= 80 ? "#22C55E" : "#E11D74"} 0 ${note}%, #EDF1F7 ${note}% 100%)` }}><span>{note}</span></span>
                     <span style={{ display: "flex", flexDirection: "column" }}><h2 id="t-qualite" className="tv-h2" style={{ fontSize: 16 }}>Note de lisibilité</h2><span className="tv-gris" style={{ fontSize: 12 }}>sur téléphone, dans le fil</span></span>
                   </div>
                   <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: 8 }}>
                     {pts.map((x) => (
                       <li key={x.texte} className="row" style={{ gap: 10, alignItems: "flex-start", fontSize: 13, lineHeight: 1.4 }}>
-                        <span style={{ width: 18, height: 18, borderRadius: 9, flexShrink: 0, marginTop: 1, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", background: x.ok ? "#16A34A" : "#E94A06" }}><Trait d={x.ok ? "M20 6L9 17l-5-5" : "M12 8v5M12 17h.01"} size={11} stroke={3.2} /></span>
+                        <span style={{ width: 18, height: 18, borderRadius: 9, flexShrink: 0, marginTop: 1, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", background: x.ok ? "#16A34A" : "#E11D74" }}><Trait d={x.ok ? "M20 6L9 17l-5-5" : "M12 8v5M12 17h.01"} size={11} stroke={3.2} /></span>
                         {!x.ok && (x.el || x.page !== undefined) ? (
                           <button type="button" className="btn link" style={{ fontSize: 13, color: "#9A3412", fontWeight: 600, textAlign: "left", padding: 0, minHeight: 0 }} onClick={() => { if (x.page !== undefined) setPageIdx(x.page); setSel(x.el ?? null); }}>{x.texte}</button>
                         ) : <span style={{ color: x.ok ? "#33425C" : "#9A3412", fontWeight: x.ok ? 400 : 600 }}>{x.texte}</span>}
@@ -732,9 +733,9 @@ export default function Studio() {
               );
             })()}
             <section className="tv-carte-side" aria-labelledby="t-charte">
-              <h2 id="t-charte" className="tv-h2" style={{ fontSize: 16 }}>Charte TUVOA</h2>
+              <h2 id="t-charte" className="tv-h2" style={{ fontSize: 16 }}>Charte du média</h2>
               <div className="row" style={{ gap: 8, flexWrap: "wrap" }}>
-                {([["#0A2A66", "Nuit"], ["#2563EB", "Bleu"], ["#6E9BFF", "Bleu clair"], ["#E94A06", "Orange"], ["#F2EFE8", "Crème"], ["#FFFFFF", "Blanc"]] as const).map(([c, n]) => (
+                {([["#1B0F4D", "Nuit"], ["#5B3DF5", "Bleu"], ["#A08BFF", "Bleu clair"], ["#E11D74", "Orange"], ["#F2EFE8", "Crème"], ["#FFFFFF", "Blanc"]] as const).map(([c, n]) => (
                   <button key={c} type="button" title={elSel ? `Appliquer ${n}` : n} aria-label={elSel ? `Appliquer la couleur ${n} à l'élément` : `Couleur ${n}`} disabled={!elSel}
                     onClick={() => elSel && majEl(elSel.id, elSel.type === "texte" || elSel.type === "icone" || elSel.type === "rayons" ? { couleur: c } : { fond: c })}
                     style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4, fontSize: 10, color: "#5B6B86", background: "none", border: 0, padding: 0, cursor: elSel ? "pointer" : "default" }}>
@@ -823,7 +824,7 @@ export default function Studio() {
                 <p className="section-title">Page {pageIdx + 1}</p>
                 <label className="field">Format<select value={doc.format} onChange={(e) => changer((d) => ({ ...d, format: e.target.value as Format }))}>{Object.entries(FORMATS).map(([k, v]) => <option key={k} value={k}>{v.nom} ({v.w} × {v.h})</option>)}</select></label>
                 {couleur("Fond de la page", page.fond, (c) => majPage({ fond: c }))}
-                <p className="muted" style={{ fontSize: 13 }}>Dégradés : « lin:#0B1633,#2563EB,160 » (linéaire) ou « rad:#FFD45A,#F2B21B,#4A2204 » (radial).</p>
+                <p className="muted" style={{ fontSize: 13 }}>Dégradés : « lin:#150E33,#5B3DF5,160 » (linéaire) ou « rad:#FFD45A,#F2B21B,#4A2204 » (radial).</p>
                 {doc.sequence ? (
                   <>
                     {num("Durée de cette scène (s)", page.duree ?? doc.duree, (v) => majPage({ duree: Math.max(1, Math.min(30, v)) }), 0.1)}
@@ -837,7 +838,7 @@ export default function Studio() {
             <section className="card" style={{ gap: 10 }}>
               <div className="row" style={{ gap: 12, alignItems: "center" }}>
                 <Voa humeur={busy === "rediger" ? "parle" : envoye ? "fete" : "veille"} taille={56} decor />
-                <p className="section-title" style={{ flex: 1 }}>VOA écrit les textes</p>
+                <p className="section-title" style={{ flex: 1 }}>NOVA écrit les textes</p>
               </div>
               <label className="field">Sujet ou occasion<input type="text" value={sujet} onChange={(e) => setSujet(e.target.value)} placeholder="Ex. bon week-end et prudence en ligne" /></label>
               {actus.length ? (
@@ -848,7 +849,7 @@ export default function Studio() {
                   </select>
                 </label>
               ) : null}
-              <button type="button" className="btn primary" disabled={!!busy} onClick={rediger}>{busy === "rediger" ? "VOA écrit…" : "Réécrire tous les textes avec VOA"}</button>
+              <button type="button" className="btn primary" disabled={!!busy} onClick={rediger}>{busy === "rediger" ? "NOVA écrit…" : "Réécrire tous les textes avec NOVA"}</button>
             </section>
 
             <section id="exporter" className="card" style={{ gap: 10, scrollMarginTop: 16 }}>
@@ -858,7 +859,7 @@ export default function Studio() {
                 {doc.pages.length > 1 ? btn("PNG de toutes les pages", () => exporterPNG(true)) : null}
                 {btn(busy === "video" ? "Enregistrement…" : `Vidéo (${Math.round(dureeTotale(doc))} s)`, exporterVideo)}
               </div>
-              <label className="field">Texte du post<textarea rows={4} value={legende} onChange={(e) => setLegende(e.target.value)} placeholder="VOA le propose quand elle réécrit les textes." /></label>
+              <label className="field">Texte du post<textarea rows={4} value={legende} onChange={(e) => setLegende(e.target.value)} placeholder="NOVA le propose quand elle réécrit les textes." /></label>
               <div className="grid2">
                 <label className="field">Publier en<select value={enVideo ? "video" : "image"} onChange={(e) => setEnVideo(e.target.value === "video")}><option value="image">{doc.pages.length > 1 ? `Carrousel (${doc.pages.length} images)` : "Image"}</option><option value="video">Vidéo animée</option></select></label>
                 <label className="field">Programmer (facultatif)<input type="datetime-local" value={quand} onChange={(e) => setQuand(e.target.value)} /></label>
@@ -907,7 +908,7 @@ export default function Studio() {
               <label className="field">Texte lu <span className="tv-studio-gris" style={{ fontWeight: 400, fontSize: 12 }}>seul ce texte est prononcé ; le ton est donné à part</span>
                 <textarea rows={4} value={voixTexte ?? texteNarration} onChange={(e) => setVoixTexte(e.target.value)} />
               </label>
-              <button type="button" className="btn primary" style={{ alignSelf: "flex-start" }} disabled={!!busy || !(voixTexte ?? texteNarration).trim()} onClick={genererVoix}>{busy === "voix" ? "VOA enregistre…" : "Générer la voix off"}</button>
+              <button type="button" className="btn primary" style={{ alignSelf: "flex-start" }} disabled={!!busy || !(voixTexte ?? texteNarration).trim()} onClick={genererVoix}>{busy === "voix" ? "NOVA enregistre…" : "Générer la voix off"}</button>
             </details>
             <span className="tv-studio-gris" style={{ fontSize: 12 }}>Chaque page est une scène ; réglez la durée de la scène choisie dans le panneau de droite.</span>
           </section>

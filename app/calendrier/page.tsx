@@ -17,7 +17,7 @@ const LIGNES: { id: Ligne; nom: string; rythme: string; c: [string, string] }[] 
   { id: "cyberbase", nom: "#CyberBase", rythme: `Chaque jour à ${heureFixe("cyberbase") ?? 7} h`, c: RUB.cyberbase.c },
   { id: "citation", nom: "Citations", rythme: "Toutes les 2 h", c: RUB.citation.c },
   { id: "actu", nom: "Actualités", rythme: "Pilote auto · 6 h – 20 h", c: RUB.actu.c },
-  { id: "recap", nom: "Récap du vendredi", rythme: "Chaque vendredi", c: ["#93C5FD", "#0A2A66"] },
+  { id: "recap", nom: "Récap du vendredi", rythme: "Chaque vendredi", c: ["#93C5FD", "#1B0F4D"] },
   { id: "portrait", nom: "Portrait", rythme: "Sur accord de la personne", c: RUB.portrait.c },
 ];
 const FILTRES: { id: "tout" | "sansphoto" | PostStatus; label: string }[] = [
@@ -31,7 +31,7 @@ const FILTRES: { id: "tout" | "sansphoto" | PostStatus; label: string }[] = [
 ];
 const ETAT: Record<string, [string, string, string]> = {
   publie: ["Publié", "#D9F7E6", "#05603A"],
-  planifie: ["Planifié", "#E7EEFF", "#1D4ED8"],
+  planifie: ["Planifié", "#E7EEFF", "#4527D9"],
   a_valider: ["À valider", "#FEF3E2", "#B54708"],
   erreur: ["À corriger", "#FDE3E6", "#9F1239"],
   brouillon: ["Brouillon", "#EEF2F8", "#33425C"],
@@ -263,9 +263,9 @@ function Calendrier() {
               </div>
               <div className="tv-legende" style={{ fontSize: 12, padding: "12px 10px 0", borderTop: "1px solid rgba(201,211,227,0.5)", marginTop: 8 }}>
                 <span><span style={{ width: 8, height: 8, borderRadius: 4, background: "#16A34A" }} />Publié</span>
-                <span><span style={{ width: 8, height: 8, borderRadius: 4, background: "#2563EB" }} />Planifié</span>
+                <span><span style={{ width: 8, height: 8, borderRadius: 4, background: "#5B3DF5" }} />Planifié</span>
                 <span><span style={{ width: 8, height: 8, borderRadius: 4, background: "#E11D2E" }} />À corriger</span>
-                <span><span style={{ width: 18, height: 14, borderRadius: 6, border: "1.5px dashed #E94A06", boxSizing: "border-box" }} />Créneau vide</span>
+                <span><span style={{ width: 18, height: 14, borderRadius: 6, border: "1.5px dashed #E11D74", boxSizing: "border-box" }} />Créneau vide</span>
                 <span style={{ flex: 1 }} />
                 <span>Cliquez sur une case pour voir le détail du jour.</span>
               </div>
@@ -276,7 +276,7 @@ function Calendrier() {
               <section className="tv-carte-side">
                 <div className="row" style={{ flexWrap: "wrap", gap: 8, alignItems: "baseline" }}>
                   <h2 id="t-jour" className="tv-h2" style={{ fontSize: 20 }}>{titreJour}</h2>
-                  {jour === aujK ? <span className="tv-tag" style={{ background: "#0A2A66", color: "#fff" }}>AUJOURD'HUI</span> : null}
+                  {jour === aujK ? <span className="tv-tag" style={{ background: "#1B0F4D", color: "#fff" }}>AUJOURD'HUI</span> : null}
                 </div>
                 {/* Rythme du jour (téléphone) */}
                 <div className="tv-mobile" style={{ flexDirection: "column" }}>
@@ -308,11 +308,11 @@ function Calendrier() {
                         <span className="trait" data-statut={p.status} />
                         <span style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 5 }}>
                           <span className="row" style={{ gap: 6, flexWrap: "wrap" }}>
-                            <span className="tv-pill" style={lg === "recap" ? { background: "#DBE7FF", color: "#0A2A66" } : { background: RUB[lg].pastille[0], color: RUB[lg].pastille[1] }}>{lg === "recap" ? "Récap" : RUB[lg].nom}</span>
+                            <span className="tv-pill" style={lg === "recap" ? { background: "#E5DEFF", color: "#1B0F4D" } : { background: RUB[lg].pastille[0], color: RUB[lg].pastille[1] }}>{lg === "recap" ? "Récap" : RUB[lg].nom}</span>
                             <span className="tv-pill" style={{ background: e[1], color: e[2] }}>{e[0]}</span>
                             {photo ? <span className="tv-pill" style={{ background: "#FDE3E6", color: "#B42318" }}>SANS PHOTO</span> : null}
                           </span>
-                          <Link href={postHref(p)} style={{ fontSize: 14, fontWeight: 700, lineHeight: 1.35, color: "#0B1A33", textDecoration: "none" }}>{postTitle(p)}</Link>
+                          <Link href={postHref(p)} style={{ fontSize: 14, fontWeight: 700, lineHeight: 1.35, color: "#150E33", textDecoration: "none" }}>{postTitle(p)}</Link>
                           <span className="row" style={{ gap: 10, fontSize: 12, color: "#5B6B86" }}>
                             {p.platforms.map((x) => ({ facebook: "Facebook", linkedin: "LinkedIn", wordpress: "Site", tiktok: "TikTok" })[x]).join(" · ")}
                             {cta ? <Link href={photo ? `/editeur?id=${p.id}` : postHref(p)} style={{ marginLeft: "auto", fontWeight: 700, textDecoration: "none", color: photo ? "#B42318" : undefined }}>{cta} →</Link> : null}
@@ -327,13 +327,13 @@ function Calendrier() {
 
               {videsCit.length || videsCyber.length ? (
                 <section className="tv-voa" aria-labelledby="t-trous" style={{ flex: "none" }}>
-                  <span className="tv-kicker" style={{ color: "#FFB48A" }}>CRÉNEAUX À COMBLER</span>
+                  <span className="tv-kicker" style={{ color: "#FF9CC6" }}>CRÉNEAUX À COMBLER</span>
                   <h2 id="t-trous" style={{ fontSize: 17, fontWeight: 800, color: "#fff", lineHeight: 1.3 }}>Cette semaine, des jours restent vides.</h2>
                   {([["citation", "Citations", videsCit], ["cyberbase", "#CyberBase", videsCyber]] as const).map(([r, nom, v]) => v.length ? (
                     <div key={r} className="row" style={{ gap: 12, padding: "10px 12px", borderRadius: 14, background: "rgba(255,255,255,0.08)" }}>
                       <Tuile rub={r} taille={30} />
-                      <span style={{ flex: 1, display: "flex", flexDirection: "column", gap: 2 }}><strong style={{ fontSize: 14 }}>{nom}</strong><span style={{ fontSize: 12, color: "#C9D6F2" }}>{v.map((d) => d.toLocaleDateString("fr-FR", { weekday: "short", day: "numeric" }).replace(".", "")).join(", ")}</span></span>
-                      <Link href={`/creer/${r}`} style={{ height: 36, padding: "0 12px", borderRadius: 10, background: "#fff", color: "#0A2A66", textDecoration: "none", display: "flex", alignItems: "center", fontSize: 13, fontWeight: 800 }}>Créer</Link>
+                      <span style={{ flex: 1, display: "flex", flexDirection: "column", gap: 2 }}><strong style={{ fontSize: 14 }}>{nom}</strong><span style={{ fontSize: 12, color: "#D9D2F2" }}>{v.map((d) => d.toLocaleDateString("fr-FR", { weekday: "short", day: "numeric" }).replace(".", "")).join(", ")}</span></span>
+                      <Link href={`/creer/${r}`} style={{ height: 36, padding: "0 12px", borderRadius: 10, background: "#fff", color: "#1B0F4D", textDecoration: "none", display: "flex", alignItems: "center", fontSize: 13, fontWeight: 800 }}>Créer</Link>
                     </div>
                   ) : null)}
                 </section>

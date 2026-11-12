@@ -1,7 +1,7 @@
 "use client";
 
 // La minute cyber : l'assistant qui écrit l'épisode (histoire → révélation → réflexes), le découpe en scènes (storyboard),
-// prépare la voix off (voix de VOA, ta voix au micro ou un fichier) et monte la vidéo dans le Studio.
+// prépare la voix off (voix de NOVA, ta voix au micro ou un fichier) et monte la vidéo dans le Studio.
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Trait } from "@/components/BottomNav";
@@ -16,16 +16,16 @@ import {
   type Episode, type Proposition, type Scene, type TypeScene,
 } from "@/lib/minute";
 
-const CLE_BROUILLON = "tuvoa-studio-brouillon";
-const CLE_LEGENDE = "tuvoa-studio-legende";
-const COULEUR: Record<TypeScene, string> = { accroche: "#0A0A0A", histoire: "#2563EB", message: "#22C55E", appel: "#16A34A", revelation: "#E94A06", technique: "#0A2A66", reflexes: "#6E9BFF", fin: "#94A3B8" };
+const CLE_BROUILLON = "mb-studio-brouillon";
+const CLE_LEGENDE = "mb-studio-legende";
+const COULEUR: Record<TypeScene, string> = { accroche: "#0A0A0A", histoire: "#5B3DF5", message: "#22C55E", appel: "#16A34A", revelation: "#E11D74", technique: "#1B0F4D", reflexes: "#A08BFF", fin: "#94A3B8" };
 
 async function api<T>(body: Record<string, unknown>): Promise<T> {
   const r = await fetch("/api/minute", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
   const brut = await r.text();
   let d: { error?: string } & Record<string, unknown>;
   try { d = JSON.parse(brut); } catch {
-    throw new Error(r.status === 504 || /timed out|timeout/i.test(brut) ? "VOA a mis trop de temps à répondre : réessaie dans un instant." : `Le serveur a répondu une erreur (${r.status}). Réessaie dans un instant.`);
+    throw new Error(r.status === 504 || /timed out|timeout/i.test(brut) ? "NOVA a mis trop de temps à répondre : réessaie dans un instant." : `Le serveur a répondu une erreur (${r.status}). Réessaie dans un instant.`);
   }
   if (!r.ok) throw new Error(d.error || `Erreur ${r.status}`);
   return d as T;
@@ -192,7 +192,7 @@ export default function MinuteCyber() {
       <div className="tv-corps" style={{ paddingTop: 20 }}>
         <div className="tv-entete" style={{ gap: 14 }}>
           <div style={{ flex: "1 1 360px", display: "flex", flexDirection: "column", gap: 6, minWidth: 0 }}>
-            <span className="tv-kicker" style={{ color: "#E94A06", letterSpacing: 2 }}>LA MINUTE CYBER · SÉRIE VIDÉO · 60 S MAX</span>
+            <span className="tv-kicker" style={{ color: "#E11D74", letterSpacing: 2 }}>LA MINUTE CYBER · SÉRIE VIDÉO · 60 S MAX</span>
             {ep ? (
               <div className="row" style={{ gap: 12, alignItems: "baseline", flexWrap: "wrap" }}>
                 <span className="tv-titre" style={{ color: "#9AA8BE", fontFamily: "var(--font-mont)", fontWeight: 800 }}>Ép. {ep.numero ?? "?"}</span>
@@ -226,7 +226,7 @@ export default function MinuteCyber() {
             <form className="tv-carte-side" onSubmit={(e) => { e.preventDefault(); if (sujet.trim()) { setNouveau(false); setOnglet("scenes"); void ecrire(sujet.trim()); } }}>
               <div className="row" style={{ gap: 10 }}><Voa humeur={busy ? "parle" : "veille"} taille={48} /><strong style={{ fontFamily: "var(--font-mont)", fontSize: 16 }}>Nouvel épisode</strong></div>
               <label className="field" style={{ fontSize: 13 }}>Une menace à raconter<input value={sujet} onChange={(e) => setSujet(e.target.value)} placeholder="Ex. faux recrutement, QR code piégé" /></label>
-              <button className="tv-btn-nuit" style={{ justifyContent: "center" }} disabled={!!busy || !sujet.trim()}>{busy === "script" ? "VOA ÉCRIT…" : "ÉCRIRE L'ÉPISODE"}</button>
+              <button className="tv-btn-nuit" style={{ justifyContent: "center" }} disabled={!!busy || !sujet.trim()}>{busy === "script" ? "NOVA ÉCRIT…" : "ÉCRIRE L'ÉPISODE"}</button>
               {episodes.length > 0 && busy !== "script" ? <button type="button" className="btn small ghost" onClick={() => setNouveau(false)}>Annuler</button> : null}
             </form>
             )}
@@ -239,7 +239,7 @@ export default function MinuteCyber() {
                   <span style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 2, textAlign: "left" }}>
                     <strong style={{ fontSize: 14 }}>{e.titre}</strong>
                     <span style={{ fontSize: 12, color: "#5B6B86" }}>{e.menace} · {Math.round(dureeEpisode(e))} s</span>
-                    <span style={{ fontSize: 11, fontWeight: 800, color: e.statut === "envoye" ? "#16A34A" : e.statut === "monte" ? "#2563EB" : e.audio ? "#0E9F8E" : "#E94A06" }}>{e.statut === "envoye" ? "Envoyé au calendrier" : e.statut === "monte" ? "Monté" : e.audio ? "Voix prête" : "Voix à faire"}</span>
+                    <span style={{ fontSize: 11, fontWeight: 800, color: e.statut === "envoye" ? "#16A34A" : e.statut === "monte" ? "#5B3DF5" : e.audio ? "#0E9F8E" : "#E11D74" }}>{e.statut === "envoye" ? "Envoyé au calendrier" : e.statut === "monte" ? "Monté" : e.audio ? "Voix prête" : "Voix à faire"}</span>
                   </span>
                 </button>
               ))}
@@ -339,7 +339,7 @@ export default function MinuteCyber() {
                 <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: 8 }}>
                   {gardes.map(([t, ok]) => (
                     <li key={t} className="row" style={{ gap: 10, alignItems: "flex-start", fontSize: 13, lineHeight: 1.4 }}>
-                      <span style={{ width: 18, height: 18, borderRadius: 9, flexShrink: 0, marginTop: 1, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", background: ok ? "#16A34A" : "#E94A06" }}><Trait d={ok ? "M20 6L9 17l-5-5" : "M12 8v5M12 17h.01"} size={11} stroke={3.2} /></span>
+                      <span style={{ width: 18, height: 18, borderRadius: 9, flexShrink: 0, marginTop: 1, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", background: ok ? "#16A34A" : "#E11D74" }}><Trait d={ok ? "M20 6L9 17l-5-5" : "M12 8v5M12 17h.01"} size={11} stroke={3.2} /></span>
                       <span style={{ color: ok ? "#33425C" : "#9A3412", fontWeight: ok ? 400 : 600 }}>{t}</span>
                     </li>
                   ))}
@@ -358,9 +358,9 @@ export default function MinuteCyber() {
                   ) : <p className="tv-gris" style={{ fontSize: 13 }}>Sans voix off, les textes à l&apos;écran racontent l&apos;histoire.</p>}
                   <div className="tv-voix-choix">
                     <div>
-                      <strong>La voix de VOA</strong>
+                      <strong>La voix de NOVA</strong>
                       <select value={voixNom} onChange={(e) => setVoixNom(e.target.value)} aria-label="Voix"><optgroup label="Voix masculines">{VOIX.filter((v) => v.genre === "m").map((v) => <option key={v.id} value={v.id}>{v.nom}</option>)}</optgroup><optgroup label="Voix féminines">{VOIX.filter((v) => v.genre === "f").map((v) => <option key={v.id} value={v.id}>{v.nom}</option>)}</optgroup></select>
-                      <button type="button" className="tv-btn-nuit" style={{ height: 40, justifyContent: "center" }} disabled={!!busy} onClick={voixVoa}>{busy === "voix" ? "VOA ENREGISTRE…" : "GÉNÉRER LA VOIX"}</button>
+                      <button type="button" className="tv-btn-nuit" style={{ height: 40, justifyContent: "center" }} disabled={!!busy} onClick={voixVoa}>{busy === "voix" ? "NOVA ENREGISTRE…" : "GÉNÉRER LA VOIX"}</button>
                     </div>
                     <div>
                       <strong>Ma voix au micro</strong>
@@ -388,7 +388,7 @@ export default function MinuteCyber() {
             <section className="tv-carte" style={{ flex: "999 1 560px", alignItems: "center", textAlign: "center", padding: 40 }}>
               <Voa humeur="ecoute" taille={120} />
               <strong style={{ fontSize: 22 }}>Premier épisode ?</strong>
-              <p className="tv-gris">Tapez une menace à gauche (par exemple « ingénierie sociale ») : VOA écrit l&apos;épisode.</p>
+              <p className="tv-gris">Tapez une menace à gauche (par exemple « ingénierie sociale ») : NOVA écrit l&apos;épisode.</p>
             </section>
           )}
 
@@ -397,7 +397,7 @@ export default function MinuteCyber() {
               <section className="tv-voa" style={{ flex: "none", alignItems: "center" }}>
                 <h2 id="t-apercu" style={{ alignSelf: "flex-start", fontSize: 16, fontWeight: 800, color: "#fff" }}>Aperçu de l&apos;épisode</h2>
                 <Apercu doc={doc} prete={prete} />
-                <span style={{ fontSize: 12, color: "#9FB6E8", textAlign: "center" }}>Format 9:16 pour TikTok, les stories et les Reels.</span>
+                <span style={{ fontSize: 12, color: "#B6A8EC", textAlign: "center" }}>Format 9:16 pour TikTok, les stories et les Reels.</span>
               </section>
               <section className="tv-carte-side">
                 <h2 className="tv-h2" style={{ fontSize: 16 }}>Quand l&apos;épisode est prêt</h2>

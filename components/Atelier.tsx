@@ -7,10 +7,10 @@ import { Trait } from "./BottomNav";
 import { heureFixe } from "@/lib/schedule";
 
 export const RUB: Record<RubriqueId, { nom: string; titre: string; c: [string, string]; d: string; pastille: [string, string] }> = {
-  actu: { nom: "Actualité", titre: "Nouvelle actualité", c: ["#60A5FA", "#1D4ED8"], d: "M4 5h16v14H4zM8 9h8M8 13h5", pastille: ["#DBE7FF", "#1D4ED8"] },
+  actu: { nom: "Actualité", titre: "Nouvelle actualité", c: ["#60A5FA", "#4527D9"], d: "M4 5h16v14H4zM8 9h8M8 13h5", pastille: ["#E5DEFF", "#4527D9"] },
   citation: { nom: "Citation", titre: "Nouvelle citation", c: ["#C4B5FD", "#7C3AED"], d: "M7 7h4v6H5V9a2 2 0 0 1 2-2zM15 7h4v6h-6V9a2 2 0 0 1 2-2zM5 13c0 2 1 3 3 4M13 13c0 2 1 3 3 4", pastille: ["#EDE7FF", "#5B21B6"] },
   cyberbase: { nom: "#CyberBase", titre: "Nouvelle #CyberBase", c: ["#5EEAD4", "#0E9F8E"], d: "M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z", pastille: ["#D5F5F0", "#0B6B60"] },
-  portrait: { nom: "Portrait", titre: "Nouveau portrait", c: ["#FDBA74", "#E94A06"], d: "M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21a8 8 0 0 1 16 0", pastille: ["#FFE8DC", "#9A3412"] },
+  portrait: { nom: "Portrait", titre: "Nouveau portrait", c: ["#FDBA74", "#E11D74"], d: "M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21a8 8 0 0 1 16 0", pastille: ["#FFE0EE", "#9A3412"] },
 };
 
 export function Tuile({ rub, taille = 52 }: { rub: RubriqueId; taille?: number }) {
@@ -76,8 +76,8 @@ export function Jauge({ n, ideal, pli, max, unite = "car." }: { n: number; ideal
 export const CANAUX: { id: Post["platforms"][number]; ini: string; nom: string; c: string }[] = [
   { id: "facebook", ini: "F", nom: "Facebook", c: "#1877F2" },
   { id: "linkedin", ini: "in", nom: "LinkedIn", c: "#0A66C2" },
-  { id: "wordpress", ini: "W", nom: "Site tuvoa.media", c: "#0A2A66" },
-  { id: "tiktok", ini: "T", nom: "TikTok", c: "#0B1A33" },
+  { id: "wordpress", ini: "W", nom: "Site du média", c: "#1B0F4D" },
+  { id: "tiktok", ini: "T", nom: "TikTok", c: "#150E33" },
 ];
 
 export function Canaux({ value, onChange, details, offerts = ["facebook", "linkedin", "wordpress", "tiktok"] }: {
@@ -138,7 +138,7 @@ export function Controle({ items }: { items: [string, boolean][] }) {
       <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: 8 }}>
         {items.map(([t, ok]) => (
           <li key={t} className="row" style={{ gap: 10, alignItems: "flex-start", fontSize: 14, lineHeight: 1.4 }}>
-            <span style={{ width: 20, height: 20, borderRadius: 10, flexShrink: 0, marginTop: 1, display: "flex", alignItems: "center", justifyContent: "center", background: ok ? "#16A34A" : "#E94A06", color: "#fff" }}>
+            <span style={{ width: 20, height: 20, borderRadius: 10, flexShrink: 0, marginTop: 1, display: "flex", alignItems: "center", justifyContent: "center", background: ok ? "#16A34A" : "#E11D74", color: "#fff" }}>
               <Trait d={ok ? "M20 6L9 17l-5-5" : "M12 8v5M12 17h.01"} size={12} stroke={3.2} />
             </span>
             <span style={{ color: ok ? "#33425C" : "#9A3412", fontWeight: ok ? 400 : 600 }}>{t}</span>
@@ -155,8 +155,8 @@ export function ApercuFacebook({ texte, image, quand, vide, pli = 125 }: { texte
   return (
     <article className="tv-fb">
       <div className="row" style={{ gap: 10, padding: "12px 12px 8px" }}>
-        <span style={{ width: 36, height: 36, borderRadius: 18, background: "#0A2A66", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}><span style={{ width: 12, height: 12, borderRadius: 6, background: "#2563EB" }} /></span>
-        <span style={{ display: "flex", flexDirection: "column", lineHeight: 1.2 }}><strong style={{ fontSize: 13 }}>TUVOA Tech Media</strong><span style={{ fontSize: 11, color: "#5B6B86" }}>{quand ?? "Brouillon"}</span></span>
+        <span style={{ width: 36, height: 36, borderRadius: 18, background: "#1B0F4D", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}><span style={{ width: 12, height: 12, borderRadius: 6, background: "#5B3DF5" }} /></span>
+        <span style={{ display: "flex", flexDirection: "column", lineHeight: 1.2 }}><strong style={{ fontSize: 13 }}>Media Booster</strong><span style={{ fontSize: 11, color: "#5B6B86" }}>{quand ?? "Brouillon"}</span></span>
       </div>
       {texte ? (
         <p style={{ padding: "0 12px 10px", fontSize: 13, lineHeight: 1.5, whiteSpace: "pre-wrap" }}>

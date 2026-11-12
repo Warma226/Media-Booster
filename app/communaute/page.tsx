@@ -1,6 +1,6 @@
 "use client";
-// Le Grin : la boîte de réception de la communauté, préparée par VOA (community manager de la Page Facebook TUVOA).
-// Autonomie réglable (pause, VOA propose et je valide, VOA répond seule), réponses à valider avec choix du ton,
+// Le Grin : la boîte de réception de la communauté, préparée par NOVA (community manager de la Page Facebook Media Booster).
+// Autonomie réglable (pause, NOVA propose et je valide, NOVA répond seule), réponses à valider avec choix du ton,
 // réponses enregistrées, humeur du grin, questions qui reviennent, radar à arnaques, grin du jeudi, piliers, brief du soir.
 import { useVoirPlus } from "@/components/VoirPlus";
 import Link from "next/link";
@@ -17,10 +17,10 @@ type Etat = {
 };
 type Filtre = "tout" | "valider" | "message" | "commentaire" | "mention" | "arnaque" | "traite";
 
-const CANAL: Record<string, string> = { commentaire: "Commentaire", message: "Message privé", mention: "Mention de TUVOA", lien: "Publication", grin: "Grin du jeudi", piliers: "Piliers du grin", alerte: "Radar à arnaques", crise: "Mode crise" };
+const CANAL: Record<string, string> = { commentaire: "Commentaire", message: "Message privé", mention: "Mention de Media Booster", lien: "Publication", grin: "Grin du jeudi", piliers: "Piliers du grin", alerte: "Radar à arnaques", crise: "Mode crise" };
 const ETAT: Record<string, [string, string]> = {
-  propose: ["À valider", "#E94A06"], signale: ["Pour vous", "#E94A06"], erreur: ["Erreur", "#B42318"], repondu: ["Répondu par VOA", "#16A34A"],
-  aime: ["Aimé", "#16A34A"], masque: ["Masqué", "#5B6B86"], ignore: ["Ignoré", "#9AA8BE"], lien: ["Lien ajouté", "#2563EB"], publie: ["Publié", "#2563EB"], annule: ["Annulé", "#5B6B86"],
+  propose: ["À valider", "#E11D74"], signale: ["Pour vous", "#E11D74"], erreur: ["Erreur", "#B42318"], repondu: ["Répondu par NOVA", "#16A34A"],
+  aime: ["Aimé", "#16A34A"], masque: ["Masqué", "#5B6B86"], ignore: ["Ignoré", "#9AA8BE"], lien: ["Lien ajouté", "#5B3DF5"], publie: ["Publié", "#5B3DF5"], annule: ["Annulé", "#5B6B86"],
 };
 const TONS = [["rassurant", "Rassurant"], ["factuel", "Factuel"], ["taquin", "Taquin"], ["court", "Court"]] as const;
 const REPONSES_DEFAUT = [
@@ -101,7 +101,7 @@ export default function Grin() {
     ["commentaire", "Commentaires", (l) => l.canal === "commentaire"],
     ["mention", "Mentions", (l) => l.canal === "mention"],
     ["arnaque", "Arnaques signalées", (l) => l.canal === "alerte" || Boolean(l.sujet)],
-    ["traite", "Traités par VOA", (l) => humains(l) && ["repondu", "aime", "masque"].includes(l.action)],
+    ["traite", "Traités par NOVA", (l) => humains(l) && ["repondu", "aime", "masque"].includes(l.action)],
   ];
   const liste = lignes.filter(FILTRES.find((f) => f[0] === filtre)?.[2] ?? (() => true));
   const ouvert = lignes.find((l) => l.id === choix) ?? liste[0] ?? null;
@@ -140,7 +140,7 @@ export default function Grin() {
     return regler({ actif: true, autonomie: a });
   }
   function crise() {
-    const motif = window.prompt("Pourquoi déclencher le mode crise ? (publications automatiques suspendues, VOA ne répond plus seule)");
+    const motif = window.prompt("Pourquoi déclencher le mode crise ? (publications automatiques suspendues, NOVA ne répond plus seule)");
     if (motif?.trim()) void action("crise", { crise: motif.trim() });
   }
   function enregistrerType() {
@@ -154,7 +154,7 @@ export default function Grin() {
     if (!r) return "";
     const gain = r.abonnes != null && r.abonnesVeille != null ? r.abonnes - r.abonnesVeille : null;
     return [
-      "Bonsoir ! Ici VOA, avec le brief du grin.", r.resume,
+      "Bonsoir ! Ici NOVA, avec le brief du grin.", r.resume,
       gain != null ? `La Page compte ${r.abonnes} abonnés, ${gain >= 0 ? `soit ${gain} de plus` : `soit ${-gain} de moins`} qu'hier.` : "",
       r.questions.length ? `Les questions qui reviennent : ${r.questions.join(". ")}.` : "",
       r.idees.length ? `Mes idées pour demain : ${r.idees.join(". ")}.` : "",
@@ -205,12 +205,12 @@ export default function Grin() {
             <div className="row" style={{ gap: 12 }}>
               <Voa humeur={humeur} taille={56} />
               <div>
-                <h1 className="tv-titre">Le Grin · VOA</h1>
+                <h1 className="tv-titre">Le Grin · NOVA</h1>
                 <span className="tv-gris" style={{ fontSize: 14 }}>{e ? (e.reglages.crise?.active ? "Mode crise" : HUMEURS[humeur]) : "…"} · commentaires, messages et mentions de la Page</span>
               </div>
             </div>
           </div>
-          <div role="radiogroup" aria-label="Autonomie de VOA" className="tv-segments">
+          <div role="radiogroup" aria-label="Autonomie de NOVA" className="tv-segments">
             {([["pause", "Pause"], ["propose", "Propose, je valide"], ["auto", "Répond seule"]] as const).map(([k, l]) => (
               <button key={k} type="button" role="radio" aria-checked={autonomie === k} aria-pressed={autonomie === k} onClick={() => changerAutonomie(k)} disabled={!e}>{l}</button>
             ))}
@@ -222,16 +222,16 @@ export default function Grin() {
         {info ? <p className="notice" role="status">{info}</p> : null}
         {e?.reglages.crise?.active ? (
           <section role="alert" className="row" style={{ flexWrap: "wrap", gap: 14, padding: "16px 20px", borderRadius: 20, background: "#B42318", color: "#fff" }}>
-            <span style={{ flex: "1 1 360px", fontSize: 15, lineHeight: 1.45 }}><strong>Mode crise depuis le {new Date(e.reglages.crise.depuis).toLocaleString("fr-FR", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}</strong> · {e.reglages.crise.motif}. Publications automatiques suspendues, VOA ne répond plus seule.</span>
-            <button type="button" className="btn" style={{ background: "#fff", borderColor: "#fff", color: "#0B1A33" }} disabled={!!busy} onClick={() => action("fin", { finCrise: true })}>Lever le mode crise</button>
+            <span style={{ flex: "1 1 360px", fontSize: 15, lineHeight: 1.45 }}><strong>Mode crise depuis le {new Date(e.reglages.crise.depuis).toLocaleString("fr-FR", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}</strong> · {e.reglages.crise.motif}. Publications automatiques suspendues, NOVA ne répond plus seule.</span>
+            <button type="button" className="btn" style={{ background: "#fff", borderColor: "#fff", color: "#150E33" }} disabled={!!busy} onClick={() => action("fin", { finCrise: true })}>Lever le mode crise</button>
           </section>
         ) : null}
 
         {/* Indicateurs */}
         <div className="tv-kpis">
-          {([[String(nbValider), "à valider", alertes.length ? `dont ${alertes.length} alerte${alertes.length > 1 ? "s" : ""} arnaque` : "réponses préparées par VOA", nbValider ? "#E94A06" : "#0A2A66"],
-            [String(personnes), "personnes aujourd'hui", "commentaires, messages, mentions", "#0A2A66"],
-            [String(traitesAuj), "échanges traités", "aujourd'hui", "#0A2A66"],
+          {([[String(nbValider), "à valider", alertes.length ? `dont ${alertes.length} alerte${alertes.length > 1 ? "s" : ""} arnaque` : "réponses préparées par NOVA", nbValider ? "#E11D74" : "#1B0F4D"],
+            [String(personnes), "personnes aujourd'hui", "commentaires, messages, mentions", "#1B0F4D"],
+            [String(traitesAuj), "échanges traités", "aujourd'hui", "#1B0F4D"],
             [humainsAuj.length ? `${pc(tons.positif)} %` : "—", "de réactions positives", "aujourd'hui", "#16A34A"]] as const).map(([v, l, s, c]) => (
             <div key={l} className="tv-kpi"><strong style={{ color: c }}>{v}</strong><span style={{ fontSize: 14, fontWeight: 600 }}>{l}</span><span className="tv-gris" style={{ fontSize: 12 }}>{s}</span></div>
           ))}
@@ -251,17 +251,17 @@ export default function Grin() {
           </nav>
 
           <section className="tv-grin-liste" aria-label="Échanges">
-            {!e ? <p className="tv-gris" style={{ padding: 12 }}>Chargement du grin…</p> : liste.length === 0 ? <p className="tv-gris" style={{ padding: 12 }}>{filtre === "valider" ? "Rien à valider. VOA s'occupe de tout." : "Aucun échange ici."}</p> : null}
+            {!e ? <p className="tv-gris" style={{ padding: 12 }}>Chargement du grin…</p> : liste.length === 0 ? <p className="tv-gris" style={{ padding: 12 }}>{filtre === "valider" ? "Rien à valider. NOVA s'occupe de tout." : "Aucun échange ici."}</p> : null}
             {vListe.visibles.map((l) => {
               const et = ETAT[l.action] ?? [l.action, "#5B6B86"];
               return (
                 <button key={l.id} type="button" className="tv-grin-item" aria-current={ouvert?.id === l.id ? "true" : undefined} onClick={() => setChoix(l.id)}>
                   <span className="av" data-alerte={l.canal === "alerte" || l.canal === "crise"}>{l.canal === "alerte" || l.canal === "crise" ? "!" : initiales(l.auteur)}</span>
                   <span style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 4, textAlign: "left" }}>
-                    <span className="row" style={{ gap: 8, alignItems: "baseline" }}><strong style={{ fontSize: 14, flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{l.auteur ?? "VOA"}</strong><span style={{ fontSize: 11, color: "#5B6B86", flexShrink: 0 }}>{ilYa(l.created_at)}</span></span>
+                    <span className="row" style={{ gap: 8, alignItems: "baseline" }}><strong style={{ fontSize: 14, flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{l.auteur ?? "NOVA"}</strong><span style={{ fontSize: 11, color: "#5B6B86", flexShrink: 0 }}>{ilYa(l.created_at)}</span></span>
                     <span style={{ fontSize: 12, color: "#5B6B86" }}>{CANAL[l.canal] ?? l.canal}</span>
                     <span style={{ fontSize: 13, lineHeight: 1.4, color: "#33425C" }}>{court(l.texte, 110)}</span>
-                    <span className="etat" style={{ background: aValider(l) ? "#E94A06" : et[1] }}>{aValider(l) ? (l.action === "erreur" ? "Erreur" : "À valider") : et[0]}</span>
+                    <span className="etat" style={{ background: aValider(l) ? "#E11D74" : et[1] }}>{aValider(l) ? (l.action === "erreur" ? "Erreur" : "À valider") : et[0]}</span>
                   </span>
                 </button>
               );
@@ -275,7 +275,7 @@ export default function Grin() {
                 <div className="row tv-grin-conv-haut">
                   <span className="av" style={{ width: 44, height: 44 }}>{initiales(ouvert.auteur)}</span>
                   <span style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column" }}>
-                    <strong style={{ fontSize: 16 }}>{ouvert.auteur ?? "VOA"}</strong>
+                    <strong style={{ fontSize: 16 }}>{ouvert.auteur ?? "NOVA"}</strong>
                     <span style={{ fontSize: 12, color: "#5B6B86" }}>{CANAL[ouvert.canal] ?? ouvert.canal} · {heure(ouvert.created_at)}{ouvert.ton ? ` · ton ${ouvert.ton === "negatif" ? "mécontent" : ouvert.ton}` : ""}{ouvert.sujet ? ` · arnaque : ${ouvert.sujet}` : ""}</span>
                   </span>
                   {ouvert.lien ? <a href={ouvert.lien} target={ouvert.lien.startsWith("/") ? undefined : "_blank"} rel="noopener noreferrer" style={{ fontSize: 13, fontWeight: 700, textDecoration: "none" }}>{ouvert.lien.startsWith("/") ? "Ouvrir" : "Voir sur Facebook"}</a> : null}
@@ -286,8 +286,8 @@ export default function Grin() {
 
                   {aValider(ouvert) ? (
                     <div className="tv-proposition">
-                      <span className="row" style={{ gap: 8, fontSize: 12, fontWeight: 800, letterSpacing: 1, color: "#5B21B6" }}><Trait d="M12 3l2.5 5.5L20 11l-5.5 2.5L12 19l-2.5-5.5L4 11l5.5-2.5z" size={14} stroke={2} />{ouvert.reponse ? "RÉPONSE PROPOSÉE PAR VOA" : "VOTRE RÉPONSE"}</span>
-                      <label><span className="sr-only">Réponse</span><textarea rows={4} value={brouillon} onChange={(x) => setBrouillon(x.target.value)} placeholder="Écrivez la réponse, ou demandez une proposition à VOA avec un ton." /></label>
+                      <span className="row" style={{ gap: 8, fontSize: 12, fontWeight: 800, letterSpacing: 1, color: "#5B21B6" }}><Trait d="M12 3l2.5 5.5L20 11l-5.5 2.5L12 19l-2.5-5.5L4 11l5.5-2.5z" size={14} stroke={2} />{ouvert.reponse ? "RÉPONSE PROPOSÉE PAR NOVA" : "VOTRE RÉPONSE"}</span>
+                      <label><span className="sr-only">Réponse</span><textarea rows={4} value={brouillon} onChange={(x) => setBrouillon(x.target.value)} placeholder="Écrivez la réponse, ou demandez une proposition à NOVA avec un ton." /></label>
                       <div className="row" style={{ flexWrap: "wrap", gap: 6 }}>
                         <span style={{ fontSize: 12, fontWeight: 700, color: "#5B21B6" }}>Ton</span>
                         {TONS.map(([k, l]) => <button key={k} type="button" className="tv-mini clair" disabled={!!busy} onClick={() => action("ton" + k, { reformuler: ouvert.id, ton: k, texte: brouillon })}>{busy === "ton" + k ? "…" : l}</button>)}
@@ -299,7 +299,7 @@ export default function Grin() {
                       </div>
                     </div>
                   ) : ouvert.reponse ? (
-                    <div className="bulle voa"><span style={{ fontSize: 11, fontWeight: 800, letterSpacing: 1, color: "#BFD0FF" }}>{ouvert.action === "repondu" ? "RÉPONSE ENVOYÉE" : "VOA"}</span>{ouvert.reponse}</div>
+                    <div className="bulle voa"><span style={{ fontSize: 11, fontWeight: 800, letterSpacing: 1, color: "#D2C8FF" }}>{ouvert.action === "repondu" ? "RÉPONSE ENVOYÉE" : "NOVA"}</span>{ouvert.reponse}</div>
                   ) : null}
                 </div>
                 <div className="tv-grin-conv-bas">
@@ -313,7 +313,7 @@ export default function Grin() {
                   ) : ouvert.canal === "alerte" || ouvert.canal === "crise" ? (
                     !ouvert.traite ? <button type="button" className="tv-btn-nuit" disabled={!!busy} onClick={() => action("t", { traite: ouvert.id })}>C'EST TRAITÉ</button> : <span className="tv-gris" style={{ fontSize: 13 }}>Traité.</span>
                   ) : annulable(ouvert) ? (
-                    <button type="button" className="btn danger" disabled={!!busy} onClick={() => action("ann", { annuler: ouvert.id })}>Annuler l'action de VOA</button>
+                    <button type="button" className="btn danger" disabled={!!busy} onClick={() => action("ann", { annuler: ouvert.id })}>Annuler l'action de NOVA</button>
                   ) : <span className="tv-gris" style={{ fontSize: 13 }}>Rien à faire : c'est traité.</span>}
                 </div>
               </>
@@ -326,10 +326,10 @@ export default function Grin() {
           <section className="tv-carte-side" aria-labelledby="t-humeur">
             <h2 id="t-humeur" className="tv-h2" style={{ fontSize: 18 }}>L'humeur du grin</h2>
             <div style={{ height: 14, borderRadius: 7, overflow: "hidden", display: "flex", background: "#EDF1F7" }} role="img" aria-label={`${pc(tons.positif)} % positif, ${pc(tons.neutre)} % neutre, ${pc(tons.negatif)} % mécontent`}>
-              <span style={{ width: `${pc(tons.positif)}%`, background: "#16A34A" }} /><span style={{ width: `${pc(tons.neutre)}%`, background: "#9AA8BE" }} /><span style={{ width: `${pc(tons.negatif)}%`, background: "#E94A06" }} />
+              <span style={{ width: `${pc(tons.positif)}%`, background: "#16A34A" }} /><span style={{ width: `${pc(tons.neutre)}%`, background: "#9AA8BE" }} /><span style={{ width: `${pc(tons.negatif)}%`, background: "#E11D74" }} />
             </div>
             <div className="row" style={{ gap: 14, fontSize: 12, color: "#5B6B86", flexWrap: "wrap" }}>
-              <span><strong style={{ color: "#16A34A" }}>{pc(tons.positif)} %</strong> positif</span><span><strong style={{ color: "#33425C" }}>{pc(tons.neutre)} %</strong> neutre</span><span><strong style={{ color: "#E94A06" }}>{pc(tons.negatif)} %</strong> mécontent</span>
+              <span><strong style={{ color: "#16A34A" }}>{pc(tons.positif)} %</strong> positif</span><span><strong style={{ color: "#33425C" }}>{pc(tons.neutre)} %</strong> neutre</span><span><strong style={{ color: "#E11D74" }}>{pc(tons.negatif)} %</strong> mécontent</span>
             </div>
             <span style={{ fontSize: 13, color: "#33425C", lineHeight: 1.45 }}>{humainsAuj.length ? `${humainsAuj.length} échange${humainsAuj.length > 1 ? "s" : ""} aujourd'hui.${tons.negatif >= 3 ? " Plusieurs réactions mécontentes : jetez un œil aux derniers commentaires." : ""}` : "Pas encore d'échange aujourd'hui."}</span>
           </section>
@@ -346,23 +346,23 @@ export default function Grin() {
           </section>
 
           <section className="tv-voa" aria-labelledby="t-radar" style={{ flex: "none" }}>
-            <span className="tv-kicker" style={{ color: "#FFB48A" }}>RADAR À ARNAQUES</span>
+            <span className="tv-kicker" style={{ color: "#FF9CC6" }}>RADAR À ARNAQUES</span>
             {alertes.length ? alertes.slice(0, 2).map((a) => (
               <div key={a.id} className="tv-voa-alerte">
                 <strong style={{ fontSize: 15, lineHeight: 1.35 }}>{a.auteur} signalent : « {court(a.texte, 90)} »</strong>
                 <span style={{ fontSize: 13, color: "#DCE5F7" }}>{court(a.raison, 140)}</span>
                 <div className="row" style={{ gap: 12 }}>
                   {a.lien ? <Link href={a.lien}>Relire et publier l'alerte →</Link> : null}
-                  <button type="button" onClick={() => action("t" + a.id, { traite: a.id })} style={{ border: 0, background: "none", padding: 0, color: "#C9D6F2", fontWeight: 700, fontSize: 13, cursor: "pointer" }}>C'est traité</button>
+                  <button type="button" onClick={() => action("t" + a.id, { traite: a.id })} style={{ border: 0, background: "none", padding: 0, color: "#D9D2F2", fontWeight: 700, fontSize: 13, cursor: "pointer" }}>C'est traité</button>
                 </div>
               </div>
-            )) : <span style={{ fontSize: 14, color: "#DCE5F7", lineHeight: 1.45 }}>Aucune arnaque signalée en ce moment. Dès que trois personnes signalent la même, VOA prépare une alerte pour les abonnés.</span>}
+            )) : <span style={{ fontSize: 14, color: "#DCE5F7", lineHeight: 1.45 }}>Aucune arnaque signalée en ce moment. Dès que trois personnes signalent la même, NOVA prépare une alerte pour les abonnés.</span>}
             {e ? <div className="row" style={{ justifyContent: "space-between", borderTop: "1px solid rgba(255,255,255,0.12)", paddingTop: 10 }}><span style={{ fontSize: 13 }}>Radar actif</span><Interrupteur on={e.reglages.radar} label="Radar à arnaques" onClick={() => regler({ radar: !e.reglages.radar })} /></div> : null}
           </section>
 
           <section className="tv-carte-side" aria-labelledby="t-jeudi">
-            <div className="row" style={{ alignItems: "baseline" }}><h2 id="t-jeudi" className="tv-h2" style={{ fontSize: 18, flex: 1 }}>Le grin du jeudi</h2><span style={{ fontSize: 12, fontWeight: 800, color: "#E94A06" }}>jeudi · 19 h</span></div>
-            <span style={{ fontSize: 13, color: "#33425C", lineHeight: 1.45 }}>VOA lance une question-débat sur l'actu de la semaine ; vendredi à 12 h, elle publie le meilleur des réponses.</span>
+            <div className="row" style={{ alignItems: "baseline" }}><h2 id="t-jeudi" className="tv-h2" style={{ fontSize: 18, flex: 1 }}>Le grin du jeudi</h2><span style={{ fontSize: 12, fontWeight: 800, color: "#E11D74" }}>jeudi · 19 h</span></div>
+            <span style={{ fontSize: 13, color: "#33425C", lineHeight: 1.45 }}>NOVA lance une question-débat sur l'actu de la semaine ; vendredi à 12 h, elle publie le meilleur des réponses.</span>
             {e?.dernierGrin?.lien ? <a href={e.dernierGrin.lien} target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, fontWeight: 700, textDecoration: "none" }}>Voir le dernier grin →</a> : null}
             {e ? <div className="row" style={{ justifyContent: "space-between", borderTop: "1px solid #EDF1F7", paddingTop: 10 }}><span style={{ fontSize: 13, fontWeight: 600 }}>{e.reglages.grin ? "Activé" : "Désactivé"}</span><Interrupteur on={e.reglages.grin} label="Le grin du jeudi" onClick={() => regler({ grin: !e.reglages.grin })} /></div> : null}
           </section>
@@ -372,7 +372,7 @@ export default function Grin() {
             <div className="row" style={{ gap: 8 }}>
               {e?.piliers.length ? e.piliers.map((p, i) => (
                 <span key={p.nom} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4, textAlign: "center" }}>
-                  <span style={{ width: 42, height: 42, borderRadius: 21, background: ["#2563EB", "#7C3AED", "#0E9F8E"][i], color: "#fff", fontWeight: 800, fontSize: 13, display: "flex", alignItems: "center", justifyContent: "center" }}>{initiales(p.nom)}</span>
+                  <span style={{ width: 42, height: 42, borderRadius: 21, background: ["#5B3DF5", "#7C3AED", "#0E9F8E"][i], color: "#fff", fontWeight: 800, fontSize: 13, display: "flex", alignItems: "center", justifyContent: "center" }}>{initiales(p.nom)}</span>
                   <span style={{ fontSize: 12, fontWeight: 700 }}>{p.nom}</span><span style={{ fontSize: 11, color: "#5B6B86" }}>{p.n} échange{p.n > 1 ? "s" : ""}</span>
                 </span>
               )) : <span className="tv-gris" style={{ fontSize: 13 }}>Les membres les plus actifs de la semaine apparaîtront ici.</span>}
@@ -382,21 +382,21 @@ export default function Grin() {
 
           <section className="tv-carte-side" aria-labelledby="t-brief">
             <h2 id="t-brief" className="tv-h2" style={{ fontSize: 18 }}>Le brief du soir</h2>
-            <div className="row" style={{ gap: 12, padding: "10px 12px", borderRadius: 16, background: "#EEF3FF" }}>
-              <button type="button" aria-label={lecture ? "Arrêter la lecture" : "Écouter le brief"} onClick={ecouter} disabled={!r} style={{ width: 44, height: 44, borderRadius: 22, border: 0, background: "#2563EB", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0 }}>
+            <div className="row" style={{ gap: 12, padding: "10px 12px", borderRadius: 16, background: "#F1EEFF" }}>
+              <button type="button" aria-label={lecture ? "Arrêter la lecture" : "Écouter le brief"} onClick={ecouter} disabled={!r} style={{ width: 44, height: 44, borderRadius: 22, border: 0, background: "#5B3DF5", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0 }}>
                 <Trait d={lecture ? "M6 4h4v16H6zM14 4h4v16h-4z" : "M7 4l13 8-13 8z"} size={18} stroke={2} />
               </button>
-              <span style={{ fontSize: 13, color: "#1D4ED8", fontWeight: 600 }}>{r ? `Brief du ${new Date(e?.rapport?.jour ?? Date.now()).toLocaleDateString("fr-FR", { day: "numeric", month: "long" })}` : `Premier brief ce soir à ${e?.reglages.heureRapport ?? 20} h`}</span>
+              <span style={{ fontSize: 13, color: "#4527D9", fontWeight: 600 }}>{r ? `Brief du ${new Date(e?.rapport?.jour ?? Date.now()).toLocaleDateString("fr-FR", { day: "numeric", month: "long" })}` : `Premier brief ce soir à ${e?.reglages.heureRapport ?? 20} h`}</span>
             </div>
             {r?.resume ? <span style={{ fontSize: 13, color: "#33425C", lineHeight: 1.45 }}>{court(r.resume, 220)}</span> : null}
-            <button type="button" className="btn small" style={{ alignSelf: "flex-start" }} disabled={!!busy} onClick={() => action("rapport", { rapport: true })}>{busy === "rapport" ? "VOA rédige…" : "Brief maintenant"}</button>
+            <button type="button" className="btn small" style={{ alignSelf: "flex-start" }} disabled={!!busy} onClick={() => action("rapport", { rapport: true })}>{busy === "rapport" ? "NOVA rédige…" : "Brief maintenant"}</button>
           </section>
         </div>
 
         {/* Réglages et journal */}
         {e ? (
           <details className="tv-carte">
-            <summary className="tv-h2" style={{ cursor: "pointer", fontSize: 18 }}>Réglages de VOA</summary>
+            <summary className="tv-h2" style={{ cursor: "pointer", fontSize: 18 }}>Réglages de NOVA</summary>
             {([["lienArticle", "Lien de l'article en commentaire", "Sous chaque publication, le lien vers l'article du site."]] as const).map(([cle, titre, texte]) => (
               <div key={cle} className="row" style={{ justifyContent: "space-between", gap: 14, borderTop: "1px solid #EDF1F7", paddingTop: 12 }}>
                 <div><p style={{ fontWeight: 700, fontSize: 15 }}>{titre}</p><p className="tv-gris" style={{ fontSize: 13 }}>{texte}</p></div>

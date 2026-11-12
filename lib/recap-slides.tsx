@@ -2,8 +2,9 @@
 // Slides du « Récap tech de la semaine » (carrousel 4:5, 1080 × 1350), même identité que le visuel #ActuTech.
 // Règle du moteur de rendu : tout bloc qui contient plusieurs enfants doit être en display: flex.
 import { LogoMark } from "./visual";
+import { MEDIA_COURT, MEDIA_NOM, MEDIA_SIGNATURE } from "@/lib/brand";
 
-const BLEU = "#2563EB";
+const BLEU = "#5B3DF5";
 const M = "Montserrat";
 const W = 1080;
 const H = 1350;
@@ -92,7 +93,7 @@ function item(d: { index: number; total: number; categorie: string; texte: strin
   return (
     <div style={{ width: W, height: H, display: "flex", position: "relative", overflow: "hidden", fontFamily: M, background: "#0A0F1F" }}>
       {d.photo ? <img src={d.photo} alt="" width={W} height={H} style={{ position: "absolute", left: 0, top: 0, width: W, height: H, objectFit: "cover" }} /> : null}
-      {!d.photo ? <div style={{ position: "absolute", left: 0, top: 0, width: W, height: H, display: "flex", backgroundImage: "radial-gradient(ellipse at 60% 40%, #1D3A7A 0%, #0B1633 60%, #050812 100%)" }} /> : null}
+      {!d.photo ? <div style={{ position: "absolute", left: 0, top: 0, width: W, height: H, display: "flex", backgroundImage: "radial-gradient(ellipse at 60% 40%, #1D3A7A 0%, #150E33 60%, #050812 100%)" }} /> : null}
       <Assombri />
       {/* Logo */}
       <div style={{ position: "absolute", left: 0, top: 66, width: W, display: "flex", justifyContent: "center" }}>
@@ -115,7 +116,7 @@ function item(d: { index: number; total: number; categorie: string; texte: strin
             <div style={{ position: "absolute", left: 690, top: 790, display: "flex" }}><Carte photo={side(2).photo} titre={side(2).categorie} w={190} h={220} opacity={0.85} r={2} /></div>
             <div style={{ position: "absolute", left: 860, top: 815, display: "flex" }}><Carte photo={side(3).photo} titre={side(3).categorie} w={150} h={180} opacity={0.55} r={3} /></div>
             <div style={{ position: "absolute", left: 425, top: 720, display: "flex" }}>
-              <Carte photo={d.photo} titre={cat} sous={d.source ?? "TUVOA Tech Media"} w={250} h={340} />
+              <Carte photo={d.photo} titre={cat} sous={d.source ?? MEDIA_NOM} w={250} h={340} />
             </div>
           </div>
         );
@@ -127,7 +128,7 @@ function item(d: { index: number; total: number; categorie: string; texte: strin
       </div>
       <div style={{ position: "absolute", right: 110, top: 1075, display: "flex", fontFamily: SERIF, fontStyle: "italic", fontSize: 84, color: "#FFFFFF" }}>{`${d.index}/${d.total}`}</div>
       <div style={{ position: "absolute", left: 210, top: 1150, display: "flex" }}>
-        <Mention text={d.source ? `« Source : ${fit(d.source, 26)} »` : "« TUVOA Tech Media »"} size={33} pinceau={150} />
+        <Mention text={d.source ? `« Source : ${fit(d.source, 26)} »` : `« ${MEDIA_NOM} »`} size={33} pinceau={150} />
       </div>
     </div>
   );
@@ -144,8 +145,8 @@ function fin(base: string) {
         </div>
         <div style={{ display: "flex", marginTop: 50, fontFamily: M, fontSize: 56, fontWeight: 800, color: "#111111" }}>Toute l'actu tech,</div>
         <div style={{ display: "flex", fontFamily: M, fontSize: 56, fontWeight: 800, color: BLEU }}>chaque jour.</div>
-        <div style={{ display: "flex", marginTop: 30, padding: "14px 30px", borderRadius: 40, background: BLEU, fontFamily: M, fontSize: 30, fontWeight: 700, color: "#FFFFFF" }}>Abonnez-vous à TUVOA Tech Media</div>
-        <div style={{ display: "flex", marginTop: 22, fontFamily: M, fontSize: 28, fontWeight: 700, color: "#151515" }}>www.tuvoa.media</div>
+        <div style={{ display: "flex", marginTop: 30, padding: "14px 30px", borderRadius: 40, background: BLEU, fontFamily: M, fontSize: 30, fontWeight: 700, color: "#FFFFFF" }}>{`Abonnez-vous à ${MEDIA_NOM}`}</div>
+        <div style={{ display: "flex", marginTop: 22, fontFamily: M, fontSize: 28, fontWeight: 700, color: "#151515" }}>{MEDIA_SIGNATURE}</div>
       </div>
       <img src={`${base}/recap/front.png`} alt="" width={W} height={H} style={{ position: "absolute", left: 0, top: 0, width: W, height: H }} />
       <div style={{ position: "absolute", left: 120, top: 1030, width: 940, display: "flex", flexDirection: "column", alignItems: "center", opacity: 0.9 }}>
@@ -167,7 +168,7 @@ function Vignette({ photo, categorie, w, h }: { photo?: string; categorie?: stri
       {photo ? (
         <img src={photo} alt="" width={w} height={h} style={{ position: "absolute", left: 0, top: 0, width: w, height: h, objectFit: "cover" }} />
       ) : (
-        <div style={{ position: "absolute", left: 0, top: 0, width: w, height: h, display: "flex", alignItems: "center", justifyContent: "center", backgroundImage: "linear-gradient(160deg, #1D3A7A 0%, #0B1633 100%)" }}>
+        <div style={{ position: "absolute", left: 0, top: 0, width: w, height: h, display: "flex", alignItems: "center", justifyContent: "center", backgroundImage: "linear-gradient(160deg, #1D3A7A 0%, #150E33 100%)" }}>
           <LogoMark size={24} color="#FFFFFF" />
         </div>
       )}
@@ -204,7 +205,7 @@ function cover(d: { periode: string; count: number; photos?: string[]; categorie
             <Vignette key={i} photo={photos[i]} categorie={cats[i]} w={tw} h={th} />
           ))}
         </div>
-        <div style={{ display: "flex", marginTop: 16, fontFamily: M, fontSize: 26, fontWeight: 700, color: "#151515" }}>{`TUVOA:\\Récap\\${fit(d.periode, 26)}`}</div>
+        <div style={{ display: "flex", marginTop: 16, fontFamily: M, fontSize: 26, fontWeight: 700, color: "#151515" }}>{`${MEDIA_COURT}:\\Récap\\${fit(d.periode, 26)}`}</div>
       </div>
 
       {/* 3. Premier plan détouré : poche de l'enveloppe et mains (le bas de la feuille passe dedans) */}

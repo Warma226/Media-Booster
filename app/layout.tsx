@@ -8,15 +8,15 @@ const mont = Montserrat({ subsets: ["latin"], weight: ["600", "700", "800"], var
 const archivo = Archivo({ subsets: ["latin"], weight: ["300", "800"], variable: "--font-archivo", display: "swap" });
 
 export const metadata: Metadata = {
-  title: "TUVOA Studio",
-  description: "Veille, création et publication des posts de TUVOA Tech Media",
+  title: "Media Booster",
+  description: "Veille, création et publication des posts de Media Booster",
   robots: { index: false, follow: false },
 };
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#0a2a66",
+  themeColor: "#1B0F4D",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

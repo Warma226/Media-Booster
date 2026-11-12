@@ -1,4 +1,4 @@
-// TikTok (Content Posting API) : connexion OAuth du compte TUVOA et publication de photos.
+// TikTok (Content Posting API) : connexion OAuth du compte Media Booster et publication de photos.
 // Jetons enregistrés côté serveur (table settings, ligne 2), jamais exposés au navigateur.
 import { db } from "./store";
 import { appUrl, signParams } from "./sign";

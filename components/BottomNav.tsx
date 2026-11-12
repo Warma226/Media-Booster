@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { Icon } from "./Icon";
 import { useMoi } from "./Moi";
 import { lienVisible } from "@/lib/roles";
+import { SigneBoost } from "@/components/Logo";
 
 // Icônes au trait de la nouvelle interface (24 × 24)
 export const NAV_ICONS = {
@@ -33,13 +34,13 @@ export function Trait({ d, size = 22, stroke = 1.8 }: { d: string; size?: number
   );
 }
 
-// Tuile logo TUVOA (carré bleu, point orange)
-export function LogoTuile({ taille = 76, bord = "#0A2A66" }: { taille?: number; bord?: string }) {
+// Tuile logo Media Booster (carré violet, chevrons blancs, point rose)
+export function LogoTuile({ taille = 76, bord = "#1B0F4D" }: { taille?: number; bord?: string }) {
   const k = taille / 76;
   return (
-    <span className="tv-logo" style={{ width: taille, height: taille, borderRadius: 20 * k }} role="img" aria-label="TUVOA Tech Media">
-      <span style={{ fontSize: 19 * k }}>TUVOA</span>
-      <span style={{ fontSize: 7.5 * k, letterSpacing: 1.6 * k }}>TECH MEDIA</span>
+    <span className="tv-logo" style={{ width: taille, height: taille, borderRadius: 20 * k }} role="img" aria-label="Media Booster">
+      <span style={{ display: "inline-flex" }}><SigneBoost size={30 * k} /></span>
+      <span style={{ fontSize: 8 * k, letterSpacing: 1.4 * k }}>BOOSTER</span>
       <i style={{ width: 14 * k, height: 14 * k, borderWidth: Math.max(2, 3 * k), borderColor: bord, right: -4 * k, top: -4 * k }} />
     </span>
   );
@@ -52,7 +53,7 @@ const MENU: { href: string; label: string; d: string; badge?: "grin" }[] = [
   { href: "/calendrier", label: "Calendrier", d: NAV_ICONS.cal },
   { href: "/studio", label: "Studio", d: NAV_ICONS.studio },
   { href: "/minute-cyber", label: "La minute cyber", d: NAV_ICONS.minute },
-  { href: "/communaute", label: "Le Grin · VOA", d: NAV_ICONS.grin, badge: "grin" },
+  { href: "/communaute", label: "Le Grin · NOVA", d: NAV_ICONS.grin, badge: "grin" },
   { href: "/sources", label: "Sources", d: NAV_ICONS.sources },
   { href: "/declencheurs", label: "Déclencheurs", d: NAV_ICONS.eclair },
   { href: "/connexions", label: "Connexions", d: NAV_ICONS.cnx },
@@ -90,7 +91,7 @@ export function BottomNav() {
   return (
     <>
       <nav className="tv-side" aria-label="Navigation principale">
-        <Link href="/" className="tv-side-brand" aria-label="TUVOA Studio, tableau de bord">
+        <Link href="/" className="tv-side-brand" aria-label="Media Booster, tableau de bord">
           <LogoTuile />
           <span className="tv-side-studio">STUDIO</span>
         </Link>
@@ -117,7 +118,7 @@ export function BottomNav() {
           </span>
         </Link>
         <div className="tv-side-pilote">
-          <span className="tv-kicker" style={{ color: "#FFB48A" }}>PILOTE AUTOMATIQUE</span>
+          <span className="tv-kicker" style={{ color: "#FF9CC6" }}>PILOTE AUTOMATIQUE</span>
           <span style={{ fontSize: 13, lineHeight: 1.4, color: "#E6ECFA" }}>
             {etat?.autopilot ? "L'app publie seule les actus de la veille." : "Les posts attendent ta validation."}
           </span>

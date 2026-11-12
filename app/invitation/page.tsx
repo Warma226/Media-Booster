@@ -58,7 +58,7 @@ function Invitation() {
             <>
               <span className="badge" style={{ alignSelf: "flex-start" }}><Trait d="M22 2L11 13M22 2l-7 20-4-9-9-4z" size={14} stroke={2.2} />Invitation personnelle · valable jusqu&apos;au {new Date(inv.expire).toLocaleDateString("fr-FR", { day: "numeric", month: "long" })}</span>
               <h1>Bienvenue dans l&apos;équipe, <span>{prenom}.</span></h1>
-              <p style={{ margin: 0, fontSize: 16, lineHeight: 1.55, color: "#D6E0FF" }}>L&apos;administration de TUVOA vous a ajouté(e) comme <strong style={{ color: "#fff" }}>{inv.roleNom.toLowerCase()}</strong>. Choisissez votre mot de passe : vous publiez directement, selon votre rôle.</p>
+              <p style={{ margin: 0, fontSize: 16, lineHeight: 1.55, color: "#D6E0FF" }}>L&apos;administration de Media Booster vous a ajouté(e) comme <strong style={{ color: "#fff" }}>{inv.roleNom.toLowerCase()}</strong>. Choisissez votre mot de passe : vous publiez directement, selon votre rôle.</p>
               <div className="row" style={{ gap: 8, flexWrap: "wrap" }}>{zones.map((z) => <span key={z} className="badge" style={{ color: "#fff" }}><Trait d="M20 6L9 17l-5-5" size={13} stroke={2.6} />{ZONE_NOM[z]}{DROITS[inv.role][z] === "l" ? " (lecture)" : ""}</span>)}</div>
             </>
           ) : <h1>{erreurLien ? "Ce lien ne fonctionne plus." : "Un instant…"}</h1>}
@@ -70,7 +70,7 @@ function Invitation() {
               <span style={{ position: "absolute", right: -28, top: -54, width: 80, zIndex: 2 }} aria-hidden="true"><Voa humeur="fete" taille={80} decor /></span>
               <form className="carte" onSubmit={valider} noValidate>
                 <div className="row" style={{ gap: 12 }}>
-                  <span style={{ width: 48, height: 48, borderRadius: 24, background: "#2563EB", color: "#fff", fontWeight: 800, display: "flex", alignItems: "center", justifyContent: "center" }}>{inv.nom.split(/\s+/).map((x) => x[0]).join("").slice(0, 2).toUpperCase()}</span>
+                  <span style={{ width: 48, height: 48, borderRadius: 24, background: "#5B3DF5", color: "#fff", fontWeight: 800, display: "flex", alignItems: "center", justifyContent: "center" }}>{inv.nom.split(/\s+/).map((x) => x[0]).join("").slice(0, 2).toUpperCase()}</span>
                   <span style={{ display: "flex", flexDirection: "column" }}><strong>{inv.nom}</strong><small style={{ color: "#5B6B86" }}>{inv.contact} · {inv.roleNom}</small></span>
                 </div>
                 <label className="field">Choisissez un mot de passe

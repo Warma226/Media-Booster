@@ -1,6 +1,7 @@
 // Rédaction des posts avec Claude (API Messages d'Anthropic).
 import { STYLE_GUIDE, RUBRIQUES, WP_CATEGORIES_AUTO, type RubriqueId, type TriggerFormat } from "./config";
 import { convertirTout } from "./devises";
+import { MEDIA_HASHTAG, MEDIA_NOM } from "@/lib/brand";
 
 export type Generated = {
   variantes: string[];
@@ -246,7 +247,7 @@ export async function generateRecap(items: RecapItem[], periode: string): Promis
     .join("\n\n");
   const out = await callClaude(
     STYLE_GUIDE,
-    `Rédige le « Récap tech de la semaine » de TUVOA (${periode}) à partir des posts publiés cette semaine, ci-dessous.
+    `Rédige le « Récap tech de la semaine » de ${MEDIA_NOM} (${periode}) à partir des posts publiés cette semaine, ci-dessous.
 Sélectionne EXACTEMENT 5 sujets différents (tous s'il y en a moins de 5), les plus importants pour le public africain francophone, du plus important au moins important.
 Ne rien inventer : n'utilise que les informations des posts.
 
@@ -290,7 +291,7 @@ Montants : écris-les sous la forme [[MONTANT:valeur numérique complète:code I
     sources ? `Sources : ${sources}` : "",
   ].filter(Boolean);
   return {
-    facebook: [...corps, "#RécapTech #ActuTech #TUVOA"].join("\n\n"),
+    facebook: [...corps, `#RécapTech #ActuTech ${MEDIA_HASHTAG}`].join("\n\n"),
     linkedin: [...corps, "#RécapTech #Tech #Afrique"].join("\n\n"),
     titre: String(g.titre ?? "Récap tech de la semaine"),
     points: details,
@@ -376,7 +377,7 @@ export async function rewrite(action: RewriteAction, text: string, platform: str
     raccourcir: "Raccourcis ce texte de moitié en gardant l'essentiel et la source.",
     reformuler: "Reformule ce texte avec une autre accroche, même sens, même longueur.",
     expliquer: "Ajoute une explication très simple de ce que ça change concrètement pour le lecteur.",
-    ton: "Réécris ce texte dans le ton TUVOA : neutre, factuel, rigoureux, à la troisième personne, sans tutoiement ni familiarité.",
+    ton: `Réécris ce texte dans le ton ${MEDIA_NOM} : neutre, factuel, rigoureux, à la troisième personne, sans tutoiement ni familiarité.`,
     traduire: "Réécris ce texte entièrement en bon français (traduis tout passage dans une autre langue), même sens, même ton.",
   };
   const out = await callClaude(
@@ -398,8 +399,8 @@ export function draftWithoutAI(input: GenerateInput): Generated {
     const base = `${nom}, ${specialite}.${infos ? `\n\n${infos}` : ""}`;
     return {
       variantes: [`Portrait : ${nom}`, `${nom}, ${specialite}`, `Qui est ${nom} ?`],
-      facebook: `${base}\n\n#Portrait #ExpertsTech #TUVOA`,
-      linkedin: `Portrait d'expert : ${base}\n\n#Portrait #ExpertsTech #TUVOA`,
+      facebook: `${base}\n\n#Portrait #ExpertsTech ${MEDIA_HASHTAG}`,
+      linkedin: `Portrait d'expert : ${base}\n\n#Portrait #ExpertsTech ${MEDIA_HASHTAG}`,
       tiktok: `Portrait : ${nom}, ${specialite}`.slice(0, 150),
       wp_title: `Portrait : ${nom}, ${specialite}`,
       wp_body: `<p>${base.replace(/\n\n/g, "</p><p>")}</p>`,
@@ -413,8 +414,8 @@ export function draftWithoutAI(input: GenerateInput): Generated {
     const corps = `« ${texte} »\n— ${auteur}, ${fonction}${contexte ? `\n\n${contexte}` : ""}${source ? `\n\n${source}${lien}` : ""}`;
     return {
       variantes: [`« ${texte} »`, `${auteur} : « ${texte} »`, `Que pensez-vous de cette déclaration de ${auteur} ?`],
-      facebook: `${corps}\n\n#Citation #Tech #TUVOA`,
-      linkedin: `${corps}\n\n#Citation #Tech #TUVOA`,
+      facebook: `${corps}\n\n#Citation #Tech ${MEDIA_HASHTAG}`,
+      linkedin: `${corps}\n\n#Citation #Tech ${MEDIA_HASHTAG}`,
       tiktok: `« ${texte} » — ${auteur}`.slice(0, 150),
       wp_title: `${auteur} : « ${texte.length > 80 ? texte.slice(0, 79).trimEnd() + "…" : texte} »`,
       wp_body: `<blockquote><p>${texte}</p></blockquote><p>— ${auteur}, ${fonction}</p>${contexte ? `<p>${contexte}</p>` : ""}${input.sourceName ? `<p>Source : ${input.sourceName}${input.sourceUrl ? ` (<a href="${input.sourceUrl}">${input.sourceUrl}</a>)` : ""}</p>` : ""}`,
@@ -427,8 +428,8 @@ export function draftWithoutAI(input: GenerateInput): Generated {
     const a_completer = "[Définition en 2 phrases simples, avec un exemple du quotidien.]";
     return {
       variantes: [`${notion} : la notion à connaître`, `${notion}, expliqué simplement`, `C'est quoi, ${notion} ?`],
-      facebook: `#CyberBase · ${notion}\n\n${a_completer}\n\n#CyberBase #Tech #TUVOA`,
-      linkedin: `#CyberBase · ${notion}\n\n${a_completer}\n\n#CyberBase #Cybersécurité #TUVOA`,
+      facebook: `#CyberBase · ${notion}\n\n${a_completer}\n\n#CyberBase #Tech ${MEDIA_HASHTAG}`,
+      linkedin: `#CyberBase · ${notion}\n\n${a_completer}\n\n#CyberBase #Cybersécurité ${MEDIA_HASHTAG}`,
       tiktok: `${notion}, expliqué en 30 secondes #CyberBase`.slice(0, 150),
       wp_title: `${notion} : comprendre la notion simplement`,
       wp_body: `<p>${a_completer}</p>`,
@@ -441,7 +442,7 @@ export function draftWithoutAI(input: GenerateInput): Generated {
   const a_completer = "[Résumé de l’information en 2 ou 3 phrases.]";
   return {
     variantes: [titre, `Ce qu'il faut retenir : ${titre}`, `${titre} : les enjeux`],
-    facebook: `${titre}${angle}\n\n${a_completer}\n\n${source}${lien}\n\n${rub.hashtag} #Tech #TUVOA`.trim(),
+    facebook: `${titre}${angle}\n\n${a_completer}\n\n${source}${lien}\n\n${rub.hashtag} #Tech ${MEDIA_HASHTAG}`.trim(),
     linkedin: `${titre}${angle}\n\n${a_completer}\n\n${source}${lien}\n\n${rub.hashtag} #Tech #Innovation`.trim(),
     tiktok: `${titre} ${rub.hashtag}`.slice(0, 150),
     wp_title: titre,

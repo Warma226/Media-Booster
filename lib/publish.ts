@@ -1,8 +1,9 @@
-// Publication sur les canaux de TUVOA.
+// Publication sur les canaux de Media Booster.
 import { categorieWp, type Platform } from "./config";
 import type { Post, PublishResult } from "./store";
 import { imageFor } from "./visual-url";
 import { publishPhotos, tiktokConfigured, tiktokUser } from "./tiktok";
+import { MEDIA_NOM } from "@/lib/brand";
 
 type Publisher = (post: Post) => Promise<Omit<PublishResult, "at">>;
 
@@ -28,11 +29,11 @@ export function connectionStatus(): Record<Platform, { configured: boolean; deta
     },
     linkedin: {
       configured: Boolean(process.env.LINKEDIN_WEBHOOK_URL || (process.env.LINKEDIN_TOKEN && process.env.LINKEDIN_AUTHOR)),
-      detail: process.env.LINKEDIN_WEBHOOK_URL ? "Page TUVOA via Make" : process.env.LINKEDIN_AUTHOR ?? "LINKEDIN_WEBHOOK_URL (Make)",
+      detail: process.env.LINKEDIN_WEBHOOK_URL ? `Page ${MEDIA_NOM} via Make` : process.env.LINKEDIN_AUTHOR ?? "LINKEDIN_WEBHOOK_URL (Make)",
     },
     tiktok: {
       configured: tiktokConfigured(),
-      detail: tiktokConfigured() ? "Compte TUVOA via Content Posting API" : "TIKTOK_CLIENT_KEY, TIKTOK_CLIENT_SECRET",
+      detail: tiktokConfigured() ? `Compte ${MEDIA_NOM} via Content Posting API` : "TIKTOK_CLIENT_KEY, TIKTOK_CLIENT_SECRET",
     },
   };
 }
@@ -97,7 +98,7 @@ async function optimise(bytes: ArrayBuffer, type: string): Promise<{ body: Array
 }
 
 async function wpMedia(url: string, name: string, legende: string, alt: string): Promise<{ id: number; src: string; width?: number; height?: number } | null> {
-  const r = await fetch(url, { headers: { "User-Agent": "TUVOA-APP/1.0" } });
+  const r = await fetch(url, { headers: { "User-Agent": "MediaBooster/1.0" } });
   if (!r.ok) return null;
   const img = await optimise(await r.arrayBuffer(), (r.headers.get("content-type") ?? "image/jpeg").split(";")[0]);
   const up = await fetch(`${wpBase()}/wp-json/wp/v2/media`, {
@@ -121,7 +122,7 @@ async function commonsCredit(url: string): Promise<string | null> {
   try {
     const name = decodeURIComponent(m[1]).replace(/_/g, " ");
     const api = `https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=extmetadata&titles=${encodeURIComponent("File:" + name)}`;
-    const r = await fetch(api, { headers: { "User-Agent": "TUVOA-APP/1.0" }, signal: AbortSignal.timeout(10000) });
+    const r = await fetch(api, { headers: { "User-Agent": "MediaBooster/1.0" }, signal: AbortSignal.timeout(10000) });
     const j = (await r.json()) as { query?: { pages?: Record<string, { imageinfo?: { extmetadata?: Record<string, { value?: string }> }[] }> } };
     const meta = Object.values(j.query?.pages ?? {})[0]?.imageinfo?.[0]?.extmetadata ?? {};
     const strip = (h?: string) => (h ?? "").replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim();
@@ -163,16 +164,16 @@ const wordpress: Publisher = async (post) => {
   const creditUne = await commonsCredit(une);
   const legendeUne = [v.legende || (post.source_name ? `Illustration · ${post.source_name}` : titre), creditUne].filter(Boolean).join(" · ");
   const altUne = v.alt || titre;
-  let media = await wpMedia(une, `tuvoa-${slug}`, legendeUne, altUne).catch(() => null);
-  // Photo indisponible : visuel de secours (visuel TUVOA).
-  if (!media && v.image_secours) media = await wpMedia(v.image_secours, `tuvoa-${slug}`, v.legende || titre, altUne);
+  let media = await wpMedia(une, `mb-${slug}`, legendeUne, altUne).catch(() => null);
+  // Photo indisponible : visuel de secours (visuel Media Booster).
+  if (!media && v.image_secours) media = await wpMedia(v.image_secours, `mb-${slug}`, v.legende || titre, altUne);
   let content = post.texts.wp_body || `<p>${escapeHtml(post.texts.facebook)}</p>`;
   const extras = v.wp_images ?? [];
   for (let i = 0; i < extras.length; i++) {
     const im = extras[i];
     const credit = await commonsCredit(im.url);
     const legende = [im.legende, credit].filter(Boolean).join(" · ");
-    const m = await wpMedia(im.url, `tuvoa-${slug}-${i + 1}`, legende, im.alt || im.legende).catch(() => null);
+    const m = await wpMedia(im.url, `mb-${slug}-${i + 1}`, legende, im.alt || im.legende).catch(() => null);
     const html = m ? figure(m, im.alt || im.legende, legende) : "";
     content = content.includes(`[[IMAGE${i + 1}]]`) ? content.replace(`[[IMAGE${i + 1}]]`, html) : content + html;
   }
@@ -283,7 +284,7 @@ const linkedinViaMake: Publisher = async (post) => {
 };
 
 const linkedin: Publisher = async (post) => {
-  // Page TUVOA via Make (aucune validation LinkedIn nécessaire) si le webhook est configuré.
+  // Page Media Booster via Make (aucune validation LinkedIn nécessaire) si le webhook est configuré.
   if (process.env.LINKEDIN_WEBHOOK_URL) return linkedinViaMake(post);
   const headers = {
     Authorization: `Bearer ${process.env.LINKEDIN_TOKEN}`,

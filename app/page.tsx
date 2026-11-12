@@ -1,5 +1,5 @@
 "use client";
-// Tableau de bord : courbe des publications, rubriques, alertes de VOA et médiathèque.
+// Tableau de bord : courbe des publications, rubriques, alertes de NOVA et médiathèque.
 import { useVoirPlus } from "@/components/VoirPlus";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -93,14 +93,14 @@ export default function Dashboard() {
   const aValider = n(actu.a_valider) + n(cit.a_valider) + n(cyb.a_valider) + n(por.a_valider);
 
   const alertes: Alerte[] = [];
-  if (d?.citationsSansPhoto) alertes.push({ type: "À FAIRE", tag: ["#E94A06", "#fff"], txt: `${pl(d.citationsSansPhoto, "citation")} ${d.citationsSansPhoto > 1 ? "attendent" : "attend"} leur photo avant de partir.`, cta: "Ajouter les photos", href: "/calendrier?filtre=erreur" });
+  if (d?.citationsSansPhoto) alertes.push({ type: "À FAIRE", tag: ["#E11D74", "#fff"], txt: `${pl(d.citationsSansPhoto, "citation")} ${d.citationsSansPhoto > 1 ? "attendent" : "attend"} leur photo avant de partir.`, cta: "Ajouter les photos", href: "/calendrier?filtre=erreur" });
   if (erreursAutres.length) {
     const e = erreursAutres[0];
     const quoi = e.rubrique === "actu" ? "Une actualité" : e.rubrique === "cyberbase" ? "Un numéro #CyberBase" : "Un post";
     const canal = /facebook/i.test(e.detail) ? " sur Facebook" : /linkedin/i.test(e.detail) ? " sur LinkedIn" : "";
     alertes.push({ type: "ERREUR", tag: ["#FDD5D9", "#9F1239"], txt: erreursAutres.length > 1 ? `${erreursAutres.length} publications n'ont pas pu partir.` : `${quoi} n'a pas pu être publiée${canal}.`, cta: "Voir et republier", href: "/calendrier?filtre=erreur" });
   }
-  if (aValider) alertes.push({ type: "À VALIDER", tag: ["#DBE7FF", "#1D4ED8"], txt: `${pl(aValider, "post")} ${aValider > 1 ? "attendent" : "attend"} ton feu vert.`, cta: "Valider", href: "/calendrier?filtre=a_valider" });
+  if (aValider) alertes.push({ type: "À VALIDER", tag: ["#E5DEFF", "#4527D9"], txt: `${pl(aValider, "post")} ${aValider > 1 ? "attendent" : "attend"} ton feu vert.`, cta: "Valider", href: "/calendrier?filtre=a_valider" });
   if (d?.grin.aTraiter) alertes.push({ type: "LE GRIN", tag: ["#FDE68A", "#7A4A00"], txt: `${pl(d.grin.aTraiter, "message")} de la communauté ${d.grin.aTraiter > 1 ? "attendent" : "attend"} une réponse.`, cta: "Ouvrir le Grin", href: "/communaute" });
   if (info && !auto) alertes.push({ type: "RÉGLAGE", tag: ["rgba(255,255,255,0.15)", "#fff"], txt: "Le pilote automatique est en pause : rien ne part sans toi.", cta: "Le réactiver", action: basculer });
   if (info && !info.ai) alertes.push({ type: "RÉGLAGE", tag: ["rgba(255,255,255,0.15)", "#fff"], txt: "Rédaction par l'IA inactive : ajoute la clé GEMINI_API_KEY dans Vercel.", cta: "Ouvrir les connexions", href: "/connexions" });
@@ -117,23 +117,23 @@ export default function Dashboard() {
   );
 
   const une = [
-    { nom: "Actualités", href: "/calendrier", meta1: `${n(actu.publie)} publiées`, meta2: "7 derniers jours", desc: "La veille repère l'info tech, l'IA la résume en français, convertit les montants en FCFA et publie seule.", c: ["#60A5FA", "#1D4ED8"], ok: !n(actu.erreur), vals: [n(actu.publie), n(actu.a_valider) + n(actu.brouillon), n(actu.erreur)], cols: [["#2563EB", "#fff"], ["#FDE7C8", "#9A4A00"], ["#FDD5D9", "#B4111F"]] as [string, string][], leg: "Publiées · à valider · erreurs", canaux: ["F", "in", "W"], rythme: auto ? "Toutes les 30 min" : "Sur validation" },
+    { nom: "Actualités", href: "/calendrier", meta1: `${n(actu.publie)} publiées`, meta2: "7 derniers jours", desc: "La veille repère l'info tech, l'IA la résume en français, convertit les montants en FCFA et publie seule.", c: ["#60A5FA", "#4527D9"], ok: !n(actu.erreur), vals: [n(actu.publie), n(actu.a_valider) + n(actu.brouillon), n(actu.erreur)], cols: [["#5B3DF5", "#fff"], ["#FDE7C8", "#9A4A00"], ["#FDD5D9", "#B4111F"]] as [string, string][], leg: "Publiées · à valider · erreurs", canaux: ["F", "in", "W"], rythme: auto ? "Toutes les 30 min" : "Sur validation" },
     { nom: "Citations", href: "/calendrier", meta1: `${n(cit.planifie)} planifiées`, meta2: `${n(cit.publie)} publiées`, desc: "Des voix tech d'Afrique et du monde, vérifiées, une toutes les deux heures. Il suffit d'ajouter la photo.", c: ["#C4B5FD", "#7C3AED"], ok: !n(cit.erreur), vals: [n(cit.publie), n(cit.planifie), n(cit.erreur)], cols: [["#7C3AED", "#fff"], ["#E9E3FF", "#5B21B6"], ["#FDD5D9", "#B4111F"]] as [string, string][], leg: "Publiées · planifiées · erreurs", canaux: ["F", "in"], rythme: "Toutes les 2 h" },
   ];
 
   const recapDate = d?.recap ? new Date(d.recap.date).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric" }) : null;
   const m = d?.media?.categories;
   const rubriques = [
-    { nom: "Actualités", href: "/calendrier", meta: `${n(actu.publie)} publiées · 7 j`, c: ["#60A5FA", "#1D4ED8"], ok: !n(actu.erreur), et: n(actu.erreur) ? `${pl(n(actu.erreur), "erreur")} à corriger` : auto ? "Pilote automatique actif" : "En attente de validation", bl: "Publiées · à valider · en erreur", v: [n(actu.publie), n(actu.a_valider) + n(actu.brouillon), n(actu.erreur)] },
+    { nom: "Actualités", href: "/calendrier", meta: `${n(actu.publie)} publiées · 7 j`, c: ["#60A5FA", "#4527D9"], ok: !n(actu.erreur), et: n(actu.erreur) ? `${pl(n(actu.erreur), "erreur")} à corriger` : auto ? "Pilote automatique actif" : "En attente de validation", bl: "Publiées · à valider · en erreur", v: [n(actu.publie), n(actu.a_valider) + n(actu.brouillon), n(actu.erreur)] },
     { nom: "Citations", href: "/calendrier", meta: `${n(cit.planifie)} planifiées`, c: ["#C4B5FD", "#7C3AED"], ok: !n(cit.erreur), et: d?.citationsSansPhoto ? `${d.citationsSansPhoto} en attente de photo` : "Photos prêtes", bl: "Publiées · planifiées · en erreur", v: [n(cit.publie), n(cit.planifie), n(cit.erreur)] },
     { nom: "#CyberBase", href: "/rubriques", meta: "Chaque jour à 7 h", c: ["#5EEAD4", "#0E9F8E"], ok: !n(cyb.erreur), et: n(cyb.planifie) ? `${pl(n(cyb.planifie), "numéro")} d'avance` : "Aucun numéro d'avance", bl: "Publiés · planifiés · en erreur", v: [n(cyb.publie), n(cyb.planifie), n(cyb.erreur)] },
-    { nom: "Portrait", href: "/creer", meta: "Vos visuels", c: ["#FDBA74", "#E94A06"], ok: !n(por.erreur), et: n(por.planifie) ? `${pl(n(por.planifie), "portrait")} planifié${n(por.planifie) > 1 ? "s" : ""}` : "Prêt à recevoir un visuel", bl: "Publiés · planifiés · à faire", v: [n(por.publie), n(por.planifie), n(por.brouillon) + n(por.a_valider)] },
+    { nom: "Portrait", href: "/creer", meta: "Vos visuels", c: ["#FDBA74", "#E11D74"], ok: !n(por.erreur), et: n(por.planifie) ? `${pl(n(por.planifie), "portrait")} planifié${n(por.planifie) > 1 ? "s" : ""}` : "Prêt à recevoir un visuel", bl: "Publiés · planifiés · à faire", v: [n(por.publie), n(por.planifie), n(por.brouillon) + n(por.a_valider)] },
     { nom: "La minute cyber", href: "/minute-cyber", meta: "Vidéo · 1 min", c: ["#FCA5A5", "#B91C1C"], ok: true, et: d?.minute.dernier ? `Épisode ${d.minute.dernier} prêt` : "Premier épisode à écrire", bl: "Montés · brouillons", v: [n(d?.minute.montes), n(d?.minute.brouillons), 0] },
-    { nom: "Récap du vendredi", href: "/calendrier", meta: "Chaque vendredi", c: ["#93C5FD", "#0A2A66"], ok: d?.recap?.statut !== "erreur", et: recapDate ? `Dernier : ${recapDate}` : "Pas encore de récap", bl: "Publiés cette semaine", v: [n(actu.recap), 0, 0] },
-    { nom: "Le Grin · VOA", href: "/communaute", meta: "Community manager", c: ["#FDE68A", "#D97706"], ok: !d?.grin.aTraiter, et: d?.grin.aTraiter ? `${pl(d.grin.aTraiter, "message")} à traiter` : "Commentaires et messages suivis", bl: "À traiter", v: [0, n(d?.grin.aTraiter), 0] },
+    { nom: "Récap du vendredi", href: "/calendrier", meta: "Chaque vendredi", c: ["#93C5FD", "#1B0F4D"], ok: d?.recap?.statut !== "erreur", et: recapDate ? `Dernier : ${recapDate}` : "Pas encore de récap", bl: "Publiés cette semaine", v: [n(actu.recap), 0, 0] },
+    { nom: "Le Grin · NOVA", href: "/communaute", meta: "Community manager", c: ["#FDE68A", "#D97706"], ok: !d?.grin.aTraiter, et: d?.grin.aTraiter ? `${pl(d.grin.aTraiter, "message")} à traiter` : "Commentaires et messages suivis", bl: "À traiter", v: [0, n(d?.grin.aTraiter), 0] },
     { nom: "Studio", href: "/studio", meta: "Visuels et vidéos", c: ["#A5B4FC", "#4338CA"], ok: true, et: "Visuels, carrousels, vidéos", bl: "Images · voix off · vidéos", v: [n(m?.images.n), n(m?.voix.n), n(m?.videos.n)] },
   ];
-  const BAR = ["#2563EB", "#F5B94A", "#C9D3E3"];
+  const BAR = ["#5B3DF5", "#F5B94A", "#C9D3E3"];
 
   const piloteTexte = d?.prochaine ? `Prochaine : ${heure(d.prochaine.at)}${d.prochaine.titre ? ` · ${d.prochaine.titre.slice(0, 40)}` : ""}` : "Rien de planifié pour les prochaines heures";
 
@@ -143,7 +143,7 @@ export default function Dashboard() {
       <header className="tv-hero-mobile tv-mobile">
         <div className="row">
           <LogoTuile taille={52} />
-          <span style={{ fontFamily: "var(--font-mont)", fontWeight: 700, fontSize: 12, letterSpacing: 2, color: "#9FB6E8" }}>STUDIO</span>
+          <span style={{ fontFamily: "var(--font-mont)", fontWeight: 700, fontSize: 12, letterSpacing: 2, color: "#B6A8EC" }}>STUDIO</span>
           <span style={{ flex: 1 }} />
           <Link href="/compte" className="tv-rond" aria-label="Mon compte"><Trait d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z" size={18} stroke={2} /></Link>
           <Link href="/calendrier" className="tv-rond" aria-label="Rechercher une publication"><Trait d="M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 20l-3.5-3.5" size={18} stroke={2} /></Link>
@@ -153,14 +153,14 @@ export default function Dashboard() {
           </Link>
         </div>
         <div>
-          <span style={{ fontSize: 13, color: "#BFD0FF" }}>{horodatage(now)}</span>
+          <span style={{ fontSize: 13, color: "#D2C8FF" }}>{horodatage(now)}</span>
           <h1 className="tv-titre" style={{ color: "#fff", marginTop: 4 }}>Tableau de bord</h1>
         </div>
         <button type="button" role="switch" aria-checked={auto} className="tv-pilote-mobile" onClick={basculer} disabled={!info || !admin}>
           <span className={`tv-led${auto ? "" : " off"}`} style={{ width: 12, height: 12 }} />
           <span style={{ display: "flex", flexDirection: "column", gap: 2, flex: 1, minWidth: 0 }}>
             <strong style={{ fontSize: 14 }}>Pilote automatique {auto ? "actif" : "en pause"}</strong>
-            <span style={{ fontSize: 12, color: "#C9D6F2", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{piloteTexte}</span>
+            <span style={{ fontSize: 12, color: "#D9D2F2", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{piloteTexte}</span>
           </span>
           <span className={`switch${auto ? " on" : ""}`} aria-hidden="true" style={{ pointerEvents: "none" }}><span /></span>
         </button>
@@ -186,8 +186,8 @@ export default function Dashboard() {
             <Trait d={NAV_ICONS.cnx} size={20} />
           </Link>
           <div className="tv-rond" style={{ width: "auto", padding: "0 16px 0 6px", gap: 10, cursor: "default" }}>
-            <span style={{ width: 36, height: 36, borderRadius: 18, background: "#0A2A66", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--font-mont)", fontWeight: 800, fontSize: 14 }}>T</span>
-            <span style={{ display: "flex", flexDirection: "column", lineHeight: 1.15, color: "var(--encre)" }}><strong style={{ fontSize: 14 }}>Équipe TUVOA</strong><span style={{ fontSize: 12, color: "#5B6B86" }}>Administrateur</span></span>
+            <span style={{ width: 36, height: 36, borderRadius: 18, background: "#1B0F4D", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--font-mont)", fontWeight: 800, fontSize: 14 }}>T</span>
+            <span style={{ display: "flex", flexDirection: "column", lineHeight: 1.15, color: "var(--encre)" }}><strong style={{ fontSize: 14 }}>Équipe Media Booster</strong><span style={{ fontSize: 12, color: "#5B6B86" }}>Administrateur</span></span>
           </div>
         </div>
 
@@ -223,7 +223,7 @@ export default function Dashboard() {
             </>
           ) : <div style={{ height: 180, display: "flex", alignItems: "center", justifyContent: "center" }} className="tv-gris">{error ? "Chiffres indisponibles." : "Chargement des chiffres…"}</div>}
           <div className="tv-legende">
-            <span><span style={{ width: 18, height: 4, borderRadius: 2, background: "#2563EB" }} />Toutes les publications</span>
+            <span><span style={{ width: 18, height: 4, borderRadius: 2, background: "#5B3DF5" }} />Toutes les publications</span>
             <span><span style={{ width: 18, height: 4, borderRadius: 2, background: "#7C3AED" }} />Dont citations</span>
             <span><span style={{ width: 18, height: 0, borderTop: "3px dashed #5B6B86" }} />Planifié</span>
             <span style={{ flex: 1 }} />
@@ -259,14 +259,14 @@ export default function Dashboard() {
                 <div className="tv-une-stats">
                   <div><span style={{ fontSize: 13, color: "#5B6B86" }} title={r.leg}>Cette semaine · {r.leg.toLowerCase()}</span>{segs(r.vals, r.cols)}</div>
                   <div><span style={{ fontSize: 13, color: "#5B6B86" }}>Canaux</span><div style={{ display: "flex", gap: 6 }}>{r.canaux.map((c) => <span key={c} className="tv-canal">{c}</span>)}</div></div>
-                  <div><span style={{ fontSize: 13, color: "#5B6B86" }}>Rythme</span><span style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 14, fontWeight: 600 }}><span style={{ width: 26, height: 26, borderRadius: 13, border: "1px solid #C7D6FB", color: "#1D4ED8", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}><Trait d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 7v5l3 2" size={14} stroke={2.2} /></span>{r.rythme}</span></div>
+                  <div><span style={{ fontSize: 13, color: "#5B6B86" }}>Rythme</span><span style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 14, fontWeight: 600 }}><span style={{ width: 26, height: 26, borderRadius: 13, border: "1px solid #C7D6FB", color: "#4527D9", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}><Trait d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 7v5l3 2" size={14} stroke={2.2} /></span>{r.rythme}</span></div>
                 </div>
               </article>
             </Link>
           ))}
         </div>
 
-        {/* Toutes les rubriques + VOA */}
+        {/* Toutes les rubriques + NOVA */}
         <div className="tv-bas">
           <section aria-labelledby="toutes" style={{ flex: "999 1 600px", minWidth: 0, display: "flex", flexDirection: "column", gap: 14 }}>
             <h2 id="toutes" className="tv-h2" style={{ fontSize: 22 }}>Toutes les rubriques</h2>
@@ -279,7 +279,7 @@ export default function Dashboard() {
                       <span className="tv-tuile" style={tuile(r.c[0], r.c[1], 52)} />
                       <span style={{ display: "flex", flexDirection: "column", gap: 2, minWidth: 0 }}>
                         <span style={{ fontSize: 12, color: "#5B6B86" }}>{r.meta}</span>
-                        <strong style={{ fontFamily: "var(--font-mont)", fontSize: 17, color: "#0B1A33" }}>{r.nom}</strong>
+                        <strong style={{ fontFamily: "var(--font-mont)", fontSize: 17, color: "#150E33" }}>{r.nom}</strong>
                       </span>
                     </div>
                     <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13, color: "#33425C" }}>
@@ -303,8 +303,8 @@ export default function Dashboard() {
                 <Voa humeur={!d ? "veille" : alertes.length ? "parle" : "content"} taille={88} />
               </span>
               <div style={{ display: "flex", flexDirection: "column", minWidth: 0 }}>
-                <h2 id="voa" style={{ fontSize: 20, fontWeight: 800, color: "#fff" }}>VOA vous signale</h2>
-                <span style={{ fontSize: 13, color: "#BFD0FF" }}>Votre community manager</span>
+                <h2 id="voa" style={{ fontSize: 20, fontWeight: 800, color: "#fff" }}>NOVA vous signale</h2>
+                <span style={{ fontSize: 13, color: "#D2C8FF" }}>Votre community manager</span>
                 <span style={{ marginTop: 6, padding: "8px 12px", borderRadius: "14px 14px 14px 4px", background: "rgba(255,255,255,0.12)", fontSize: 13, lineHeight: 1.35 }}>{bulle}</span>
               </div>
             </div>
@@ -312,11 +312,11 @@ export default function Dashboard() {
               <div key={i} className="tv-voa-alerte">
                 <span className="tv-tag" style={{ background: a.tag[0], color: a.tag[1] }}>{a.type}</span>
                 <span style={{ fontSize: 15, lineHeight: 1.4, fontWeight: 600 }}>{a.txt}</span>
-                {a.href ? <Link href={a.href}>{a.cta} →</Link> : <button type="button" onClick={a.action} style={{ alignSelf: "flex-start", border: 0, background: "none", padding: 0, fontSize: 13, fontWeight: 700, color: "#FFB48A", cursor: "pointer" }}>{a.cta} →</button>}
+                {a.href ? <Link href={a.href}>{a.cta} →</Link> : <button type="button" onClick={a.action} style={{ alignSelf: "flex-start", border: 0, background: "none", padding: 0, fontSize: 13, fontWeight: 700, color: "#FF9CC6", cursor: "pointer" }}>{a.cta} →</button>}
               </div>
             ))}
             <div className="tv-sombre">{vAl.bouton}</div>
-            <Link href="/communaute" style={{ fontSize: 13, fontWeight: 700, color: "#C9D6F2", textDecoration: "none" }}>Ouvrir le Grin de VOA →</Link>
+            <Link href="/communaute" style={{ fontSize: 13, fontWeight: 700, color: "#D9D2F2", textDecoration: "none" }}>Ouvrir le Grin de NOVA →</Link>
           </aside>
         </div>
 
@@ -327,7 +327,7 @@ export default function Dashboard() {
               <h2 id="media" className="tv-h2" style={{ fontSize: 22 }}>Médiathèque</h2>
               <span className="tv-gris">Ouvrez un dossier ou une catégorie pour voir ses fichiers.</span>
             </div>
-            <Link href="/mediatheque" style={{ height: 40, padding: "0 14px", borderRadius: 10, background: "#0A2A66", color: "#fff", textDecoration: "none", display: "flex", alignItems: "center", gap: 8, fontSize: 13, fontWeight: 700 }}>
+            <Link href="/mediatheque" style={{ height: 40, padding: "0 14px", borderRadius: 10, background: "#1B0F4D", color: "#fff", textDecoration: "none", display: "flex", alignItems: "center", gap: 8, fontSize: 13, fontWeight: 700 }}>
               <Trait d={NAV_ICONS.media} size={16} stroke={2} />Ouvrir
             </Link>
           </div>

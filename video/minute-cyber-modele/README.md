@@ -13,11 +13,11 @@ Format vertical 9:16, environ 1 minute, rendu image par image depuis le code (fi
 | Révélation | ~3 s | Fond orange, nom de la technique en grand avec glitch et impact |
 | La technique | ~9 s | Image d'enquête (mur, silhouette), fiches qui fusionnent, « UN SEUL CYBERCRIMINEL » |
 | Réflexes | ~8 s | Page claire, 3 cartes qui pivotent en 3D (Vérifiez / Signalez / Partagez) |
-| Générique | 2,8 s | Fin de l'épisode 1 (logo TUVOA, alerte.bclcc.gov.bf, www.tuvoa.media) |
+| Générique | 2,8 s | Fin de l'épisode 1 (logo Media Booster, alerte.bclcc.gov.bf, www.tuvoa.media) |
 
 Style : caméra 3D (travellings, orbites, traversées), profondeur de champ, poussières lumineuses,
 traînées de lumière orange, flares, repères discrets sur les bords, grain. Police Montserrat.
-Couleurs : nuit #071018, orange #E94A06 / ambre #FF8A3D, bleu TUVOA #2563EB.
+Couleurs : nuit #071018, orange #E94A06 / ambre #FF8A3D, bleu Media Booster #2563EB.
 
 Son : voix off de Mara (prises mp3) + musique rythmée composée en code (score.py, 96 bpm,
 la musique baisse sous la voix) + ~55 effets sonores calés sur l'image (HITS dans film.js).

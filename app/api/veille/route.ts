@@ -12,7 +12,7 @@ async function run(sources: Source[], triggers: Trigger[]) {
     // Plus de 2 jours : retirée de la veille, publiée ou non.
     const limite = Date.now() - 48 * 3.6e6;
     const fraiches = items.filter((i) => !i.publishedAt || new Date(i.publishedAt).getTime() >= limite).slice(0, 80);
-    // Déjà reprise dans une publication TUVOA : on le signale.
+    // Déjà reprise dans une publication Media Booster : on le signale.
     const repris = await postsParUrl(fraiches.map((i) => i.url)).catch(() => new Map());
     for (const i of fraiches) {
       const p = repris.get(urlNette(i.url));

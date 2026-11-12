@@ -9,7 +9,7 @@ import { renderSlide, type SlideData } from "@/lib/recap-slides";
 async function safeImage(url: string | null): Promise<string | undefined> {
   if (!url || !/^https?:\/\//.test(url)) return undefined;
   try {
-    const res = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0 (compatible; TUVOA/1.0)" }, signal: AbortSignal.timeout(6000) });
+    const res = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0 (compatible; MediaBooster/1.0)" }, signal: AbortSignal.timeout(6000) });
     if (!res.ok) return undefined;
     const type = (res.headers.get("content-type") ?? "").split(";")[0].trim();
     const buf = Buffer.from(await res.arrayBuffer());

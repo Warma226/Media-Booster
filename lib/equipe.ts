@@ -29,7 +29,7 @@ export function mdpValide(mdp: string): string | null {
 // Qui fait la requête (en-têtes posés par le middleware)
 export async function moi(): Promise<{ uid: string; role: Role; sid: string | null }> {
   const h = await headers();
-  return { uid: h.get("x-tuvoa-uid") || "admin", role: (h.get("x-tuvoa-role") as Role) || "admin", sid: h.get("x-tuvoa-sid") || null };
+  return { uid: h.get("x-mb-uid") || "admin", role: (h.get("x-mb-role") as Role) || "admin", sid: h.get("x-mb-sid") || null };
 }
 
 // Profil de l'administrateur principal (settings, ligne 6)

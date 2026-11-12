@@ -1,6 +1,7 @@
 // La minute cyber : épisodes vidéo de 60 s maximum. Une histoire réaliste, puis la technique d'attaque révélée à la fin,
 // et les bons réflexes. Ce fichier décrit un épisode et le transforme en vidéo du Studio (une page = une scène).
 import { anim as A, logo, nouveau, page, type Doc, type El } from "./creation";
+import { MEDIA_COURT, MEDIA_NOM } from "@/lib/brand";
 
 export type TypeScene = "accroche" | "histoire" | "message" | "appel" | "revelation" | "technique" | "reflexes" | "fin";
 export type Scene = {
@@ -46,7 +47,7 @@ export function caler(scenes: Scene[], dureeAudio: number): Scene[] {
 }
 
 // ─── De l'épisode à la vidéo ─────────────────────────────────────────
-const B = "#2563EB", NUIT = "#0A2A66", CIEL = "#6E9BFF", OR = "#E94A06", NOIR = "#0A0A0A", BLANC = "#FFFFFF", VERT = "#22C55E";
+const B = "#5B3DF5", NUIT = "#1B0F4D", CIEL = "#A08BFF", OR = "#E11D74", NOIR = "#0A0A0A", BLANC = "#FFFFFF", VERT = "#22C55E";
 type O = Partial<El>;
 const T = (texte: string, x: number, y: number, w: number, h: number, o: O = {}) => nouveau.texte({ texte, x, y, w, h, ...o });
 const Pa = (texte: string, x: number, y: number, w: number, h: number, o: O = {}) => nouveau.pastille({ texte, x, y, w, h, ...o });
@@ -74,7 +75,7 @@ function scene(s: Scene, i: number, e: Episode, n: number) {
     case "message":
     case "appel": {
       const appel = s.type === "appel";
-      return page(`rad:#1E2E5C,#0B1633,#05080F`, [
+      return page(`rad:#1E2E5C,#150E33,#05080F`, [
         ...bandeau(e.numero),
         F(140, 300, 800, 1380, "#0F172A", { nom: "Téléphone", rayon: 80, bordure: "#334155", epaisseur: 10, anim: A("glisser-haut", 0, "aucune", 0.7) }),
         T(appel ? "Appel entrant" : "21:47", 140, 400, 800, 120, { nom: "Heure", police: appel ? 54 : 130, graisse: 600, align: "center", anim: A("fondu", 0.3) }),
@@ -117,7 +118,7 @@ function scene(s: Scene, i: number, e: Episode, n: number) {
         T(ecran || "Les bons réflexes", 70, 380, 940, 200, { role: "titre", police: 84, interligne: 1.02, anim: A("glisser-haut", 0.1) }),
         ...pts.flatMap((p, k) => [
           F(70, 640 + k * 360, 940, 310, "rgba(255,255,255,0.07)", { nom: `Réflexe ${k + 1}`, rayon: 28, bordure: k === 0 ? B : k === 1 ? CIEL : OR, epaisseur: 4, anim: A("glisser-gauche", 0.5 + k * 0.6) }),
-          Ic("check", 110, 690 + k * 360, 90, k === 0 ? B : k === 1 ? "#1D4ED8" : OR, { anim: A("pop", 0.6 + k * 0.6) }),
+          Ic("check", 110, 690 + k * 360, 90, k === 0 ? B : k === 1 ? "#4527D9" : OR, { anim: A("pop", 0.6 + k * 0.6) }),
           T(p, 240, 680 + k * 360, 730, 230, { role: `reflexe${k + 1}`, police: taille(p, 46, 34, 50), graisse: 700, interligne: 1.15, anim: A("glisser-gauche", 0.5 + k * 0.6) }),
         ]),
       ]);
@@ -126,18 +127,18 @@ function scene(s: Scene, i: number, e: Episode, n: number) {
       return page(`rad:#3B6CF0,#1D3A9E,#060B1A`, [
         nouveau.rayons({ x: -410, y: 10, couleur: "rgba(200,220,255,0.2)" }),
         F(415, 520, 250, 250, B, { nom: "Logo (carré)", anim: A("pop", 0.1) }),
-        T("TUVOA", 415, 600, 250, 70, { nom: "Logo (sigle)", police: 56, align: "center", anim: A("pop", 0.1) }),
-        T("TECH MEDIA", 415, 680, 250, 40, { nom: "Logo (mention)", police: 22, couleur: "#BFD0FF", align: "center", espacement: 3, anim: A("pop", 0.1) }),
+        T(MEDIA_COURT, 415, 600, 250, 70, { nom: "Logo (sigle)", police: 56, align: "center", anim: A("pop", 0.1) }),
+        T("TECH MEDIA", 415, 680, 250, 40, { nom: "Logo (mention)", police: 22, couleur: "#D2C8FF", align: "center", espacement: 3, anim: A("pop", 0.1) }),
         T(ecran || "Partagez pour protéger vos proches.", 70, 880, 940, 300, { role: "titre", police: taille(ecran, 72, 52, 36), align: "center", interligne: 1.08, anim: A("glisser-haut", 0.5) }),
         Pa("LA MINUTE CYBER", 290, 1300, 500, 84, { nom: "Bandeau", police: 36, fond: OR, anim: A("pop", 0.9) }),
-        Pa("Abonnez-vous à TUVOA", 220, 1460, 640, 96, { role: "bouton", police: 40, fond: BLANC, couleur: B, anim: A("pop", 1.2, "pulser") }),
+        Pa(`Abonnez-vous à ${MEDIA_NOM}`, 220, 1460, 640, 96, { role: "bouton", police: 40, fond: BLANC, couleur: B, anim: A("pop", 1.2, "pulser") }),
       ]);
     default: { // histoire
       const ic = ICONE_HISTOIRE[i % ICONE_HISTOIRE.length];
-      const fonds = [`rad:#1E2E5C,#0B1633,#05080F`, `lin:#0B1633,#1D3A9E,160`, `rad:#2A1A4A,#120A24,#05030A`];
+      const fonds = [`rad:#1E2E5C,#150E33,#05080F`, `lin:#150E33,#1D3A9E,160`, `rad:#2A1A4A,#120A24,#05030A`];
       return page(fonds[i % fonds.length], [
         ...scan(14), ...bandeau(e.numero),
-        F(340, 420, 400, 400, "rgba(37,99,235,0.18)", { nom: "Halo", forme: "cercle", anim: A("fondu", 0, "pulser", 1) }),
+        F(340, 420, 400, 400, "rgba(91,61,245,0.18)", { nom: "Halo", forme: "cercle", anim: A("fondu", 0, "pulser", 1) }),
         Ic(ic, 440, 520, 200, B, { rayon: 48, anim: A("pop", 0.2, "flotter") }),
         T(ecran, 70, 960, 940, 620, { role: "titre", police: taille(ecran, 84, 54, 32), align: "center", interligne: 1.08, anim: A("glisser-haut", 0.4) }),
         T(`${i + 1}/${n}`, 70, 1760, 940, 50, { nom: "Compteur", police: 28, couleur: "rgba(255,255,255,0.45)", align: "center" }),

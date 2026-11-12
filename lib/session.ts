@@ -1,6 +1,6 @@
 // Session de connexion : un cookie signé (HMAC-SHA256), lisible par le middleware (Edge) et les routes (Node).
 // Changer APP_PASSWORD (ou APP_SECRET) déconnecte tous les appareils.
-export const SESSION_COOKIE = "tuvoa_session";
+export const SESSION_COOKIE = "mb_session";
 export const SESSION_DAYS = 30;
 import type { Role } from "./roles";
 export type Session = { uid: string; role: Role; sid: string | null; exp: number };
@@ -26,7 +26,7 @@ export function sameText(a: string, b: string): boolean {
 export async function createSession(uid = "admin", role: Role = "admin", sid = ""): Promise<{ value: string; maxAge: number }> {
   const maxAge = SESSION_DAYS * 24 * 3600;
   const exp = Math.floor(Date.now() / 1000) + maxAge;
-  const sig = await hmac(`tuvoa2:${exp}:${sid}:${uid}:${role}`);
+  const sig = await hmac(`mb1:${exp}:${sid}:${uid}:${role}`);
   return { value: `2.${exp}.${sid || "-"}.${uid}.${role}.${sig}`, maxAge };
 }
 
@@ -37,7 +37,7 @@ export async function readSession(value: string | undefined): Promise<Session | 
   const [, exp, sidRaw, uid, role, sig] = parts;
   if (!/^\d+$/.test(exp) || Number(exp) < Date.now() / 1000) return null;
   const sid = sidRaw === "-" ? "" : sidRaw;
-  if (!sameText(sig, await hmac(`tuvoa2:${exp}:${sid}:${uid}:${role}`))) return null;
+  if (!sameText(sig, await hmac(`mb1:${exp}:${sid}:${uid}:${role}`))) return null;
   return { uid, role: role as Role, sid: sid || null, exp: Number(exp) };
 }
 

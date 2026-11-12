@@ -15,7 +15,7 @@ type Membre = { id: string; nom: string; contact: string; role: Role; statut: "i
 type Equipe = { membres: Membre[]; parMembre: Record<string, number>; journal: { id: string; auteur: string; auteur_id: string; titre: string; status: string; at: string }[] };
 
 const ZONES = Object.keys(ZONE_NOM) as Zone[];
-const COUL = ["#2563EB", "#0E9F8E", "#E94A06", "#7C3AED", "#0A2A66", "#DB2777"];
+const COUL = ["#5B3DF5", "#0E9F8E", "#E11D74", "#7C3AED", "#1B0F4D", "#DB2777"];
 const couleur = (id: string) => COUL[[...id].reduce((s, c) => s + c.charCodeAt(0), 0) % COUL.length];
 const initiales = (n: string) => n.trim().split(/\s+/).map((x) => x[0]).join("").slice(0, 2).toUpperCase() || "?";
 const date = (s: string | null | undefined) => (s ? new Date(s).toLocaleDateString("fr-FR", { day: "numeric", month: "short" }) : "—");
@@ -24,10 +24,10 @@ const ilya = (s: string | null) => {
   const m = Math.round((Date.now() - new Date(s).getTime()) / 60000);
   return m < 60 ? `il y a ${Math.max(1, m)} min` : m < 1440 ? `il y a ${Math.round(m / 60)} h` : m < 2880 ? "hier" : `il y a ${Math.round(m / 1440)} jours`;
 };
-const STATUT: Record<string, [string, string, string]> = { publie: ["Publié", "#16A34A", "#D9F7E6"], planifie: ["Programmé", "#2563EB", "#E0EAFF"], brouillon: ["Brouillon", "#5B6B86", "#EEF2F8"], a_valider: ["À relire", "#92400E", "#FEF3C7"], erreur: ["Erreur", "#B42318", "#FDE3E6"], annule: ["Annulé", "#5B6B86", "#EEF2F8"] };
+const STATUT: Record<string, [string, string, string]> = { publie: ["Publié", "#16A34A", "#D9F7E6"], planifie: ["Programmé", "#5B3DF5", "#E0EAFF"], brouillon: ["Brouillon", "#5B6B86", "#EEF2F8"], a_valider: ["À relire", "#92400E", "#FEF3C7"], erreur: ["Erreur", "#B42318", "#FDE3E6"], annule: ["Annulé", "#5B6B86", "#EEF2F8"] };
 
 function Av({ nom, id, taille = 44 }: { nom: string; id: string; taille?: number }) {
-  return <span style={{ width: taille, height: taille, borderRadius: taille / 2, flexShrink: 0, background: id === "admin" ? "#0A2A66" : couleur(id), color: "#fff", fontWeight: 800, fontSize: taille * 0.36, display: "flex", alignItems: "center", justifyContent: "center" }}>{initiales(nom)}</span>;
+  return <span style={{ width: taille, height: taille, borderRadius: taille / 2, flexShrink: 0, background: id === "admin" ? "#1B0F4D" : couleur(id), color: "#fff", fontWeight: 800, fontSize: taille * 0.36, display: "flex", alignItems: "center", justifyContent: "center" }}>{initiales(nom)}</span>;
 }
 
 async function api(url: string, body?: unknown) {
@@ -57,7 +57,7 @@ function Compte() {
           <div style={{ flex: "1 1 340px", display: "flex", flexDirection: "column", gap: 6 }}>
             <Link href="/" className="tv-gris" style={{ textDecoration: "none", fontWeight: 600 }}>← Tableau de bord</Link>
             <h1 className="tv-titre">Mon compte</h1>
-            <span style={{ fontSize: 14, color: "#33425C" }}>{admin ? "Le compte principal de l'administration de TUVOA, et l'équipe qui travaille avec vous." : "Votre espace dans l'administration de TUVOA."}</span>
+            <span style={{ fontSize: 14, color: "#33425C" }}>{admin ? "Le compte principal de l'administration de Media Booster, et l'équipe qui travaille avec vous." : "Votre espace dans l'administration de Media Booster."}</span>
           </div>
           <button type="button" className="btn" onClick={async () => { await fetch("/api/logout", { method: "POST" }).catch(() => {}); window.location.href = "/acces"; }}><Trait d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" size={16} />Se déconnecter</button>
         </div>
@@ -96,7 +96,7 @@ function Securite({ c, recharger, setError, setInfo }: Props) {
       <div style={{ display: "flex", flexDirection: "column" }}>
         {c.sessions.map((s) => (
           <div key={s.id} className="row" style={{ gap: 12, padding: "10px 0", borderTop: "1px solid #EDF1F7" }}>
-            <span style={{ width: 34, height: 34, borderRadius: 10, background: "#EEF2F8", color: "#0A2A66", display: "flex", alignItems: "center", justifyContent: "center" }}><Trait d={/iPhone|Android|Téléphone/.test(s.appareil ?? "") ? "M7 2h10a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1zM11 18h2" : "M4 5h16v11H4zM8 20h8M12 16v4"} size={17} /></span>
+            <span style={{ width: 34, height: 34, borderRadius: 10, background: "#EEF2F8", color: "#1B0F4D", display: "flex", alignItems: "center", justifyContent: "center" }}><Trait d={/iPhone|Android|Téléphone/.test(s.appareil ?? "") ? "M7 2h10a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1zM11 18h2" : "M4 5h16v11H4zM8 20h8M12 16v4"} size={17} /></span>
             <span style={{ flex: 1, display: "flex", flexDirection: "column" }}><strong style={{ fontSize: 14 }}>{s.appareil ?? "Appareil"}</strong><span style={{ fontSize: 12, color: "#5B6B86" }}>Connecté le {date(s.created_at)} · actif {ilya(s.vu_at)}</span></span>
             {s.moi ? <span className="tv-pill bleu">CET APPAREIL</span> : <button type="button" className="btn small danger" onClick={async () => { await api("/api/compte", { action: "deconnecter", id: s.id }).catch((x: Error) => setError(x.message)); recharger(); }}>Déconnecter</button>}
           </div>
@@ -123,7 +123,7 @@ function VueMembre(p: Props) {
         <section className="tv-carte" aria-labelledby="t-mes" style={{ gap: 4 }}>
           <div className="row" style={{ alignItems: "baseline", gap: 10, paddingBottom: 8 }}><h2 id="t-mes" className="tv-h2" style={{ flex: 1 }}>Mes publications</h2><Link href="/calendrier" style={{ fontSize: 13, fontWeight: 800, textDecoration: "none" }}>Voir dans le calendrier →</Link></div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 10, paddingBottom: 10 }}>
-            {([[c.stats.publies, "publiées · 7 jours", "#16A34A"], [c.stats.planifies, "programmées", "#2563EB"], [c.stats.brouillons, "brouillons", "#5B6B86"]] as const).map(([n, l, col]) => (
+            {([[c.stats.publies, "publiées · 7 jours", "#16A34A"], [c.stats.planifies, "programmées", "#5B3DF5"], [c.stats.brouillons, "brouillons", "#5B6B86"]] as const).map(([n, l, col]) => (
               <div key={l} style={{ borderRadius: 16, padding: "12px 14px", background: "#F4F7FC" }}><strong style={{ fontFamily: "var(--font-mont)", fontSize: 26, color: col }}>{n}</strong><span style={{ display: "block", fontSize: 12, color: "#5B6B86" }}>{l}</span></div>
             ))}
           </div>
@@ -131,7 +131,7 @@ function VueMembre(p: Props) {
           {c.posts.map((x) => {
             const s = STATUT[x.status] ?? [x.status, "#5B6B86", "#EEF2F8"];
             return (
-              <Link key={x.id} href={x.status === "brouillon" ? `/editeur?id=${x.id}` : `/apercu?id=${x.id}`} className="row" style={{ gap: 12, padding: "12px 0", borderTop: "1px solid #EDF1F7", textDecoration: "none", color: "#0B1A33" }}>
+              <Link key={x.id} href={x.status === "brouillon" ? `/editeur?id=${x.id}` : `/apercu?id=${x.id}`} className="row" style={{ gap: 12, padding: "12px 0", borderTop: "1px solid #EDF1F7", textDecoration: "none", color: "#150E33" }}>
                 <span style={{ width: 6, height: 36, borderRadius: 3, background: s[1], flexShrink: 0 }} />
                 <span style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 2 }}><strong style={{ fontSize: 14 }}>{x.title || x.idea}</strong><span style={{ fontSize: 12, color: "#5B6B86" }}>{date(x.scheduled_at ?? x.created_at)}</span></span>
                 <span style={{ fontSize: 11, fontWeight: 800, color: s[1] }}>{s[0].toUpperCase()}</span>
@@ -150,7 +150,7 @@ function VueMembre(p: Props) {
               const d = DROITS[c.role][z];
               return (
                 <li key={z} className="row" style={{ gap: 12, padding: "10px 0", borderTop: "1px solid #EDF1F7", opacity: d === "-" ? 0.65 : 1 }}>
-                  <span style={{ width: 26, height: 26, borderRadius: 13, flexShrink: 0, background: d === "o" ? "#16A34A" : d === "l" ? "#2563EB" : "#C9D3E3", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center" }}><Trait d={d === "o" ? "M20 6L9 17l-5-5" : d === "l" ? "M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12zM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" : "M5 12h14"} size={13} stroke={2.6} /></span>
+                  <span style={{ width: 26, height: 26, borderRadius: 13, flexShrink: 0, background: d === "o" ? "#16A34A" : d === "l" ? "#5B3DF5" : "#C9D3E3", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center" }}><Trait d={d === "o" ? "M20 6L9 17l-5-5" : d === "l" ? "M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12zM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" : "M5 12h14"} size={13} stroke={2.6} /></span>
                   <span style={{ flex: 1, display: "flex", flexDirection: "column" }}><strong style={{ fontSize: 14 }}>{ZONE_NOM[z]}{d === "l" ? " · lecture" : ""}</strong><span style={{ fontSize: 12, color: "#5B6B86" }}>{ZONE_DETAIL[z]}</span></span>
                 </li>
               );
@@ -159,7 +159,7 @@ function VueMembre(p: Props) {
         </section>
         <section className="tv-voa" style={{ flexDirection: "row", gap: 12, alignItems: "flex-start" }}>
           <Voa humeur="veille" taille={40} decor />
-          <span style={{ display: "flex", flexDirection: "column", gap: 6 }}><strong style={{ fontSize: 14, color: "#fff" }}>Vos publications sont signées</strong><span style={{ fontSize: 13, color: "#C9D6F2", lineHeight: 1.45 }}>Votre nom apparaît dans le calendrier et le journal de l&apos;administration. Les lecteurs, eux, ne voient que TUVOA.</span></span>
+          <span style={{ display: "flex", flexDirection: "column", gap: 6 }}><strong style={{ fontSize: 14, color: "#fff" }}>Vos publications sont signées</strong><span style={{ fontSize: 13, color: "#D9D2F2", lineHeight: 1.45 }}>Votre nom apparaît dans le calendrier et le journal de l&apos;administration. Les lecteurs, eux, ne voient que Media Booster.</span></span>
         </section>
       </aside>
     </div>
@@ -195,14 +195,14 @@ function VueAdmin(p: Props) {
         <section className="tv-compte-principal" aria-label="Compte principal">
           <span style={{ position: "relative" }}><Av nom={c.nom || "TU"} id="admin" taille={68} /><span className="etoile"><Trait d="M12 2l3 7h7l-5.5 4.5 2 7.5L12 16.5 5.5 21l2-7.5L2 9h7z" size={12} stroke={2} /></span></span>
           <span style={{ flex: "1 1 240px", display: "flex", flexDirection: "column", gap: 4 }}>
-            <span className="tv-kicker" style={{ color: "#FFB48A", letterSpacing: 2 }}>COMPTE PRINCIPAL · ADMINISTRATION</span>
+            <span className="tv-kicker" style={{ color: "#FF9CC6", letterSpacing: 2 }}>COMPTE PRINCIPAL · ADMINISTRATION</span>
             <strong style={{ fontFamily: "var(--font-mont)", fontSize: 22, color: "#fff" }}>{c.nom || "Vous"}</strong>
-            <span style={{ fontSize: 13, color: "#C9D6F2" }}>Tous les droits. Vous seul gérez l&apos;équipe, la médiathèque, les connexions et les réglages.</span>
+            <span style={{ fontSize: 13, color: "#D9D2F2" }}>Tous les droits. Vous seul gérez l&apos;équipe, la médiathèque, les connexions et les réglages.</span>
           </span>
         </section>
         <section className="tv-carte"><Nom {...p} /></section>
 
-        <form className="tv-carte" aria-labelledby="t-ajout" style={{ border: "2px solid #2563EB" }} onSubmit={inviter}>
+        <form className="tv-carte" aria-labelledby="t-ajout" style={{ border: "2px solid #5B3DF5" }} onSubmit={inviter}>
           <div className="row" style={{ alignItems: "baseline", gap: 10, flexWrap: "wrap" }}><h2 id="t-ajout" className="tv-h2" style={{ flex: 1 }}>Ajouter un membre</h2><span className="tv-gris" style={{ fontSize: 13 }}>Il reçoit un lien personnel pour choisir son mot de passe.</span></div>
           <div className="row" style={{ gap: 10, flexWrap: "wrap", alignItems: "flex-end" }}>
             <label className="field" style={{ flex: "1 1 170px" }}>Nom<input value={nom} onChange={(e) => setNom(e.target.value)} placeholder="Prénom N." /></label>
@@ -217,7 +217,7 @@ function VueAdmin(p: Props) {
               <code>{lien.url}</code>
               <span className="row" style={{ gap: 8, flexWrap: "wrap" }}>
                 <button type="button" className="btn small" onClick={() => { void navigator.clipboard?.writeText(lien.url); setInfo("Lien copié."); }}>Copier</button>
-                <a className="btn small" href={`https://wa.me/?text=${encodeURIComponent(`Bienvenue dans l'équipe TUVOA ! Choisis ton mot de passe ici : ${lien.url}`)}`} target="_blank" rel="noopener noreferrer">Envoyer par WhatsApp</a>
+                <a className="btn small" href={`https://wa.me/?text=${encodeURIComponent(`Bienvenue dans l'équipe Media Booster ! Choisis ton mot de passe ici : ${lien.url}`)}`} target="_blank" rel="noopener noreferrer">Envoyer par WhatsApp</a>
                 <span className="tv-gris" style={{ fontSize: 12 }}>Valable 7 jours, une seule fois.</span>
               </span>
             </div>
@@ -249,7 +249,7 @@ function VueAdmin(p: Props) {
               {lien && lien.pour === m.id ? (
                 <div className="tv-lien-invit" style={{ flexBasis: "100%" }}>
                   <code>{lien.url}</code>
-                  <span className="row" style={{ gap: 8 }}><button type="button" className="btn small" onClick={() => { void navigator.clipboard?.writeText(lien.url); setInfo("Lien copié."); }}>Copier</button><a className="btn small" href={`https://wa.me/?text=${encodeURIComponent(`Ton lien TUVOA pour choisir ton mot de passe : ${lien.url}`)}`} target="_blank" rel="noopener noreferrer">WhatsApp</a></span>
+                  <span className="row" style={{ gap: 8 }}><button type="button" className="btn small" onClick={() => { void navigator.clipboard?.writeText(lien.url); setInfo("Lien copié."); }}>Copier</button><a className="btn small" href={`https://wa.me/?text=${encodeURIComponent(`Ton lien Media Booster pour choisir ton mot de passe : ${lien.url}`)}`} target="_blank" rel="noopener noreferrer">WhatsApp</a></span>
                 </div>
               ) : null}
             </div>
@@ -263,7 +263,7 @@ function VueAdmin(p: Props) {
               <thead><tr><th>RÔLE</th>{ZONES.map((z) => <th key={z}>{ZONE_NOM[z].toUpperCase()}</th>)}</tr></thead>
               <tbody>
                 {ROLES.map((r) => (
-                  <tr key={r}><td><span className="tv-pill" style={r === "admin" ? { background: "#0A2A66", color: "#fff" } : {}}>{ROLE_NOM[r]}</span></td>
+                  <tr key={r}><td><span className="tv-pill" style={r === "admin" ? { background: "#1B0F4D", color: "#fff" } : {}}>{ROLE_NOM[r]}</span></td>
                     {ZONES.map((z) => { const d = DROITS[r][z]; return <td key={z}><span data-d={d} title={d === "o" ? "Oui" : d === "l" ? "Lecture seule" : "Non"}><Trait d={d === "o" ? "M20 6L9 17l-5-5" : d === "l" ? "M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12zM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" : "M5 12h14"} size={13} stroke={2.6} /></span></td>; })}
                   </tr>
                 ))}

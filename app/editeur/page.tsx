@@ -10,6 +10,7 @@ import { PLATFORMS, RUBRIQUES, TOPICS, type Platform } from "@/lib/config";
 import { PLATFORM_LABEL } from "@/lib/labels";
 import type { Post } from "@/lib/store";
 import { loadPost, savePost, visuelsDe } from "@/lib/client";
+import { MEDIA_HASHTAG, MEDIA_SITE } from "@/lib/brand";
 
 type Tab = "commun" | Platform;
 type TextKey = "commun" | "facebook" | "linkedin" | "tiktok" | "wp_body";
@@ -19,7 +20,7 @@ const ACTIONS: { id: string; label: string }[] = [
   { id: "raccourcir", label: "Raccourcir" },
   { id: "reformuler", label: "Reformuler" },
   { id: "expliquer", label: "Expliquer simplement" },
-  { id: "ton", label: "Ton TUVOA" },
+  { id: "ton", label: "Ton du média" },
   { id: "traduire", label: "En français" },
 ];
 
@@ -46,8 +47,8 @@ function verdict(tab: Tab, n: number): [string, boolean] {
   if (n > t.ideal[1]) return [tab === "facebook" ? `${n - t.ideal[1]} car. de trop pour être lu en entier sur ordinateur` : `${(n - t.ideal[1]).toLocaleString("fr-FR")} ${t.unite} au-delà de la zone idéale`, false];
   return ["Dans la zone idéale", true];
 }
-const NOM: Record<Tab, string> = { commun: "Texte commun", facebook: "Facebook", linkedin: "LinkedIn", tiktok: "TikTok", wordpress: "Site tuvoa.media" };
-const ICO: Record<Tab, [string, string]> = { commun: ["≡", "#5B6B86"], facebook: ["F", "#1877F2"], linkedin: ["in", "#0A66C2"], tiktok: ["T", "#0B1A33"], wordpress: ["W", "#0A2A66"] };
+const NOM: Record<Tab, string> = { commun: "Texte commun", facebook: "Facebook", linkedin: "LinkedIn", tiktok: "TikTok", wordpress: "Site du média" };
+const ICO: Record<Tab, [string, string]> = { commun: ["≡", "#5B6B86"], facebook: ["F", "#1877F2"], linkedin: ["in", "#0A66C2"], tiktok: ["T", "#150E33"], wordpress: ["W", "#1B0F4D"] };
 
 // Hashtags proposés à partir de la rubrique, des thèmes détectés et des produits cités.
 function suggestHashtags(post: Post, text: string): string[] {
@@ -59,7 +60,7 @@ function suggestHashtags(post: Post, text: string): string[] {
   if (rub) out.push(rub.hashtag);
   out.push("#Tech");
   TOPICS.filter((t) => t.poids > 0 && t.keywords.some((k) => low.includes(k))).forEach((t) => out.push(`#${t.label.normalize("NFD").replace(/[^A-Za-z0-9]/g, "")}`));
-  out.push("#TUVOA");
+  out.push(MEDIA_HASHTAG);
   return Array.from(new Set(out)).slice(0, 6);
 }
 
@@ -304,9 +305,9 @@ function Editeur() {
   const apercuImage = visuels[tab === "commun" ? "facebook" : tab] || visuels.facebook || current.visual.image || undefined;
   const titreWp = current.texts.wp_title ?? "";
   const meta = current.texts.wp_excerpt ?? "";
-  const pastille = (ok: boolean) => ({ padding: "2px 7px", borderRadius: 7, fontWeight: 800, whiteSpace: "nowrap" as const, background: ok ? "#D9F7E6" : "#FFE8DC", color: ok ? "#05603A" : "#9A3412" });
+  const pastille = (ok: boolean) => ({ padding: "2px 7px", borderRadius: 7, fontWeight: 800, whiteSpace: "nowrap" as const, background: ok ? "#D9F7E6" : "#FFE0EE", color: ok ? "#05603A" : "#9A3412" });
 
-  // Tableau des tailles et remarques de VOA, pour chaque canal de la publication
+  // Tableau des tailles et remarques de NOVA, pour chaque canal de la publication
   const lignes: { ou: string; visible: string; ideal: string; valeur: string; ok: boolean; tab: Tab; conseil?: string }[] = [];
   for (const p of current.platforms) {
     const k = TEXT_KEY[p];
@@ -469,7 +470,7 @@ function Editeur() {
                   <label className="field">Auteur<input type="text" value={current.visual.nom ?? ""} disabled={verrouille} onChange={(e) => update({ ...current, visual: { ...current.visual, nom: e.target.value, titre: e.target.value } })} /></label>
                   <label className="field">Fonction<input type="text" value={current.visual.specialite ?? ""} disabled={verrouille} onChange={(e) => update({ ...current, visual: { ...current.visual, specialite: e.target.value } })} /></label>
                 </div>
-                <ImageField label="Photo de l'auteur" hint="Placée sur le visuel. Une photo dont TUVOA a le droit d'usage." disabled={verrouille} value={current.visual.photo ?? ""} onChange={(url) => update({ ...current, visual: { ...current.visual, photo: url || undefined } })} />
+                <ImageField label="Photo de l'auteur" hint="Placée sur le visuel. Une photo dont le média a le droit d'usage." disabled={verrouille} value={current.visual.photo ?? ""} onChange={(url) => update({ ...current, visual: { ...current.visual, photo: url || undefined } })} />
               </section>
             ) : null}
 
@@ -491,7 +492,7 @@ function Editeur() {
               <div className="row"><h2 id="t-apercu" className="tv-h2" style={{ fontSize: 17, flex: 1 }}>Aperçu en direct</h2><span className="tv-gris" style={{ fontSize: 12 }}>{tab === "wordpress" ? "Google" : `${tab === "commun" ? "Facebook" : NOM[tab]} · téléphone`}</span></div>
               {tab === "wordpress" ? (
                 <div className="tv-google">
-                  <span style={{ fontSize: 12, color: "#33425C" }}>tuvoa.media › actualites</span>
+                  <span style={{ fontSize: 12, color: "#33425C" }}>{MEDIA_SITE || "votre-site"} › actualites</span>
                   <strong>{titreWp.length > 60 ? `${titreWp.slice(0, 58).replace(/\s+\S*$/, "")} …` : titreWp || "Titre de l'article"}</strong>
                   <span style={{ fontSize: 13, color: "#33425C", lineHeight: 1.5 }}>{meta ? (meta.length > 158 ? `${meta.slice(0, 155).replace(/\s+\S*$/, "")} …` : meta) : "Ajoutez une méta-description : c'est le texte affiché sous le titre dans Google."}</span>
                 </div>
@@ -507,7 +508,7 @@ function Editeur() {
                 <tbody>
                   {lignes.map((l) => (
                     <tr key={l.ou}>
-                      <th scope="row"><button type="button" className="btn link" style={{ fontSize: 12, color: "#0B1A33", fontWeight: 700 }} onClick={() => setTab(l.tab)}>{l.ou}</button></th>
+                      <th scope="row"><button type="button" className="btn link" style={{ fontSize: 12, color: "#150E33", fontWeight: 700 }} onClick={() => setTab(l.tab)}>{l.ou}</button></th>
                       <td>{l.visible}</td><td>{l.ideal}</td>
                       <td style={{ textAlign: "right" }}><span style={pastille(l.ok)}>{l.valeur}</span></td>
                     </tr>
@@ -519,12 +520,12 @@ function Editeur() {
 
             {remarques.length && !verrouille ? (
               <section className="tv-voa" aria-labelledby="t-voa" style={{ flex: "none" }}>
-                <h2 id="t-voa" style={{ fontSize: 16, fontWeight: 800, color: "#fff" }}>Les remarques de VOA</h2>
+                <h2 id="t-voa" style={{ fontSize: 16, fontWeight: 800, color: "#fff" }}>Les remarques de NOVA</h2>
                 {remarques.slice(0, 4).map((r, i) => (
                   <div key={i} className="tv-voa-alerte">
                     <span className="tv-tag" style={{ background: "rgba(255,255,255,0.15)", color: "#fff" }}>{r.ou.toUpperCase()}</span>
                     <span style={{ fontSize: 14, lineHeight: 1.45 }}>{r.conseil}</span>
-                    <button type="button" style={{ alignSelf: "flex-start", border: 0, background: "none", padding: 0, fontSize: 13, fontWeight: 700, color: "#FFB48A", cursor: "pointer" }} onClick={() => setTab(r.tab)}>Voir cette version →</button>
+                    <button type="button" style={{ alignSelf: "flex-start", border: 0, background: "none", padding: 0, fontSize: 13, fontWeight: 700, color: "#FF9CC6", cursor: "pointer" }} onClick={() => setTab(r.tab)}>Voir cette version →</button>
                   </div>
                 ))}
               </section>

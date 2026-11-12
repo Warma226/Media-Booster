@@ -16,8 +16,8 @@ export type Info = {
   connections: Record<Platform, { configured: boolean; detail: string }>;
 };
 
-const LS_POSTS = "tuvoa.posts.v1";
-const LS_SETTINGS = "tuvoa.settings.v1";
+const LS_POSTS = "mb.posts.v1";
+const LS_SETTINGS = "mb.settings.v1";
 
 function readLocal<T>(key: string, fallback: T): T {
   try {

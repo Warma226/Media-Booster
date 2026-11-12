@@ -1,18 +1,19 @@
 "use client";
-// Vidéos à reprendre : les dernières vidéos tech des chaînes suivies (Micode, France 24…). VOA (Gemini) repère les
+// Vidéos à reprendre : les dernières vidéos tech des chaînes suivies (Micode, France 24…). NOVA (Gemini) repère les
 // moments forts. La découpe 9:16 n'est ouverte que pour les vidéos CC BY ou les chaînes qui ont donné leur autorisation.
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Trait } from "@/components/BottomNav";
 import { useVoirPlus } from "@/components/VoirPlus";
 import type { Chaine, Extrait, Genre, Licence, LigneVideo } from "@/lib/youtube";
+import { MEDIA_COURT } from "@/lib/brand";
 
 const mmss = (s: number) => `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
 const ilya = (iso: string) => {
   const h = Math.round((Date.now() - new Date(iso).getTime()) / 3.6e6);
   return h < 1 ? "à l'instant" : h < 24 ? `il y a ${h} h` : h < 48 ? "hier" : `il y a ${Math.round(h / 24)} j`;
 };
-const COUL = ["#E94A06", "#2563EB", "#7C3AED", "#0E9F8E"];
+const COUL = ["#E11D74", "#5B3DF5", "#7C3AED", "#0E9F8E"];
 const GENRES: [string, string][] = [["tout", "Tout"], ["actu", "Actu tech"], ["interview", "Interviews"], ["docu", "Documentaires"]];
 const GENRE_NOM: Record<Genre, string> = { actu: "Actu", interview: "Interview", docu: "Documentaire" };
 const LIC: Record<Licence, { nom: string; cls: string }> = { cc: { nom: "CC BY", cls: "vert" }, autorisee: { nom: "Autorisée", cls: "vert" }, reservee: { nom: "Droits réservés", cls: "ambre" } };
@@ -93,7 +94,7 @@ export default function VideosPage() {
           <div style={{ flex: "1 1 360px", display: "flex", flexDirection: "column", gap: 6 }}>
             <Link href="/veille" className="tv-gris" style={{ textDecoration: "none", fontWeight: 600 }}>← Veille</Link>
             <h1 className="tv-titre">Vidéos à reprendre</h1>
-            <span style={{ fontSize: 14, color: "#33425C" }}>Les dernières vidéos tech de vos chaînes suivies ({chaines.filter((c) => c.id).length}). VOA repère les moments chocs des interviews et des documentaires.</span>
+            <span style={{ fontSize: 14, color: "#33425C" }}>Les dernières vidéos tech de vos chaînes suivies ({chaines.filter((c) => c.id).length}). NOVA repère les moments chocs des interviews et des documentaires.</span>
           </div>
           <div className="row" style={{ gap: 8 }}>
             {admin ? <button type="button" className="btn" onClick={() => setGerer((g) => !g)}>{gerer ? "Fermer" : "Chaînes suivies"}</button> : null}
@@ -151,9 +152,9 @@ export default function VideosPage() {
                   <strong>{x.info.titre}</strong>
                   <small>{x.info.chaine} · {ilya(x.info.publie)}{x.info.langue && x.info.langue !== "fr" ? ` · ${x.info.langue.toUpperCase()}` : ""}</small>
                   <span className="row" style={{ gap: 6, flexWrap: "wrap" }}>
-                    {x.info.genre !== "actu" ? <span className="tv-pill" style={{ background: x.info.genre === "docu" ? "#EDE5FF" : "#FFE8DC", color: x.info.genre === "docu" ? "#5B21B6" : "#B23A00" }}>{GENRE_NOM[x.info.genre]}</span> : null}
+                    {x.info.genre !== "actu" ? <span className="tv-pill" style={{ background: x.info.genre === "docu" ? "#EDE5FF" : "#FFE0EE", color: x.info.genre === "docu" ? "#5B21B6" : "#B23A00" }}>{GENRE_NOM[x.info.genre]}</span> : null}
                     <span className={`tv-pill ${LIC[x.licence].cls}`}>{LIC[x.licence].nom}</span>
-                    {x.extraits?.length ? <span style={{ fontSize: 12, fontWeight: 800, color: "#2563EB" }}>{x.extraits.length} extraits</span> : null}
+                    {x.extraits?.length ? <span style={{ fontSize: 12, fontWeight: 800, color: "#5B3DF5" }}>{x.extraits.length} extraits</span> : null}
                     <span style={{ fontSize: 12, color: "#5B6B86" }}>{x.info.vues >= 1000 ? `${Math.round(x.info.vues / 100) / 10} k vues` : `${x.info.vues} vues`}</span>
                   </span>
                 </span>
@@ -184,7 +185,7 @@ export default function VideosPage() {
                     </>
                   ) : null}
                   {libre ? (
-                    <div className="tv-vid-licence"><Trait d="M20 6L9 17l-5-5" size={18} stroke={2.6} /><span><strong>{v.licence === "cc" ? "Licence Creative Commons (CC BY), vérifiée sur YouTube." : `Autorisation de ${v.info.chaine} enregistrée.`}</strong> Vous pouvez couper et republier en citant la chaîne : VOA ajoute le crédit sur la vidéo et dans le texte.</span></div>
+                    <div className="tv-vid-licence"><Trait d="M20 6L9 17l-5-5" size={18} stroke={2.6} /><span><strong>{v.licence === "cc" ? "Licence Creative Commons (CC BY), vérifiée sur YouTube." : `Autorisation de ${v.info.chaine} enregistrée.`}</strong> Vous pouvez couper et republier en citant la chaîne : NOVA ajoute le crédit sur la vidéo et dans le texte.</span></div>
                   ) : (
                     <div className="tv-vid-licence" data-reserve="true"><Trait d="M12 9v4M12 17h.01M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z" size={18} stroke={2.2} /><span><strong>Droits réservés par {v.info.chaine}.</strong> Le crédit de la chaîne est incrusté sur chaque extrait coupé. Une réclamation de la chaîne peut faire retirer la vidéo de vos réseaux.</span></div>
                   )}
@@ -192,16 +193,16 @@ export default function VideosPage() {
 
                 {!extraits.length ? (
                   <div className="tv-carte" style={{ alignItems: "flex-start", gap: 10 }}>
-                    <strong style={{ fontSize: 16 }}>{busy === "extraits" ? "VOA regarde la vidéo…" : v.info.genre === "actu" ? "Les meilleurs extraits, prêts à partager" : "Les moments chocs, prêts à partager"}</strong>
-                    <span className="tv-gris" style={{ fontSize: 13 }}>{busy === "extraits" ? "Il note les passages forts et traduit ce qui est dit. Cela prend une à trois minutes : vous pouvez rester sur cette page." : v.info.genre === "actu" ? "En un clic, VOA visionne la vidéo et sélectionne 4 Reels chocs de 1 min maximum, qui démarrent sur la phrase forte, sous-titrés en français." : "En un clic, VOA visionne toute la vidéo et sélectionne 4 Reels chocs de 1 min maximum : révélations, aveux, chiffres qui frappent, phrases à partager."}</span>
+                    <strong style={{ fontSize: 16 }}>{busy === "extraits" ? "NOVA regarde la vidéo…" : v.info.genre === "actu" ? "Les meilleurs extraits, prêts à partager" : "Les moments chocs, prêts à partager"}</strong>
+                    <span className="tv-gris" style={{ fontSize: 13 }}>{busy === "extraits" ? "Il note les passages forts et traduit ce qui est dit. Cela prend une à trois minutes : vous pouvez rester sur cette page." : v.info.genre === "actu" ? "En un clic, NOVA visionne la vidéo et sélectionne 4 Reels chocs de 1 min maximum, qui démarrent sur la phrase forte, sous-titrés en français." : "En un clic, NOVA visionne toute la vidéo et sélectionne 4 Reels chocs de 1 min maximum : révélations, aveux, chiffres qui frappent, phrases à partager."}</span>
                     <div className="row" style={{ gap: 8 }}>
-                      <button type="button" className="tv-btn-nuit" onClick={reperer} disabled={Boolean(busy)}>{busy === "extraits" ? "VOA REGARDE LA VIDÉO…" : v.info.genre === "actu" ? "REPÉRER LES EXTRAITS" : "TROUVER LES MOMENTS CHOCS"}</button>
+                      <button type="button" className="tv-btn-nuit" onClick={reperer} disabled={Boolean(busy)}>{busy === "extraits" ? "NOVA REGARDE LA VIDÉO…" : v.info.genre === "actu" ? "REPÉRER LES EXTRAITS" : "TROUVER LES MOMENTS CHOCS"}</button>
                       <button type="button" className="btn" onClick={() => ecarter(v.id)}>Écarter cette vidéo</button>
                     </div>
                   </div>
                 ) : (
                   <>
-                    <div className="row" style={{ alignItems: "baseline", gap: 10 }}><h2 className="tv-h2" style={{ flex: 1 }}>{extraits.length} {v.info.genre === "actu" ? "extraits repérés" : "moments chocs repérés"} par VOA</h2><button type="button" className="btn link small" onClick={reperer} disabled={Boolean(busy)}>{busy === "extraits" ? "…" : "Relancer"}</button></div>
+                    <div className="row" style={{ alignItems: "baseline", gap: 10 }}><h2 className="tv-h2" style={{ flex: 1 }}>{extraits.length} {v.info.genre === "actu" ? "extraits repérés" : "moments chocs repérés"} par NOVA</h2><button type="button" className="btn link small" onClick={reperer} disabled={Boolean(busy)}>{busy === "extraits" ? "…" : "Relancer"}</button></div>
                     {extraits.map((x, i) => (
                       <div key={i} className="tv-vid-extrait" data-on={i === ext}>
                         <div className="row" style={{ gap: 10, flexWrap: "wrap" }}>
@@ -232,7 +233,7 @@ export default function VideosPage() {
               <h2 className="tv-h2" style={{ fontSize: 17 }}>Ce que vous pouvez en faire</h2>
               <ol className="tv-vid-etapes">
                 <li><b>1</b><span><strong>Toutes les vidéos</strong> : écrire un post qui raconte et commente le moment, citer une phrase courte avec la source, partager le lien horodaté.</span></li>
-                <li><b>2</b><span><strong>Reel choc (1 min max)</strong> : directement depuis YouTube (Chrome sur ordinateur) ou depuis un fichier ; VOA coupe au bon minutage, recadre en vertical, met l&apos;accroche en bandeau orange, incruste les sous-titres, le logo TUVOA et le crédit de la chaîne.</span></li>
+                <li><b>2</b><span><strong>Reel choc (1 min max)</strong> : directement depuis YouTube (Chrome sur ordinateur) ou depuis un fichier ; NOVA coupe au bon minutage, recadre en vertical, met l&apos;accroche en bandeau orange, incruste les sous-titres, le logo du média et le crédit de la chaîne.</span></li>
                 <li><b>3</b><span>Gardez des extraits courts et ajoutez votre commentaire dans le post : c&apos;est ce qui protège le mieux en cas de réclamation.</span></li>
               </ol>
             </section>
@@ -253,7 +254,7 @@ export default function VideosPage() {
 // Reel 9:16 fabriqué dans le navigateur, à partir de deux sources possibles :
 // - « YouTube » : la vidéo est lue dans un lecteur YouTube intégré et capturée à l'écran (Chrome sur ordinateur) ;
 // - « Fichier » : un fichier vidéo importé.
-// L'image est recadrée sur un canvas 1080 × 1920 avec accroche, sous-titres, logo TUVOA, crédit et barre de progression.
+// L'image est recadrée sur un canvas 1080 × 1920 avec accroche, sous-titres, logo du média, crédit et barre de progression.
 type Source = { img: CanvasImageSource; sx: number; sy: number; sw: number; sh: number };
 type CropTargetCtor = { fromElement(el: Element): Promise<unknown> };
 
@@ -306,7 +307,7 @@ function Decoupe({ videoId, extrait, credit, titre: titre0, fermer }: { videoId:
     const types = ["video/mp4;codecs=avc1.42E01E,mp4a.40.2", "video/mp4", "video/webm;codecs=vp9,opus", "video/webm"];
     const mime = types.find((t) => typeof MediaRecorder !== "undefined" && MediaRecorder.isTypeSupported(t));
     const mots = st.split(/\s+/).filter(Boolean), parBloc = 9;
-    // Sous-titres horodatés par VOA (si le texte n'a pas été modifié à la main) : calés sur la voix.
+    // Sous-titres horodatés par NOVA (si le texte n'a pas été modifié à la main) : calés sur la voix.
     const phrases = st === extrait.soustitres && extrait.phrases?.length ? extrait.phrases.filter((ph) => ph.t < fin + 1) : null;
     const motCourant = (t: number): { mots: string[]; actif: number } => {
       if (phrases) {
@@ -323,7 +324,7 @@ function Decoupe({ videoId, extrait, credit, titre: titre0, fermer }: { videoId:
     const duree = Math.max(1, fin - debut);
     const dessiner = (src: Source | null, t: number) => {
       if (!ctx) return;
-      ctx.fillStyle = "#061A44"; ctx.fillRect(0, 0, W, H);
+      ctx.fillStyle = "#120A38"; ctx.fillRect(0, 0, W, H);
       if (mise === "choc") return styleChoc(ctx, src, t);
       if (mise === "plein") return pleinEcran(ctx, src, t);
       let y0 = 560, dh = 608;
@@ -338,7 +339,7 @@ function Decoupe({ videoId, extrait, credit, titre: titre0, fermer }: { videoId:
       ctx.font = "900 62px Montserrat, sans-serif"; ctx.textAlign = "center";
       lignes(ctx, titre, W - 200, 3).forEach((l, i) => {
         const w = ctx.measureText(l).width + 44, y = 300 + i * 82;
-        ctx.fillStyle = "#E94A06"; ctx.beginPath(); ctx.roundRect((W - w) / 2, y - 60, w, 76, 14); ctx.fill();
+        ctx.fillStyle = "#E11D74"; ctx.beginPath(); ctx.roundRect((W - w) / 2, y - 60, w, 76, 14); ctx.fill();
         ctx.fillStyle = "#fff"; ctx.fillText(l, W / 2, y);
       });
       const p = Math.min(1, Math.max(0, (t - debut) / duree));
@@ -349,12 +350,12 @@ function Decoupe({ videoId, extrait, credit, titre: titre0, fermer }: { videoId:
         ctx.fillStyle = "rgba(0,0,0,0.72)"; ctx.beginPath(); ctx.roundRect(80, yb, W - 160, hb, 28); ctx.fill();
         ctx.fillStyle = "#fff"; ls.forEach((l, i) => ctx.fillText(l, W / 2, yb + 70 + i * 70));
       }
-      ctx.fillStyle = "#2563EB"; ctx.beginPath(); ctx.roundRect(70, 90, 150, 150, 38); ctx.fill();
-      ctx.fillStyle = "#fff"; ctx.font = "800 38px Montserrat, sans-serif"; ctx.fillText("TUVOA", 145, 175);
-      ctx.fillStyle = "#CFDCFF"; ctx.font = "700 15px Montserrat, sans-serif"; ctx.fillText("TECH MEDIA", 145, 205);
-      ctx.fillStyle = "#C9D6F2"; ctx.font = "600 30px Inter, sans-serif"; ctx.fillText(credit, W / 2, H - 120);
+      ctx.fillStyle = "#5B3DF5"; ctx.beginPath(); ctx.roundRect(70, 90, 150, 150, 38); ctx.fill();
+      ctx.fillStyle = "#fff"; ctx.font = "800 38px Montserrat, sans-serif"; ctx.fillText(MEDIA_COURT, 145, 175);
+      ctx.fillStyle = "#DDD5FF"; ctx.font = "700 15px Montserrat, sans-serif"; ctx.fillText("TECH MEDIA", 145, 205);
+      ctx.fillStyle = "#D9D2F2"; ctx.font = "600 30px Inter, sans-serif"; ctx.fillText(credit, W / 2, H - 120);
       ctx.fillStyle = "rgba(255,255,255,0.18)"; ctx.fillRect(0, H - 14, W, 14);
-      ctx.fillStyle = "#E94A06"; ctx.fillRect(0, H - 14, W * p, 14);
+      ctx.fillStyle = "#E11D74"; ctx.fillRect(0, H - 14, W * p, 14);
     };
     // Style « Short d'interview » : image plein écran recadrée sur la personne, accroche en haut,
     // gros sous-titres mot par mot (3 à 4 mots à la fois, mot prononcé surligné), logo et crédit discrets.
@@ -375,7 +376,7 @@ function Decoupe({ videoId, extrait, credit, titre: titre0, fermer }: { videoId:
       ctx.font = "900 58px Montserrat, sans-serif";
       lignes(ctx, titre, W - 180, 3).forEach((l, i) => {
         const w = ctx.measureText(l).width + 40, y = 250 + i * 76;
-        ctx.fillStyle = "#E94A06"; ctx.beginPath(); ctx.roundRect((W - w) / 2, y - 56, w, 72, 12); ctx.fill();
+        ctx.fillStyle = "#E11D74"; ctx.beginPath(); ctx.roundRect((W - w) / 2, y - 56, w, 72, 12); ctx.fill();
         ctx.fillStyle = "#fff"; ctx.fillText(l, W / 2, y);
       });
       // sous-titres mot par mot
@@ -404,11 +405,11 @@ function Decoupe({ videoId, extrait, credit, titre: titre0, fermer }: { videoId:
         });
       }
       // logo et crédit discrets
-      ctx.fillStyle = "#2563EB"; ctx.beginPath(); ctx.roundRect(W - 190, 60, 130, 52, 14); ctx.fill();
-      ctx.fillStyle = "#fff"; ctx.font = "800 28px Montserrat, sans-serif"; ctx.textAlign = "center"; ctx.fillText("TUVOA", W - 125, 96);
+      ctx.fillStyle = "#5B3DF5"; ctx.beginPath(); ctx.roundRect(W - 190, 60, 130, 52, 14); ctx.fill();
+      ctx.fillStyle = "#fff"; ctx.font = "800 28px Montserrat, sans-serif"; ctx.textAlign = "center"; ctx.fillText(MEDIA_COURT, W - 125, 96);
       ctx.fillStyle = "rgba(255,255,255,0.85)"; ctx.font = "600 28px Inter, sans-serif"; ctx.fillText(credit, W / 2, H - 70);
       ctx.fillStyle = "rgba(255,255,255,0.2)"; ctx.fillRect(0, H - 12, W, 12);
-      ctx.fillStyle = "#E94A06"; ctx.fillRect(0, H - 12, W * p, 12);
+      ctx.fillStyle = "#E11D74"; ctx.fillRect(0, H - 12, W * p, 12);
     };
     // Style « coup de gueule » (Shorts de chaînes télé) : plein écran serré sur la personne, plan large / plan serré
     // qui alternent à chaque coupe, citation en blocs blancs les premières secondes, logo discret.
@@ -446,13 +447,13 @@ function Decoupe({ videoId, extrait, credit, titre: titre0, fermer }: { videoId:
           lignes(ctx, grp, W - 140, 2).forEach((l, i) => { const y = H - 360 + i * 92; ctx.strokeText(l, W / 2, y); ctx.fillStyle = "#FFD60A"; ctx.fillText(l, W / 2, y); });
         }
       }
-      // logo TUVOA discret, crédit, progression
+      // logo du média discret, crédit, progression
       ctx.textAlign = "center";
-      ctx.fillStyle = "#2563EB"; ctx.fillRect(W - 220, 110, 150, 46);
-      ctx.fillStyle = "#fff"; ctx.font = "900 30px Montserrat, sans-serif"; ctx.fillText("TUVOA", W - 145, 144);
+      ctx.fillStyle = "#5B3DF5"; ctx.fillRect(W - 220, 110, 150, 46);
+      ctx.fillStyle = "#fff"; ctx.font = "900 30px Montserrat, sans-serif"; ctx.fillText(MEDIA_COURT, W - 145, 144);
       ctx.fillStyle = "rgba(255,255,255,0.9)"; ctx.font = "600 22px Inter, sans-serif"; ctx.fillText("TECH MEDIA", W - 145, 96);
       ctx.fillStyle = "rgba(255,255,255,0.8)"; ctx.font = "600 24px Inter, sans-serif"; ctx.shadowColor = "rgba(0,0,0,0.8)"; ctx.shadowBlur = 6; ctx.fillText(credit, W / 2, H - 60); ctx.shadowBlur = 0;
-      ctx.fillStyle = "#E94A06"; ctx.fillRect(0, H - 8, W * p, 8);
+      ctx.fillStyle = "#E11D74"; ctx.fillRect(0, H - 8, W * p, 8);
     };
     return { c, ctx, mime, duree, dessiner };
   }
@@ -601,7 +602,7 @@ function Decoupe({ videoId, extrait, credit, titre: titre0, fermer }: { videoId:
               {origine ? <iframe ref={ifr} onLoad={ecouterYT} src={`https://www.youtube.com/embed/${videoId}?enablejsapi=1&start=${debut}&controls=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&origin=${encodeURIComponent(origine)}`} title="Lecteur YouTube" allow="autoplay; encrypted-media" /> : null}
             </div>
             {ecranOk ? (
-              <p className="notice" style={{ margin: 0 }}>Pas besoin de fichier. Au clic sur « Créer le Reel », Chrome demande quoi partager : choisissez <strong>« Cet onglet »</strong> et laissez <strong>« Partager l&apos;audio de l&apos;onglet »</strong> activé. VOA lit l&apos;extrait et l&apos;enregistre en temps réel : ne changez pas d&apos;onglet et ne faites pas défiler la page pendant l&apos;enregistrement.</p>
+              <p className="notice" style={{ margin: 0 }}>Pas besoin de fichier. Au clic sur « Créer le Reel », Chrome demande quoi partager : choisissez <strong>« Cet onglet »</strong> et laissez <strong>« Partager l&apos;audio de l&apos;onglet »</strong> activé. NOVA lit l&apos;extrait et l&apos;enregistre en temps réel : ne changez pas d&apos;onglet et ne faites pas défiler la page pendant l&apos;enregistrement.</p>
             ) : (
               <p className="notice ambre" style={{ margin: 0 }}>La capture depuis YouTube fonctionne avec Chrome ou Edge sur ordinateur. Sur téléphone, utilisez « Depuis un fichier ».</p>
             )}
@@ -631,7 +632,7 @@ function Decoupe({ videoId, extrait, credit, titre: titre0, fermer }: { videoId:
                 <input type="range" min={0} max={100} value={cadre} onChange={(e) => setCadre(Number(e.target.value))} />
               </label>
             ) : null}
-            <span className="tv-gris" style={{ fontSize: 12 }}>{extrait.phrases?.length && st === extrait.soustitres ? "Sous-titres calés sur la voix par VOA." : "Sous-titres répartis sur la durée (relancez le repérage pour les caler sur la voix)."}</span>
+            <span className="tv-gris" style={{ fontSize: 12 }}>{extrait.phrases?.length && st === extrait.soustitres ? "Sous-titres calés sur la voix par NOVA." : "Sous-titres répartis sur la durée (relancez le repérage pour les caler sur la voix)."}</span>
           </div>
         </div>
         <div className="row" style={{ gap: 10 }}>
@@ -652,7 +653,7 @@ function Decoupe({ videoId, extrait, credit, titre: titre0, fermer }: { videoId:
         {sortie ? (
           <div className="row" style={{ gap: 10, flexWrap: "wrap" }}>
             <video src={sortie.url} controls style={{ width: 140, borderRadius: 12, background: "#000" }} />
-            <a className="tv-btn-nuit" href={sortie.url} download={`TUVOA_reel.${sortie.ext}`}>TÉLÉCHARGER LE REEL</a>
+            <a className="tv-btn-nuit" href={sortie.url} download={`MediaBooster_reel.${sortie.ext}`}>TÉLÉCHARGER LE REEL</a>
           </div>
         ) : null}
         <button type="button" className="tv-btn-nuit" style={{ justifyContent: "center" }} onClick={creer} disabled={!pret || Boolean(msg) || fin <= debut}>{msg ? "ENREGISTREMENT EN COURS…" : "CRÉER LE REEL"}</button>

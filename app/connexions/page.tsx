@@ -14,12 +14,12 @@ const LETTRE: Record<Platform, string> = { wordpress: "W", facebook: "F", linked
 // Les comptes se relient avec des variables d'environnement dans Vercel : « Connecter » affiche la marche à suivre.
 const HELP: Record<Platform, string[]> = {
   wordpress: [
-    "Dans WordPress : Utilisateurs › Profil › Mots de passe d'application, crée « TUVOA ».",
+    "Dans WordPress : Utilisateurs › Profil › Mots de passe d'application, crée « Media Booster ».",
     "Dans Vercel (Settings › Environment Variables) : WP_URL, WP_USER et WP_APP_PASSWORD.",
     "Redéploie l'app (Deployments › Redeploy).",
   ],
   facebook: [
-    "Crée une application sur developers.facebook.com et relie ta Page TUVOA.",
+    "Crée une application sur developers.facebook.com et relie ta Page Media Booster.",
     "Obtiens un jeton de Page longue durée (pages_manage_posts, pages_read_engagement).",
     "Dans Vercel : FB_PAGE_ID et FB_PAGE_TOKEN, puis redéploie.",
   ],
@@ -27,14 +27,14 @@ const HELP: Record<Platform, string[]> = {
     "Sur make.com (gratuit), crée un scénario : module « Webhooks › Custom webhook », puis copie son adresse.",
     "Dans Vercel : LINKEDIN_WEBHOOK_URL = cette adresse, puis redéploie.",
     "Dans Make, sur le webhook : « Redetermine data structure », puis ici « Envoyer un exemple à Make ».",
-    "Ajoute « HTTP › Get a file » (URL : image_url) puis « LinkedIn › Create an Organization Image Post » (Page TUVOA, texte : text, image : le fichier). Active le scénario.",
+    "Ajoute « HTTP › Get a file » (URL : image_url) puis « LinkedIn › Create an Organization Image Post » (Page Media Booster, texte : text, image : le fichier). Active le scénario.",
   ],
   tiktok: [
-    "Sur developers.tiktok.com, crée une application « TUVOA » et ajoute les produits « Login Kit » et « Content Posting API » (avec « Direct Post »).",
-    "Adresse de redirection (Login Kit) : https://tuvoa-app.vercel.app/api/tiktok/callback. Autorisations : user.info.basic et video.publish.",
-    "Vérifie l'adresse https://tuvoa-app.vercel.app/ comme préfixe d'URL (Content Posting API › URL properties) : envoie-moi le fichier de vérification, je le mets en ligne.",
+    "Sur developers.tiktok.com, crée une application « Media Booster » et ajoute les produits « Login Kit » et « Content Posting API » (avec « Direct Post »).",
+    "Adresse de redirection (Login Kit) : https://ton-app.vercel.app/api/tiktok/callback. Autorisations : user.info.basic et video.publish.",
+    "Vérifie l'adresse https://ton-app.vercel.app/ comme préfixe d'URL (Content Posting API › URL properties) : envoie-moi le fichier de vérification, je le mets en ligne.",
     "Dans Vercel : TIKTOK_CLIENT_KEY et TIKTOK_CLIENT_SECRET (onglet « Credentials » de l'app TikTok), puis redéploie.",
-    "Ouvre https://tuvoa-app.vercel.app/api/tiktok/login et autorise le compte TikTok de TUVOA.",
+    "Ouvre https://ton-app.vercel.app/api/tiktok/login et autorise le compte TikTok de Media Booster.",
     "Tant que TikTok n'a pas validé l'app (audit), les publications sont visibles par toi seul. Demande l'audit dans le portail pour publier en public.",
   ],
 };
@@ -53,11 +53,11 @@ type Sante = {
 type Etat = "ok" | "warn" | "off" | "err";
 const ETATS: Record<Etat, [string, string, string, string]> = {
   ok: ["Opérationnel", "#D9F7E6", "#05603A", "#16A34A"],
-  warn: ["À surveiller", "#FFE8DC", "#9A3412", "#E94A06"],
+  warn: ["À surveiller", "#FFE0EE", "#9A3412", "#E11D74"],
   off: ["Non connecté", "#EEF2F8", "#5B6B86", "#9AA8BE"],
   err: ["En panne", "#FDE3E6", "#9F1239", "#E11D2E"],
 };
-const COULEUR: Record<Platform, string> = { facebook: "#1877F2", linkedin: "#0A66C2", wordpress: "#0A2A66", tiktok: "#0B1A33" };
+const COULEUR: Record<Platform, string> = { facebook: "#1877F2", linkedin: "#0A66C2", wordpress: "#1B0F4D", tiktok: "#150E33" };
 const ROLE: Record<Platform, string> = { facebook: "Publications, commentaires, messages", linkedin: "Publication via Make", wordpress: "Articles du site", tiktok: "Vidéos et carrousels" };
 const AUTORISATIONS: [string, string][] = [
   ["pages_manage_posts", "Publier sur la Page"],
@@ -78,7 +78,7 @@ const jours = (iso: string | null) => (iso ? Math.ceil((new Date(iso).getTime() 
 function Puce({ ok, children }: { ok: boolean | null; children: React.ReactNode }) {
   return (
     <li className="row" style={{ gap: 10, alignItems: "flex-start", fontSize: 13, lineHeight: 1.4 }}>
-      <span style={{ width: 18, height: 18, borderRadius: 9, flexShrink: 0, marginTop: 1, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", background: ok ? "#16A34A" : ok === false ? "#E94A06" : "#C9D3E3" }}>
+      <span style={{ width: 18, height: 18, borderRadius: 9, flexShrink: 0, marginTop: 1, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", background: ok ? "#16A34A" : ok === false ? "#E11D74" : "#C9D3E3" }}>
         <Trait d={ok ? "M20 6L9 17l-5-5" : "M12 8v5M12 17h.01"} size={11} stroke={3.2} />
       </span>
       <span style={{ color: ok === false ? "#9A3412" : "#33425C", fontWeight: ok === false ? 600 : 400 }}>{children}</span>
@@ -176,7 +176,7 @@ export default function Connexions() {
   const manquantes = AUTORISATIONS.filter(([k]) => scopes.length && !scopes.includes(k));
   const alerte =
     jetonJours !== null && jetonJours < 15 ? `Le jeton de la Page Facebook expire dans ${jetonJours} jour${jetonJours > 1 ? "s" : ""}. Renouvelez-le dans Vercel (FB_PAGE_TOKEN) avant cette date.`
-    : manquantes.length ? `Une autorisation manque sur la Page Facebook : « ${manquantes[0][1]} ». Sans elle, VOA ne peut pas faire ce travail.`
+    : manquantes.length ? `Une autorisation manque sur la Page Facebook : « ${manquantes[0][1]} ». Sans elle, NOVA ne peut pas faire ce travail.`
     : (sante?.diagnostic ?? []).find((d) => !d.ok)?.detail ?? "";
 
   const aide = (id: string, lignes: string[]) =>
@@ -194,7 +194,7 @@ export default function Connexions() {
           <div style={{ flex: "1 1 340px", display: "flex", flexDirection: "column", gap: 6 }}>
             <Link href="/" className="tv-gris tv-desk" style={{ textDecoration: "none", fontWeight: 600 }}>← Tableau de bord</Link>
             <h1 className="tv-titre">Connexions</h1>
-            <span style={{ fontSize: 14, color: "#33425C" }}>L'état de chaque compte et service dont TUVOA a besoin pour publier.</span>
+            <span style={{ fontSize: 14, color: "#33425C" }}>L'état de chaque compte et service dont Media Booster a besoin pour publier.</span>
           </div>
           <span className="tv-rond" style={{ width: "auto", height: 52, padding: "0 16px", borderRadius: 16, gap: 8, fontSize: 14, cursor: "default" }}>
             <strong style={{ fontFamily: "var(--font-mont)", fontSize: 20 }}>{info ? `${okCount} / ${total}` : "…"}</strong>
@@ -214,7 +214,7 @@ export default function Connexions() {
           </div>
         ) : null}
 
-        <div className="row" style={{ alignItems: "baseline", gap: 10 }}><h2 className="tv-h2" style={{ fontSize: 22 }}>Canaux de publication</h2><span className="tv-gris">là où TUVOA publie</span></div>
+        <div className="row" style={{ alignItems: "baseline", gap: 10 }}><h2 className="tv-h2" style={{ fontSize: 22 }}>Canaux de publication</h2><span className="tv-gris">là où Media Booster publie</span></div>
         <div className="tv-cnx-grille">
           {PLATFORMS.map((p) => {
             const c = info?.connections[p.id];
@@ -224,7 +224,7 @@ export default function Connexions() {
                 key={p.id}
                 ini={LETTRE[p.id]}
                 couleur={COULEUR[p.id]}
-                nom={p.id === "wordpress" ? "Site tuvoa.media" : p.label}
+                nom={p.id === "wordpress" ? "Site du média" : p.label}
                 role={ROLE[p.id]}
                 etat={info ? etatCanal(p.id) : "off"}
                 extra={p.id === "facebook" && jetonJours !== null ? (
@@ -265,7 +265,7 @@ export default function Connexions() {
           <div className="tv-cnx-grille" style={{ flex: "999 1 600px", minWidth: 0 }}>
             <Carte ini="IA" couleur="linear-gradient(145deg, #C4B5FD, #7C3AED)" nom="Rédaction par l'IA" role={info?.aiProvider === "claude" ? "Claude" : "Google Gemini · gratuit"} etat={!info ? "off" : info.ai ? "ok" : "off"}
               actions={!info?.ai ? btnAide("ia", false) : undefined}>
-              <Puce ok={info ? info.ai : null}>{info?.ai ? "Rédige les posts, les accroches et les réponses de VOA" : "Non configurée : les textes sont préparés sans IA"}</Puce>
+              <Puce ok={info ? info.ai : null}>{info?.ai ? "Rédige les posts, les accroches et les réponses de NOVA" : "Non configurée : les textes sont préparés sans IA"}</Puce>
               <Puce ok={null}>Claude prend le relais si une clé ANTHROPIC_API_KEY est ajoutée</Puce>
               {aide("ia", ["Gratuit : créez une clé sur aistudio.google.com (Get API key), puis ajoutez GEMINI_API_KEY dans Vercel et redéployez.", "Ou payant à l'usage : clé Claude sur platform.claude.com, à ajouter comme ANTHROPIC_API_KEY."])}
             </Carte>
@@ -281,7 +281,7 @@ export default function Connexions() {
                   <span style={{ height: 8, borderRadius: 4, background: "#EDF1F7", display: "flex" }}><span style={{ width: `${Math.max(1, (sante.stockage.utilise / sante.stockage.capacite) * 100)}%`, borderRadius: 4, background: "#0E9F8E" }} /></span>
                 </div>
               ) : null}>
-              <Puce ok={info ? !info.demo : null}>{info?.demo ? "Mode démo : posts gardés sur ce téléphone" : "Supabase connecté : publications, réglages, journal de VOA"}</Puce>
+              <Puce ok={info ? !info.demo : null}>{info?.demo ? "Mode démo : posts gardés sur ce téléphone" : "Supabase connecté : publications, réglages, journal de NOVA"}</Puce>
               {sante?.stockage ? <Puce ok>{sante.stockage.n} fichiers dans la médiathèque</Puce> : null}
               {aide("db", ["Créez un projet sur supabase.com et lancez supabase/schema.sql dans SQL Editor.", "Dans Vercel : SUPABASE_URL et SUPABASE_SERVICE_ROLE_KEY, puis redéployez."])}
             </Carte>
@@ -297,7 +297,7 @@ export default function Connexions() {
                     <span className="trait" style={{ background: i.resolu ? "#9AA8BE" : "#E11D2E" }} />
                     <span style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 2 }}>
                       <span style={{ fontSize: 11, color: "#5B6B86" }}>{quand(i.at)} · {PLATFORMS.find((x) => x.id === i.plateforme)?.label}</span>
-                      <Link href={`/apercu?id=${i.id}`} style={{ fontSize: 13, fontWeight: 700, lineHeight: 1.35, color: "#0B1A33", textDecoration: "none" }}>{i.detail}</Link>
+                      <Link href={`/apercu?id=${i.id}`} style={{ fontSize: 13, fontWeight: 700, lineHeight: 1.35, color: "#150E33", textDecoration: "none" }}>{i.detail}</Link>
                     </span>
                     <span style={{ fontSize: 11, fontWeight: 800, color: i.resolu ? "#05603A" : "#9F1239", whiteSpace: "nowrap" }}>{i.resolu ? "Résolu" : "À voir"}</span>
                   </li>

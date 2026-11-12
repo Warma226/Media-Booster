@@ -69,7 +69,7 @@ export default function Sources() {
             {busy ? "Recherche…" : "Ajouter"}
           </button>
         </form>
-        <p className="muted small" style={{ marginTop: -8 }}>Colle l'adresse d'un site : TUVOA cherche son flux RSS.</p>
+        <p className="muted small" style={{ marginTop: -8 }}>Colle l'adresse d'un site : Media Booster cherche son flux RSS.</p>
         {error ? <p className="notice rouge" role="alert">{error}</p> : null}
         {ok ? <p className="notice" role="status">{ok}</p> : null}
 

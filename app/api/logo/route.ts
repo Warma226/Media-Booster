@@ -4,7 +4,7 @@
 export const runtime = "nodejs";
 export const maxDuration = 20;
 
-const UA = "Mozilla/5.0 (compatible; TUVOA-APP/1.0; +https://tuvoa.media)";
+const UA = "Mozilla/5.0 (compatible; MediaBooster/1.0)";
 const DOMAINE = /^(?=.{4,253}$)([a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,24}$/;
 
 async function chercher(url: string, ms: number): Promise<Response | null> {

@@ -31,7 +31,7 @@ export async function middleware(req: NextRequest) {
   const { pathname, search } = req.nextUrl;
   if (!process.env.APP_PASSWORD) {
     if (process.env.NODE_ENV === "production") {
-      return new NextResponse("Configure APP_PASSWORD dans Vercel pour ouvrir TUVOA.", { status: 503 });
+      return new NextResponse("Configure APP_PASSWORD dans Vercel pour ouvrir Media Booster.", { status: 503 });
     }
     return NextResponse.next();
   }
@@ -53,8 +53,8 @@ export async function middleware(req: NextRequest) {
   }
   // Identité transmise aux routes (les en-têtes envoyés par le navigateur sont écrasés).
   const h = new Headers(req.headers);
-  h.set("x-tuvoa-uid", s.uid);
-  h.set("x-tuvoa-role", s.role);
-  h.set("x-tuvoa-sid", s.sid ?? "");
+  h.set("x-mb-uid", s.uid);
+  h.set("x-mb-role", s.role);
+  h.set("x-mb-sid", s.sid ?? "");
   return NextResponse.next({ request: { headers: h } });
 }

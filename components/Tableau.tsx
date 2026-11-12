@@ -50,29 +50,29 @@ export function Courbe({ jours, auj, compact = false }: { jours: Jour[]; auj: nu
       <div style={{ position: "relative", minWidth: compact ? 0 : 600, height: h + 40 }}>
         <svg viewBox="0 0 1000 240" preserveAspectRatio="none" width="100%" height={h} role="img" aria-label={`Publications par jour. ${desc}`} style={{ display: "block", overflow: "visible" }}>
           <defs>
-            <linearGradient id="tv-aire" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#2563EB" stopOpacity="0.35" /><stop offset="100%" stopColor="#2563EB" stopOpacity="0" /></linearGradient>
+            <linearGradient id="tv-aire" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#5B3DF5" stopOpacity="0.35" /><stop offset="100%" stopColor="#5B3DF5" stopOpacity="0" /></linearGradient>
             <linearGradient id="tv-aire2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#7C3AED" stopOpacity="0.18" /><stop offset="100%" stopColor="#7C3AED" stopOpacity="0" /></linearGradient>
           </defs>
           <path d={`M0 ${HAUT} H1000 M0 ${(HAUT + BAS) / 2} H1000`} stroke="#E1E8F3" strokeWidth="1" vectorEffect="non-scaling-stroke" fill="none" />
           <path d={`M0 ${BAS} H1000`} stroke="#C9D3E3" strokeWidth="1" vectorEffect="non-scaling-stroke" fill="none" />
           <path d={aire} fill="url(#tv-aire)" />
-          <path d={ligne} stroke="#2563EB" strokeWidth={compact ? 3 : 4} fill="none" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
-          {auj < fin ? <path d={lisse(P, auj, fin)} stroke="#2563EB" strokeWidth={compact ? 2.5 : 3} strokeDasharray="8 8" fill="none" strokeLinecap="round" vectorEffect="non-scaling-stroke" /> : null}
+          <path d={ligne} stroke="#5B3DF5" strokeWidth={compact ? 3 : 4} fill="none" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
+          {auj < fin ? <path d={lisse(P, auj, fin)} stroke="#5B3DF5" strokeWidth={compact ? 2.5 : 3} strokeDasharray="8 8" fill="none" strokeLinecap="round" vectorEffect="non-scaling-stroke" /> : null}
           <path d={aireCit} fill="url(#tv-aire2)" />
           <path d={cl} stroke="#7C3AED" strokeWidth={compact ? 2.5 : 3} fill="none" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
           {auj < fin ? <path d={lisse(C, auj, fin)} stroke="#7C3AED" strokeWidth="2.5" strokeDasharray="6 7" fill="none" strokeLinecap="round" vectorEffect="non-scaling-stroke" /> : null}
-          <path d={`M${px} 10 V${BAS}`} stroke="#E94A06" strokeWidth="1.5" strokeDasharray="4 5" vectorEffect="non-scaling-stroke" fill="none" />
+          <path d={`M${px} 10 V${BAS}`} stroke="#E11D74" strokeWidth="1.5" strokeDasharray="4 5" vectorEffect="non-scaling-stroke" fill="none" />
         </svg>
-        <span aria-hidden="true" style={{ position: "absolute", left: `${px / 10}%`, top: py * k - 9, width: 18, height: 18, marginLeft: -9, borderRadius: 9, background: "#fff", border: "4px solid #2563EB", boxSizing: "border-box", boxShadow: "0 0 0 6px rgba(37,99,235,0.18)" }} />
+        <span aria-hidden="true" style={{ position: "absolute", left: `${px / 10}%`, top: py * k - 9, width: 18, height: 18, marginLeft: -9, borderRadius: 9, background: "#fff", border: "4px solid #5B3DF5", boxSizing: "border-box", boxShadow: "0 0 0 6px rgba(91,61,245,0.18)" }} />
         {!compact ? (
-          <div aria-hidden="true" style={{ position: "absolute", left: `${px / 10}%`, top: Math.max(-6, py * k - 78), transform: "translateX(-50%)", padding: "8px 12px", borderRadius: 12, background: "#0A2A66", color: "#fff", display: "flex", flexDirection: "column", whiteSpace: "nowrap", boxShadow: "0 10px 24px rgba(10,42,102,0.25)" }}>
+          <div aria-hidden="true" style={{ position: "absolute", left: `${px / 10}%`, top: Math.max(-6, py * k - 78), transform: "translateX(-50%)", padding: "8px 12px", borderRadius: 12, background: "#1B0F4D", color: "#fff", display: "flex", flexDirection: "column", whiteSpace: "nowrap", boxShadow: "0 10px 24px rgba(27,15,77,0.25)" }}>
             <strong style={{ fontSize: 13 }}>Aujourd'hui</strong>
-            <span style={{ fontSize: 12, color: "#C9D6F2" }}>{tot[auj]} publiée{tot[auj] > 1 ? "s" : ""} · {encore} encore prévue{encore > 1 ? "s" : ""}</span>
+            <span style={{ fontSize: 12, color: "#D9D2F2" }}>{tot[auj]} publiée{tot[auj] > 1 ? "s" : ""} · {encore} encore prévue{encore > 1 ? "s" : ""}</span>
           </div>
         ) : null}
         <div aria-hidden="true" style={{ position: "absolute", left: 0, right: 0, top: h + 12, height: 20 }}>
           {jours.map((j, i) => (
-            <span key={j.date} style={{ position: "absolute", left: `${X(i) / 10}%`, transform: "translateX(-50%)", whiteSpace: "nowrap", fontSize: compact ? 11 : 12, color: i === auj ? "#0A2A66" : i > auj ? "#7C3AED" : "#5B6B86", fontWeight: i === auj ? 800 : i > auj ? 600 : 400 }}>
+            <span key={j.date} style={{ position: "absolute", left: `${X(i) / 10}%`, transform: "translateX(-50%)", whiteSpace: "nowrap", fontSize: compact ? 11 : 12, color: i === auj ? "#1B0F4D" : i > auj ? "#7C3AED" : "#5B6B86", fontWeight: i === auj ? 800 : i > auj ? 600 : 400 }}>
               {libelleJour(j.date, compact)}
             </span>
           ))}
@@ -91,7 +91,7 @@ export function taille(o: number): string {
 }
 
 export const CATS: { id: CatId; nom: string; dossier: string; couleur: string; d: string }[] = [
-  { id: "images", nom: "Images", dossier: "Images", couleur: "#2563EB", d: "M3 5h18v14H3zM8 11a2 2 0 1 0 0-.01M21 15l-5-5L5 19" },
+  { id: "images", nom: "Images", dossier: "Images", couleur: "#5B3DF5", d: "M3 5h18v14H3zM8 11a2 2 0 1 0 0-.01M21 15l-5-5L5 19" },
   { id: "voix", nom: "Voix off", dossier: "Voix off", couleur: "#7C3AED", d: "M12 3v18M8 8v8M4 11v2M16 6v12M20 10v4" },
   { id: "videos", nom: "Vidéos", dossier: "Vidéos", couleur: "#0E9F8E", d: "M3 6h13v12H3zM16 10l5-3v10l-5-3" },
   { id: "documents", nom: "Autres fichiers", dossier: "Documents", couleur: "#8A93A6", d: "M6 3h9l5 5v13H6zM14 3v6h6" },
@@ -109,9 +109,9 @@ export function Disque({ s, o }: { s: Stockage; o: Ouvrir }) {
   const pct = Math.min(100, (s.utilise / s.capacite) * 100);
   return (
     <Cible cat={null} o={o} className="tv-disque">
-      <svg width="64" height="64" viewBox="0 0 64 64" aria-hidden="true" style={{ flexShrink: 0 }}><rect x="6" y="18" width="52" height="30" rx="5" fill="#E7ECF4" stroke="#9AA8BE" strokeWidth="2" /><rect x="6" y="38" width="52" height="10" rx="3" fill="#C9D3E3" /><circle cx="49" cy="43" r="2.5" fill="#22C55E" /><rect x="16" y="24" width="18" height="10" rx="2" fill="#2563EB" /><path d="M19 27h12M19 31h8" stroke="#fff" strokeWidth="1.6" strokeLinecap="round" /></svg>
+      <svg width="64" height="64" viewBox="0 0 64 64" aria-hidden="true" style={{ flexShrink: 0 }}><rect x="6" y="18" width="52" height="30" rx="5" fill="#E7ECF4" stroke="#9AA8BE" strokeWidth="2" /><rect x="6" y="38" width="52" height="10" rx="3" fill="#C9D3E3" /><circle cx="49" cy="43" r="2.5" fill="#22C55E" /><rect x="16" y="24" width="18" height="10" rx="2" fill="#5B3DF5" /><path d="M19 27h12M19 31h8" stroke="#fff" strokeWidth="1.6" strokeLinecap="round" /></svg>
       <span style={{ flex: 1, display: "flex", flexDirection: "column", gap: 6, minWidth: 0 }}>
-        <strong style={{ fontSize: 15 }}>Stockage TUVOA (T:)</strong>
+        <strong style={{ fontSize: 15 }}>Stockage (M:)</strong>
         <span className="tv-win-bar" role="meter" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(pct)} aria-label="Espace utilisé"><span style={{ width: `${pct}%` }} /></span>
         <span style={{ fontSize: 13, color: "#5B6B86" }}>{taille(libre)} libres sur {taille(s.capacite)}</span>
       </span>

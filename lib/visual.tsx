@@ -4,6 +4,7 @@
 
 export { FORMATS, type VisualFormat } from "./formats";
 import { FORMATS, type VisualFormat } from "./formats";
+import { MEDIA_SIGNATURE } from "@/lib/brand";
 
 export type VisualData = {
   rubrique: "actu" | "cyberbase" | "portrait" | "citation";
@@ -15,7 +16,7 @@ export type VisualData = {
   source?: string;
 };
 
-const BLEU = "#2563EB";
+const BLEU = "#5B3DF5";
 
 function Lambda({ size, color }: { size: number; color: string }) {
   return (
@@ -54,7 +55,7 @@ function autoSize(text: string, steps: [number, number][]): number {
   return steps[steps.length - 1][1];
 }
 
-// Les gabarits sont dessinés pour du 4:5 (1080 × 1350, comme les maquettes TUVOA).
+// Les gabarits sont dessinés pour du 4:5 (1080 × 1350, comme les maquettes d'origine).
 // Pour les autres formats, le fond remplit tout et la composition 4:5 est centrée.
 type Stage = { s: number; ox: number; oy: number };
 function stage(w: number, h: number): Stage {
@@ -71,7 +72,7 @@ export function renderVisual(d: VisualData, format: VisualFormat) {
   return d.rubrique === "citation" ? citation(d, w, h) : actu(d, w, h);
 }
 
-// Guillemets TUVOA : deux blocs géométriques à queue oblique (ouvrant = retourné).
+// Guillemets de la charte : deux blocs géométriques à queue oblique (ouvrant = retourné).
 function Guillemets({ width, color, ouvrant = false }: { width: number; color: string; ouvrant?: boolean }) {
   const d = ouvrant
     ? "M92 68H54V32L68 0H82L74 32H92Z M40 68H2V32L16 0H30L22 32H40Z"
@@ -116,7 +117,7 @@ function citation(d: VisualData, w: number, h: number) {
         </div>
         <div style={{ display: "flex", flexWrap: "wrap", width: 960 * s, fontSize: size * s, fontWeight: 500, color: "#FFFFFF", lineHeight: 1.2 }}>
           {mots.map((m, i) => (
-            <span key={i} style={{ marginRight: size * 0.26 * s, color: m.fort ? "#6E9BFF" : "#FFFFFF" }}>{m.mot}</span>
+            <span key={i} style={{ marginRight: size * 0.26 * s, color: m.fort ? "#A08BFF" : "#FFFFFF" }}>{m.mot}</span>
           ))}
         </div>
         <div style={{ display: "flex", alignItems: "flex-start", marginTop: 34 * s }}>
@@ -148,7 +149,7 @@ function actu(d: VisualData, w: number, h: number) {
   const info = fit(d.texte || d.titre || "Titre de l'actu", 230);
   const size = autoSize(info, [[90, 54], [150, 48], [200, 44], [999, 40]]);
   return (
-    <div style={{ width: w, height: h, display: "flex", position: "relative", backgroundImage: "linear-gradient(160deg, #1D3A7A 0%, #0B1633 55%, #000000 100%)", fontFamily: "Archivo" }}>
+    <div style={{ width: w, height: h, display: "flex", position: "relative", backgroundImage: "linear-gradient(160deg, #1D3A7A 0%, #150E33 55%, #000000 100%)", fontFamily: "Archivo" }}>
       {d.photo ? <img src={d.photo} alt="" width={w} height={h} style={{ position: "absolute", left: 0, top: 0, width: w, height: h, objectFit: "cover" }} /> : null}
       <div style={{ position: "absolute", left: 0, top: 0, width: w, height: h, display: "flex", backgroundImage: "linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 46%, rgba(0,0,0,0.82) 66%, #000000 84%)" }} />
       <div style={at(st, 838, 30, { width: 194 * s, height: 194 * s, alignItems: "center", justifyContent: "center", background: "#FFFFFF", borderRadius: `0 0 0 ${100 * s}px` })}>
@@ -158,7 +159,7 @@ function actu(d: VisualData, w: number, h: number) {
         {fit(categorie, 26)}
       </div>
       <div style={at(st, 102, 900, { width: 930 * s, fontSize: size * s, fontWeight: 800, color: "#FFFFFF", lineHeight: 1.3 })}>{info}</div>
-      <div style={at(st, 600, 1238, { width: 415 * s, justifyContent: "flex-end", fontSize: 46 * s, fontWeight: 800, color: "#FFFFFF" })}>www.tuvoa.media</div>
+      <div style={at(st, 600, 1238, { width: 415 * s, justifyContent: "flex-end", fontSize: 46 * s, fontWeight: 800, color: "#FFFFFF" })}>{MEDIA_SIGNATURE}</div>
     </div>
   );
 }

@@ -1,8 +1,8 @@
 {
-  "name": "tuvoa-app",
+  "name": "media-booster",
   "version": "0.1.0",
   "private": true,
-  "description": "TUVOA Tech Media – veille, création et publication de posts tech",
+  "description": "Media Booster – veille, création et publication de posts tech",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
