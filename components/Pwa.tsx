@@ -6,8 +6,8 @@
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { SigneBoost } from "@/components/Logo";
+import { dejaInstallee, installer, plateforme, suivre, surIphoneSafari } from "@/lib/installation";
 
-type InvitationInstall = Event & { prompt: () => Promise<void>; userChoice: Promise<{ outcome: "accepted" | "dismissed" }> };
 type Bandeau = "installer" | "iphone" | "maj" | null;
 
 const CLE_REFUS = "mb-install-refus";
@@ -20,15 +20,6 @@ function ecrire(cle: string, valeur: string) {
   try { window.localStorage.setItem(cle, valeur); } catch { /* stockage indisponible : sans conséquence */ }
 }
 
-function dejaInstallee(): boolean {
-  const nav = window.navigator as Navigator & { standalone?: boolean };
-  return window.matchMedia("(display-mode: standalone)").matches || nav.standalone === true;
-}
-function surIphoneSafari(): boolean {
-  const ua = window.navigator.userAgent;
-  const ios = /iPhone|iPad|iPod/i.test(ua) || (ua.includes("Macintosh") && navigator.maxTouchPoints > 1);
-  return ios && /Safari/i.test(ua) && !/CriOS|FxiOS|EdgiOS/i.test(ua);
-}
 function refusRecent(): boolean {
   const t = Number(lire(CLE_REFUS) ?? 0);
   return Boolean(t) && Date.now() - t < PAUSE_REFUS;
@@ -38,7 +29,6 @@ export function Pwa() {
   const path = usePathname();
   const [bandeau, setBandeau] = useState<Bandeau>(null);
   const [horsLigne, setHorsLigne] = useState(false);
-  const invitation = useRef<InvitationInstall | null>(null);
   const enAttente = useRef<ServiceWorker | null>(null);
 
   // Service worker (en production seulement : en développement il gênerait le rechargement à chaud).
@@ -78,25 +68,17 @@ export function Pwa() {
     };
   }, []);
 
-  // Invitation à installer.
+  // Invitation à installer (événement capté par lib/installation, partagé avec la page d'accueil publique).
   useEffect(() => {
     if (dejaInstallee()) return;
-    const surInvitation = (e: Event) => {
-      e.preventDefault();
-      invitation.current = e as InvitationInstall;
-      if (!refusRecent()) setBandeau((b) => b ?? "installer");
+    const maj = () => {
+      const p = plateforme();
+      if (p === "installee") setBandeau((b) => (b === "installer" || b === "iphone" ? null : b));
+      else if (p === "invitation" && !refusRecent()) setBandeau((b) => b ?? "installer");
     };
-    const surInstallee = () => {
-      invitation.current = null;
-      setBandeau((b) => (b === "installer" || b === "iphone" ? null : b));
-    };
-    window.addEventListener("beforeinstallprompt", surInvitation);
-    window.addEventListener("appinstalled", surInstallee);
+    maj();
     if (surIphoneSafari() && !refusRecent()) setBandeau((b) => b ?? "iphone");
-    return () => {
-      window.removeEventListener("beforeinstallprompt", surInvitation);
-      window.removeEventListener("appinstalled", surInstallee);
-    };
+    return suivre(maj);
   }, []);
 
   // Réseau.
@@ -111,13 +93,8 @@ export function Pwa() {
     };
   }, []);
 
-  async function installer() {
-    const inv = invitation.current;
-    if (!inv) return;
-    await inv.prompt();
-    const choix = await inv.userChoice.catch(() => ({ outcome: "dismissed" as const }));
-    invitation.current = null;
-    if (choix.outcome === "dismissed") ecrire(CLE_REFUS, String(Date.now()));
+  async function installerApp() {
+    if (!(await installer())) ecrire(CLE_REFUS, String(Date.now()));
     setBandeau(null);
   }
   function plusTard() {
@@ -129,7 +106,8 @@ export function Pwa() {
     setBandeau(null);
   }
 
-  if (path.startsWith("/hors-ligne")) return null;
+  // Page d'accueil publique : elle a son propre bouton d'installation.
+  if (path.startsWith("/hors-ligne") || path.startsWith("/bienvenue")) return null;
 
   return (
     <div className="tv-pwa-zone" aria-live="polite">
@@ -152,7 +130,7 @@ export function Pwa() {
         <div className="tv-pwa">
           <span className="tv-pwa-tuile" aria-hidden="true"><SigneBoost size={20} /></span>
           <span className="tv-pwa-texte"><strong>Installer Media Booster</strong><small>Accès direct, en plein écran.</small></span>
-          <button type="button" className="tv-pwa-btn" onClick={installer}>Installer</button>
+          <button type="button" className="tv-pwa-btn" onClick={installerApp}>Installer</button>
           <button type="button" className="tv-pwa-fermer" onClick={plusTard} aria-label="Plus tard">×</button>
         </div>
       ) : null}

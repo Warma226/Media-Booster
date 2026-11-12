@@ -28,7 +28,7 @@ export function useProfil(): Profil | null {
   return p;
 }
 
-const SANS_SESSION = ["/acces", "/inscription", "/invitation", "/hors-ligne", "/cgu", "/confidentialite"];
+const SANS_SESSION = ["/bienvenue", "/acces", "/inscription", "/invitation", "/hors-ligne", "/cgu", "/confidentialite"];
 
 /** Placé dans la mise en page : charge la marque dès l'ouverture de l'app (rien à afficher). */
 export function ChargeurProfil() {

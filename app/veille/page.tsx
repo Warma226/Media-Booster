@@ -5,7 +5,9 @@ import { useEffect, useMemo, useState } from "react";
 import Voa from "@/components/Voa";
 import { SourceLogo } from "@/components/SourceLogo";
 import { NAV_ICONS, Trait } from "@/components/BottomNav";
-import { TOPICS, allSources, allTriggers, isOn, type Trigger } from "@/lib/config";
+import { allSources, allTriggers, isOn, type Trigger } from "@/lib/config";
+import { useProfil } from "@/components/Profil";
+import type { Theme } from "@/lib/marque";
 import type { VeilleItem } from "@/lib/veille";
 import { getInfo } from "@/lib/client";
 
@@ -45,7 +47,9 @@ function etiquette(it: VeilleItem): { label: string; tone: string } {
   if (ageH < 3) return { label: "Nouveau", tone: "vert" };
   return { label: `Pertinence ${it.score}`, tone: "" };
 }
-const themeDe = (it: VeilleItem) => TOPICS.find((t) => t.id === it.topics[0]);
+// Thèmes du client (écran Thèmes), chargés avec son profil.
+let THEMES: Theme[] = [];
+const themeDe = (it: VeilleItem) => THEMES.find((t) => t.id === it.topics[0]);
 function lienCreer(it: VeilleItem) {
   const params = new URLSearchParams({ src: it.url, source: it.sourceName, titre: it.title, resume: it.summary.slice(0, 400) });
   const theme = themeDe(it)?.label;
@@ -54,6 +58,8 @@ function lienCreer(it: VeilleItem) {
 }
 
 export default function Veille() {
+  const profil = useProfil();
+  THEMES = profil?.themes ?? [];
   const [items, setItems] = useState<VeilleItem[] | null>(null);
   const [errors, setErrors] = useState<string[]>([]);
   const [topic, setTopic] = useState("tout");
@@ -126,7 +132,7 @@ export default function Veille() {
   }, [shown]);
   const flux = shown.filter((i) => i.id !== sujet?.id);
   const sensibles = visibles.filter((i) => i.blocked).length;
-  const themesActifs = TOPICS.filter((t) => parTheme.get(t.id));
+  const themesActifs = THEMES.filter((t) => parTheme.get(t.id));
 
   const avis = !items
     ? "Je parcours les sources…"
@@ -194,7 +200,7 @@ export default function Veille() {
               <article className="tv-sujet">
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 8, alignItems: "center", position: "relative" }}>
                   <span className="tv-tag" style={{ background: "#D97706", color: "#fff", fontSize: 12 }}>SUJET DU JOUR</span>
-                  {sujet.topics.length ? <span className="tv-tag" style={{ background: "rgba(255,255,255,0.12)", color: "#fff", letterSpacing: 0, fontWeight: 700, fontSize: 12 }}>{sujet.topics.map((t) => TOPICS.find((x) => x.id === t)?.label).filter(Boolean).slice(0, 2).join(" · ")}</span> : null}
+                  {sujet.topics.length ? <span className="tv-tag" style={{ background: "rgba(255,255,255,0.12)", color: "#fff", letterSpacing: 0, fontWeight: 700, fontSize: 12 }}>{sujet.topics.map((t) => THEMES.find((x) => x.id === t)?.label).filter(Boolean).slice(0, 2).join(" · ")}</span> : null}
                   <span style={{ fontSize: 13, color: "#CBD5E1" }}>{sujet.sameStoryCount > 1 ? `repris par ${sujet.sameStoryCount} sources` : `pertinence ${sujet.score}`}</span>
                 </div>
                 <h2><a className="lien" href={sujet.url} target="_blank" rel="noopener noreferrer">{sujet.title}</a></h2>
@@ -214,7 +220,7 @@ export default function Veille() {
             {/* Flux */}
             <div style={{ display: "flex", alignItems: "baseline", gap: 10, flexWrap: "wrap" }}>
               <h2 className="tv-h2" style={{ fontSize: 22 }}>Le flux</h2>
-              <span className="tv-gris">trié par pertinence pour Media Booster</span>
+              <span className="tv-gris">trié par pertinence pour votre public</span>
             </div>
             {items === null ? <p className="tv-gris">Lecture des sources…</p> : null}
             {items && flux.length === 0 ? <p className="tv-gris">{recherche ? "Aucune actu ne correspond à cette recherche." : "Rien d'autre pour ce thème pour l'instant."}</p> : null}

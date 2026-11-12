@@ -10,7 +10,7 @@ import { apiAutorisee, pageAutorisee } from "@/lib/roles";
 import { accesOuvert, PAGES_SANS_ABONNEMENT } from "@/lib/abonnement";
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|icon.png|apple-icon.png|manifest.webmanifest|sw.js|icons/|hors-ligne|api/cron|api/cm-cron|api/visuel|api/login|api/inscription|api/invitation|api/abonnement/notification|invitation|inscription|studio/|recap/|cyberbase/|citations/|wp/|api/media|cgu|confidentialite|tiktok).*)"],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|icon.png|apple-icon.png|manifest.webmanifest|sw.js|icons/|hors-ligne|api/cron|api/cm-cron|api/visuel|api/login|api/inscription|api/invitation|api/abonnement/notification|invitation|inscription|bienvenue|landing/|studio/|recap/|cyberbase/|citations/|wp/|api/media|cgu|confidentialite|tiktok).*)"],
 };
 
 type EtatSession = { ouverte: boolean; acces: boolean };
@@ -64,6 +64,8 @@ export async function middleware(req: NextRequest) {
   if (pathname === "/acces") return s ? NextResponse.redirect(new URL("/", req.url)) : NextResponse.next();
   if (!s) {
     if (pathname.startsWith("/api/")) return NextResponse.json({ error: "Session expirée : recharge la page et reconnecte-toi." }, { status: 401 });
+    // Visiteur sur l'accueil : page publique de présentation ; ouverture depuis l'application installée : connexion.
+    if (pathname === "/" && req.nextUrl.searchParams.get("source") !== "app") return NextResponse.redirect(new URL("/bienvenue", req.url));
     const url = new URL("/acces", req.url);
     if (pathname !== "/") url.searchParams.set("next", pathname + search);
     const res = NextResponse.redirect(url);

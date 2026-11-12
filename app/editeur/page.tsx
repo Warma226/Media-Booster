@@ -6,7 +6,9 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Trait } from "@/components/BottomNav";
 import { ApercuFacebook, Jauge, RUB } from "@/components/Atelier";
 import { ImageField } from "@/components/ImageField";
-import { PLATFORMS, RUBRIQUES, TOPICS, type Platform } from "@/lib/config";
+import { PLATFORMS, type Platform } from "@/lib/config";
+import { useProfil } from "@/components/Profil";
+import { infoRubrique, type RubriqueClient, type Theme } from "@/lib/marque";
 import { PLATFORM_LABEL } from "@/lib/labels";
 import type { Post } from "@/lib/store";
 import { loadPost, savePost, visuelsDe } from "@/lib/client";
@@ -51,15 +53,16 @@ const NOM: Record<Tab, string> = { commun: "Texte commun", facebook: "Facebook",
 const ICO: Record<Tab, [string, string]> = { commun: ["≡", "#5B6B86"], facebook: ["F", "#1877F2"], linkedin: ["in", "#0A66C2"], tiktok: ["T", "#0F172A"], wordpress: ["W", "#0F172A"] };
 
 // Hashtags proposés à partir de la rubrique, des thèmes détectés et des produits cités.
+// Rubriques et thèmes du client, chargés avec son profil (écran Éditeur).
+let RUBS_ED: RubriqueClient[] = [];
+let THEMES_ED: Theme[] = [];
 function suggestHashtags(post: Post, text: string): string[] {
   const out: string[] = [];
   const low = ` ${text.toLowerCase()} `;
   const products = text.match(/\b(Android|iOS|iPhone|Galaxy|Pixel|Windows|ChatGPT|Gemini|Claude|WhatsApp)\s?(\d{1,2})?\b/g) ?? [];
   products.forEach((p) => out.push(`#${p.replace(/\s+/g, "")}`));
-  const rub = RUBRIQUES.find((r) => r.id === post.rubrique);
-  if (rub) out.push(rub.hashtag);
-  out.push("#Tech");
-  TOPICS.filter((t) => t.poids > 0 && t.keywords.some((k) => low.includes(k))).forEach((t) => out.push(`#${t.label.normalize("NFD").replace(/[^A-Za-z0-9]/g, "")}`));
+  out.push(infoRubrique(RUBS_ED, post.rubrique).hashtag);
+  THEMES_ED.filter((t) => t.poids > 0 && t.keywords.some((k) => low.includes(k))).forEach((t) => out.push(`#${t.label.normalize("NFD").replace(/[^A-Za-z0-9]/g, "")}`));
   out.push(marqueActive.hashtag);
   return Array.from(new Set(out)).slice(0, 6);
 }
@@ -91,6 +94,9 @@ export default function EditeurPage() {
 }
 
 function Editeur() {
+  const profil = useProfil();
+  RUBS_ED = profil?.rubriques ?? [];
+  THEMES_ED = profil?.themes ?? [];
   const q = useSearchParams();
   const router = useRouter();
   const id = q.get("id");
@@ -475,7 +481,7 @@ function Editeur() {
             ) : null}
 
             <section className="tv-carte" aria-labelledby="ton-visuel">
-              <h2 id="ton-visuel" className="tv-h2" style={{ fontSize: 17 }}>{current.rubrique === "actu" ? "Image de l'article" : current.rubrique === "citation" ? "Remplacer par votre propre visuel (facultatif)" : `Votre visuel ${RUBRIQUES.find((r) => r.id === current.rubrique)?.hashtag ?? ""}`}</h2>
+              <h2 id="ton-visuel" className="tv-h2" style={{ fontSize: 17 }}>{current.rubrique === "actu" ? "Image de l'article" : current.rubrique === "citation" ? "Remplacer par votre propre visuel (facultatif)" : `Votre visuel ${infoRubrique(RUBS_ED, current.rubrique).hashtag}`}</h2>
               <ImageField
                 label="Image"
                 hint={current.rubrique === "actu" ? "Publiée avec le post (récupérée depuis l'article). Vous pouvez la remplacer." : current.rubrique === "citation" ? "Laissez vide pour publier le visuel généré." : "Le visuel que vous avez créé (PNG ou JPG, format 4:5 conseillé)."}
