@@ -51,7 +51,7 @@ export function Courbe({ jours, auj, compact = false }: { jours: Jour[]; auj: nu
         <svg viewBox="0 0 1000 240" preserveAspectRatio="none" width="100%" height={h} role="img" aria-label={`Publications par jour. ${desc}`} style={{ display: "block", overflow: "visible" }}>
           <defs>
             <linearGradient id="tv-aire" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#047857" stopOpacity="0.35" /><stop offset="100%" stopColor="#047857" stopOpacity="0" /></linearGradient>
-            <linearGradient id="tv-aire2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#7C3AED" stopOpacity="0.18" /><stop offset="100%" stopColor="#7C3AED" stopOpacity="0" /></linearGradient>
+            <linearGradient id="tv-aire2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#B45309" stopOpacity="0.18" /><stop offset="100%" stopColor="#B45309" stopOpacity="0" /></linearGradient>
           </defs>
           <path d={`M0 ${HAUT} H1000 M0 ${(HAUT + BAS) / 2} H1000`} stroke="#E1E8F3" strokeWidth="1" vectorEffect="non-scaling-stroke" fill="none" />
           <path d={`M0 ${BAS} H1000`} stroke="#C9D3E3" strokeWidth="1" vectorEffect="non-scaling-stroke" fill="none" />
@@ -59,8 +59,8 @@ export function Courbe({ jours, auj, compact = false }: { jours: Jour[]; auj: nu
           <path d={ligne} stroke="#047857" strokeWidth={compact ? 3 : 4} fill="none" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
           {auj < fin ? <path d={lisse(P, auj, fin)} stroke="#047857" strokeWidth={compact ? 2.5 : 3} strokeDasharray="8 8" fill="none" strokeLinecap="round" vectorEffect="non-scaling-stroke" /> : null}
           <path d={aireCit} fill="url(#tv-aire2)" />
-          <path d={cl} stroke="#7C3AED" strokeWidth={compact ? 2.5 : 3} fill="none" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
-          {auj < fin ? <path d={lisse(C, auj, fin)} stroke="#7C3AED" strokeWidth="2.5" strokeDasharray="6 7" fill="none" strokeLinecap="round" vectorEffect="non-scaling-stroke" /> : null}
+          <path d={cl} stroke="#B45309" strokeWidth={compact ? 2.5 : 3} fill="none" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
+          {auj < fin ? <path d={lisse(C, auj, fin)} stroke="#B45309" strokeWidth="2.5" strokeDasharray="6 7" fill="none" strokeLinecap="round" vectorEffect="non-scaling-stroke" /> : null}
           <path d={`M${px} 10 V${BAS}`} stroke="#D97706" strokeWidth="1.5" strokeDasharray="4 5" vectorEffect="non-scaling-stroke" fill="none" />
         </svg>
         <span aria-hidden="true" style={{ position: "absolute", left: `${px / 10}%`, top: py * k - 9, width: 18, height: 18, marginLeft: -9, borderRadius: 9, background: "#fff", border: "4px solid #047857", boxSizing: "border-box", boxShadow: "0 0 0 6px rgba(4,120,87,0.18)" }} />
@@ -72,7 +72,7 @@ export function Courbe({ jours, auj, compact = false }: { jours: Jour[]; auj: nu
         ) : null}
         <div aria-hidden="true" style={{ position: "absolute", left: 0, right: 0, top: h + 12, height: 20 }}>
           {jours.map((j, i) => (
-            <span key={j.date} style={{ position: "absolute", left: `${X(i) / 10}%`, transform: "translateX(-50%)", whiteSpace: "nowrap", fontSize: compact ? 11 : 12, color: i === auj ? "#0F172A" : i > auj ? "#7C3AED" : "#5B6B86", fontWeight: i === auj ? 800 : i > auj ? 600 : 400 }}>
+            <span key={j.date} style={{ position: "absolute", left: `${X(i) / 10}%`, transform: "translateX(-50%)", whiteSpace: "nowrap", fontSize: compact ? 11 : 12, color: i === auj ? "#0F172A" : i > auj ? "#B45309" : "#5B6B86", fontWeight: i === auj ? 800 : i > auj ? 600 : 400 }}>
               {libelleJour(j.date, compact)}
             </span>
           ))}
@@ -92,7 +92,7 @@ export function taille(o: number): string {
 
 export const CATS: { id: CatId; nom: string; dossier: string; couleur: string; d: string }[] = [
   { id: "images", nom: "Images", dossier: "Images", couleur: "#047857", d: "M3 5h18v14H3zM8 11a2 2 0 1 0 0-.01M21 15l-5-5L5 19" },
-  { id: "voix", nom: "Voix off", dossier: "Voix off", couleur: "#7C3AED", d: "M12 3v18M8 8v8M4 11v2M16 6v12M20 10v4" },
+  { id: "voix", nom: "Voix off", dossier: "Voix off", couleur: "#B45309", d: "M12 3v18M8 8v8M4 11v2M16 6v12M20 10v4" },
   { id: "videos", nom: "Vidéos", dossier: "Vidéos", couleur: "#0E9F8E", d: "M3 6h13v12H3zM16 10l5-3v10l-5-3" },
   { id: "documents", nom: "Autres fichiers", dossier: "Documents", couleur: "#8A93A6", d: "M6 3h9l5 5v13H6zM14 3v6h6" },
 ];

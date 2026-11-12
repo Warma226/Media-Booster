@@ -40,7 +40,7 @@ function Acces() {
     <CadreAuth
       titre="Connexion"
       sousTitre="Retrouvez votre espace de publication."
-      pied={<>Pas encore de compte ? <a href="/inscription">Essayer gratuitement 24 h</a></>}
+      pied={<>Pas encore de compte ? <a href="/inscription">Essayer gratuitement 24 h</a></>}
     >
       <form onSubmit={submit} className="mb-auth-form" noValidate>
         <label htmlFor="email">E-mail

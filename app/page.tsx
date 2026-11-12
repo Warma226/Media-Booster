@@ -120,14 +120,14 @@ export default function Dashboard() {
 
   const une = [
     { nom: "Actualités", href: "/calendrier", meta1: `${n(actu.publie)} publiées`, meta2: "7 derniers jours", desc: "La veille repère l'info tech, l'IA la résume en français, convertit les montants en FCFA et publie seule.", c: ["#60A5FA", "#065F46"], ok: !n(actu.erreur), vals: [n(actu.publie), n(actu.a_valider) + n(actu.brouillon), n(actu.erreur)], cols: [["#047857", "#fff"], ["#FDE7C8", "#9A4A00"], ["#FDD5D9", "#B4111F"]] as [string, string][], leg: "Publiées · à valider · erreurs", canaux: ["F", "in", "W"], rythme: auto ? "Toutes les 30 min" : "Sur validation" },
-    { nom: "Citations", href: "/calendrier", meta1: `${n(cit.planifie)} planifiées`, meta2: `${n(cit.publie)} publiées`, desc: "Des voix tech d'Afrique et du monde, vérifiées, une toutes les deux heures. Il suffit d'ajouter la photo.", c: ["#C4B5FD", "#7C3AED"], ok: !n(cit.erreur), vals: [n(cit.publie), n(cit.planifie), n(cit.erreur)], cols: [["#7C3AED", "#fff"], ["#E9E3FF", "#5B21B6"], ["#FDD5D9", "#B4111F"]] as [string, string][], leg: "Publiées · planifiées · erreurs", canaux: ["F", "in"], rythme: "Toutes les 2 h" },
+    { nom: "Citations", href: "/calendrier", meta1: `${n(cit.planifie)} planifiées`, meta2: `${n(cit.publie)} publiées`, desc: "Des voix tech d'Afrique et du monde, vérifiées, une toutes les deux heures. Il suffit d'ajouter la photo.", c: ["#FCD34D", "#B45309"], ok: !n(cit.erreur), vals: [n(cit.publie), n(cit.planifie), n(cit.erreur)], cols: [["#B45309", "#fff"], ["#E9E3FF", "#92400E"], ["#FDD5D9", "#B4111F"]] as [string, string][], leg: "Publiées · planifiées · erreurs", canaux: ["F", "in"], rythme: "Toutes les 2 h" },
   ];
 
   const recapDate = d?.recap ? new Date(d.recap.date).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric" }) : null;
   const m = d?.media?.categories;
   const rubriques = [
     { nom: "Actualités", href: "/calendrier", meta: `${n(actu.publie)} publiées · 7 j`, c: ["#60A5FA", "#065F46"], ok: !n(actu.erreur), et: n(actu.erreur) ? `${pl(n(actu.erreur), "erreur")} à corriger` : auto ? "Pilote automatique actif" : "En attente de validation", bl: "Publiées · à valider · en erreur", v: [n(actu.publie), n(actu.a_valider) + n(actu.brouillon), n(actu.erreur)] },
-    { nom: "Citations", href: "/calendrier", meta: `${n(cit.planifie)} planifiées`, c: ["#C4B5FD", "#7C3AED"], ok: !n(cit.erreur), et: d?.citationsSansPhoto ? `${d.citationsSansPhoto} en attente de photo` : "Photos prêtes", bl: "Publiées · planifiées · en erreur", v: [n(cit.publie), n(cit.planifie), n(cit.erreur)] },
+    { nom: "Citations", href: "/calendrier", meta: `${n(cit.planifie)} planifiées`, c: ["#FCD34D", "#B45309"], ok: !n(cit.erreur), et: d?.citationsSansPhoto ? `${d.citationsSansPhoto} en attente de photo` : "Photos prêtes", bl: "Publiées · planifiées · en erreur", v: [n(cit.publie), n(cit.planifie), n(cit.erreur)] },
     { nom: "#CyberBase", href: "/rubriques", meta: "Chaque jour à 7 h", c: ["#5EEAD4", "#0E9F8E"], ok: !n(cyb.erreur), et: n(cyb.planifie) ? `${pl(n(cyb.planifie), "numéro")} d'avance` : "Aucun numéro d'avance", bl: "Publiés · planifiés · en erreur", v: [n(cyb.publie), n(cyb.planifie), n(cyb.erreur)] },
     { nom: "Portrait", href: "/creer", meta: "Vos visuels", c: ["#FDBA74", "#D97706"], ok: !n(por.erreur), et: n(por.planifie) ? `${pl(n(por.planifie), "portrait")} planifié${n(por.planifie) > 1 ? "s" : ""}` : "Prêt à recevoir un visuel", bl: "Publiés · planifiés · à faire", v: [n(por.publie), n(por.planifie), n(por.brouillon) + n(por.a_valider)] },
     { nom: "La minute cyber", href: "/minute-cyber", meta: "Vidéo · 1 min", c: ["#FCA5A5", "#B91C1C"], ok: true, et: d?.minute.dernier ? `Épisode ${d.minute.dernier} prêt` : "Premier épisode à écrire", bl: "Montés · brouillons", v: [n(d?.minute.montes), n(d?.minute.brouillons), 0] },
@@ -235,7 +235,7 @@ export default function Dashboard() {
             <div className="tv-graph-chiffres">
               <div><strong>{pret ? publiees7 : "…"}</strong><span>publiées en 7 jours</span></div>
               <div><strong>{pret ? record.publie : "…"}</strong><span>record{pret && record.date ? ` · ${new Date(`${record.date}T12:00:00Z`).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", timeZone: "UTC" })}` : ""}</span></div>
-              <div><strong style={{ color: "#7C3AED" }}>{pret ? d.planifiees : "…"}</strong><span>déjà planifiées</span></div>
+              <div><strong style={{ color: "#B45309" }}>{pret ? d.planifiees : "…"}</strong><span>déjà planifiées</span></div>
             </div>
           </div>
           {pret ? (
@@ -246,7 +246,7 @@ export default function Dashboard() {
           ) : <div style={{ height: 180, display: "flex", alignItems: "center", justifyContent: "center" }} className="tv-gris">{error ? "Chiffres indisponibles." : "Chargement des chiffres…"}</div>}
           <div className="tv-legende">
             <span><span style={{ width: 18, height: 4, borderRadius: 2, background: "#047857" }} />Toutes les publications</span>
-            <span><span style={{ width: 18, height: 4, borderRadius: 2, background: "#7C3AED" }} />Dont citations</span>
+            <span><span style={{ width: 18, height: 4, borderRadius: 2, background: "#B45309" }} />Dont citations</span>
             <span><span style={{ width: 18, height: 0, borderTop: "3px dashed #5B6B86" }} />Planifié</span>
             <span style={{ flex: 1 }} />
             <Link href="/calendrier" style={{ fontSize: 14, fontWeight: 600, textDecoration: "none" }}>Ouvrir le calendrier →</Link>

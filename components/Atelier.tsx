@@ -10,7 +10,7 @@ import { infoRubrique } from "@/lib/marque";
 
 export const RUB: Record<RubriqueId, { nom: string; titre: string; c: [string, string]; d: string; pastille: [string, string] }> = {
   actu: { nom: "Actualité", titre: "Nouvelle actualité", c: ["#60A5FA", "#065F46"], d: "M4 5h16v14H4zM8 9h8M8 13h5", pastille: ["#D1FAE5", "#065F46"] },
-  citation: { nom: "Citation", titre: "Nouvelle citation", c: ["#C4B5FD", "#7C3AED"], d: "M7 7h4v6H5V9a2 2 0 0 1 2-2zM15 7h4v6h-6V9a2 2 0 0 1 2-2zM5 13c0 2 1 3 3 4M13 13c0 2 1 3 3 4", pastille: ["#EDE7FF", "#5B21B6"] },
+  citation: { nom: "Citation", titre: "Nouvelle citation", c: ["#FCD34D", "#B45309"], d: "M7 7h4v6H5V9a2 2 0 0 1 2-2zM15 7h4v6h-6V9a2 2 0 0 1 2-2zM5 13c0 2 1 3 3 4M13 13c0 2 1 3 3 4", pastille: ["#FEF3C7", "#92400E"] },
   cyberbase: { nom: "#CyberBase", titre: "Nouvelle #CyberBase", c: ["#5EEAD4", "#0E9F8E"], d: "M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z", pastille: ["#D5F5F0", "#0B6B60"] },
   portrait: { nom: "Portrait", titre: "Nouveau portrait", c: ["#FDBA74", "#D97706"], d: "M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21a8 8 0 0 1 16 0", pastille: ["#FEF3C7", "#9A3412"] },
 };
@@ -130,7 +130,7 @@ export function ChoixQuand({ value, onChange, libre, libreTitre = "Prochain cré
       {value === "choisir" ? (
         <label className="field" style={{ maxWidth: 320 }}>Date et heure<input type="datetime-local" value={custom} onChange={(e) => setCustom(e.target.value)} /></label>
       ) : null}
-      {note ? <span className="row" style={{ gap: 8, fontSize: 13, color: "#5B6B86" }}><span style={{ width: 8, height: 8, borderRadius: 4, background: "#7C3AED", flexShrink: 0 }} />{note}</span> : null}
+      {note ? <span className="row" style={{ gap: 8, fontSize: 13, color: "#5B6B86" }}><span style={{ width: 8, height: 8, borderRadius: 4, background: "#B45309", flexShrink: 0 }} />{note}</span> : null}
     </div>
   );
 }

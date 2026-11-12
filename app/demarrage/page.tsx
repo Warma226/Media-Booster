@@ -24,7 +24,7 @@ export default function Demarrage() {
     { href: "/sources", titre: "Vos sources de veille", texte: "Les sites que Media Booster lit pour vous trouver des sujets.", fait: (s?.customSources?.length ?? 0) > 0 },
     { href: "/themes", titre: "Vos thèmes", texte: "Les sujets qui comptent pour votre public, pour trier la veille.", fait: (s?.themes?.length ?? 0) > 0 },
     { href: "/connexions", titre: "Vos pages", texte: "Reliez votre page Facebook, LinkedIn, votre site ou TikTok.", fait: relie },
-    { href: "/declencheurs", titre: "Pilote automatique", texte: "Facultatif : laissez Media Booster publier seul les actus qui correspondent à vos règles.", fait: Boolean(s?.autopilot), facultatif: true },
+    { href: "/declencheurs", titre: "Pilote automatique", texte: "Laissez Media Booster publier seul les actus qui correspondent à vos règles.", fait: Boolean(s?.autopilot), facultatif: true },
   ];
   const faites = etapes.filter((e) => e.fait && !e.facultatif).length, total = etapes.filter((e) => !e.facultatif).length;
   const essaiFin = espace?.statut === "essai" && espace.essai_fin ? new Date(espace.essai_fin) : null;

@@ -2,7 +2,7 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 
 function secret() {
-  return process.env.APP_SECRET || process.env.APP_PASSWORD || "mb-dev-secret";
+  return process.env.APP_SECRET || "mb-dev-secret";
 }
 
 export function signParams(params: URLSearchParams): string {

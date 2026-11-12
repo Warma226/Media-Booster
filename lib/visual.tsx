@@ -20,12 +20,7 @@ export type VisualData = {
 const BLEU = "#047857";
 
 // Logo texte du média sur les visuels : son sigle (ex. « DTI ») suivi d'un point de couleur.
-// Si LOGO_URL est réglé (image PNG du logo), il est utilisé à la place.
 export function LogoMark({ size, color, dot = BLEU, texte = "" }: { size: number; color: string; dot?: string; texte?: string }) {
-  const logoUrl = process.env.LOGO_URL;
-  if (logoUrl) {
-    return <img src={logoUrl} alt="" height={size * 1.6} style={{ height: size * 1.6, objectFit: "contain" }} />;
-  }
   const t = texte.trim().toUpperCase().slice(0, 8);
   const taille = t.length > 5 ? size * (5 / t.length) : size;
   return (
