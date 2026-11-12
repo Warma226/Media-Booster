@@ -202,7 +202,7 @@ details summary { list-style-position: inside; }
   .login-brand {
     display: flex; flex-direction: column; justify-content: space-between; gap: 40px;
     padding: 48px 56px; color: #ffffff;
-    background: radial-gradient(120% 90% at 85% 15%, #1f4fbf 0%, var(--bleu-nuit) 45%, #06173d 100%);
+    background: radial-gradient(120% 90% at 85% 15%, #4B2BD6 0%, var(--bleu-nuit) 45%, #0D0728 100%);
   }
   .login-brand-body { display: flex; flex-direction: column; gap: 28px; max-width: 460px; }
   .login-headline { font-family: var(--font-archivo), var(--font-inter), sans-serif; font-weight: 800; font-size: 40px; line-height: 1.08; letter-spacing: -0.01em; }
@@ -301,7 +301,7 @@ details summary { list-style-position: inside; }
 .tv-h2 { font-family: var(--font-mont), sans-serif; font-weight: 800; font-size: 20px; color: var(--encre); }
 .tv-gris { color: var(--gris-t); font-size: 14px; }
 .tv-btn-nuit { height: 52px; padding: 0 22px; border-radius: 16px; background: var(--nuit); color: #fff; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 10px; font-weight: 700; font-size: 14px; letter-spacing: 0.04em; box-shadow: 0 10px 24px rgba(27,15,77,0.25); border: 0; cursor: pointer; }
-.tv-btn-nuit:hover { color: #fff; background: #0d3580; }
+.tv-btn-nuit:hover { color: #fff; background: #2A1572; }
 .tv-rond { width: 48px; height: 48px; border-radius: 24px; border: 1px solid var(--verre-bord); background: rgba(255,255,255,0.75); color: var(--nuit); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; position: relative; flex-shrink: 0; text-decoration: none; }
 .tv-rond .pastille { position: absolute; top: 8px; right: 9px; min-width: 10px; height: 10px; border-radius: 5px; background: var(--orange); border: 2px solid #fff; }
 .tv-recherche { flex: 1 1 260px; max-width: 460px; display: flex; align-items: center; gap: 10px; height: 48px; padding: 0 16px; border-radius: 24px; background: rgba(255,255,255,0.75); border: 1px solid var(--verre-bord); color: var(--gris-t); }
@@ -310,12 +310,14 @@ details summary { list-style-position: inside; }
 
 /* Tableau de bord */
 .tv-page { flex: 1; width: 100%; max-width: 1280px; margin: 0 auto; padding: 0 0 120px; display: flex; flex-direction: column; gap: 20px; color: var(--encre); }
-.tv-hero-mobile { background: linear-gradient(180deg, #1B0F4D 0%, #082256 100%); color: #fff; padding: 20px 18px 24px; border-radius: 0 0 32px 32px; display: flex; flex-direction: column; gap: 16px; }
+.tv-hero-mobile { background: linear-gradient(180deg, #1B0F4D 0%, #120A38 100%); color: #fff; padding: 20px 18px 24px; border-radius: 0 0 32px 32px; display: flex; flex-direction: column; gap: 16px; }
 .tv-hero-mobile .tv-rond { background: rgba(255,255,255,0.1); border: 0; color: #fff; width: 44px; height: 44px; }
 .tv-hero-mobile .tv-rond .pastille { border-color: var(--nuit); }
 .tv-pilote-mobile { display: flex; align-items: center; gap: 12px; padding: 14px; border-radius: 20px; background: rgba(255,255,255,0.1); color: #fff; text-align: left; border: 0; cursor: pointer; width: 100%; }
 .tv-corps { padding: 0 16px; display: flex; flex-direction: column; gap: 20px; }
 .tv-desk, .tv-desk-b { display: none; }
+/* Sur téléphone, les blocs réservés à l'ordinateur restent cachés même si une autre classe les affiche (.tv-entete, .tv-btn-nuit…) */
+@media (max-width: 1023px) { .tv-desk, .tv-desk-b { display: none !important; } }
 .switch.on { background: var(--bleu); justify-content: flex-end; }
 .tv-entete { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 16px; }
 .tv-titre { font-size: 42px !important; letter-spacing: -0.03em; line-height: 1.05; }
@@ -374,7 +376,7 @@ details summary { list-style-position: inside; }
 .tv-veille { display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start; }
 .tv-veille-main { flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 16px; }
 .tv-veille-side { flex: 1 1 300px; min-width: 0; display: flex; flex-direction: column; gap: 16px; }
-.tv-sujet { border-radius: 28px; padding: 22px; background: linear-gradient(135deg, #1B0F4D 0%, #123f94 100%); color: #fff; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 20px 50px rgba(27,15,77,0.25); position: relative; overflow: hidden; }
+.tv-sujet { border-radius: 28px; padding: 22px; background: linear-gradient(135deg, #1B0F4D 0%, #3A1FA8 100%); color: #fff; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 20px 50px rgba(27,15,77,0.25); position: relative; overflow: hidden; }
 .tv-sujet::after { content: ""; position: absolute; right: -60px; top: -60px; width: 220px; height: 220px; border-radius: 50%; background: radial-gradient(circle, rgba(225,29,116,0.35), rgba(225,29,116,0)); }
 .tv-sujet h2 { font-size: 24px; line-height: 1.2; color: #fff; position: relative; }
 .tv-sujet a.lien { color: #fff; text-decoration: none; }
@@ -502,7 +504,7 @@ details summary { list-style-position: inside; }
 .tv-puce[data-sorte="err"] { background: #fde3e6; color: #9f1239; } .tv-puce[data-sorte="err"] i { background: #e11d2e; }
 .tv-puce[data-sorte="brouillon"] { background: #fff; border-color: #c9d3e3; } .tv-puce[data-sorte="brouillon"] i { background: #9aa8be; }
 .tv-puce[data-sorte="vide"] { background: transparent; border: 1.5px dashed var(--orange); color: #9a3412; } .tv-puce[data-sorte="vide"] i { background: var(--orange); }
-.tv-puce[data-sorte="auto"] { background: transparent; border: 1.5px dashed #93b4f5; color: #4527D9; cursor: default; } .tv-puce[data-sorte="auto"] i { background: #93b4f5; }
+.tv-puce[data-sorte="auto"] { background: transparent; border: 1.5px dashed #B3A3F5; color: #4527D9; cursor: default; } .tv-puce[data-sorte="auto"] i { background: #B3A3F5; }
 .tv-fil { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
 .tv-fil li { display: flex; gap: 12px; padding: 10px 0; border-top: 1px solid #edf1f7; }
 .tv-fil .h { width: 44px; flex-shrink: 0; font-size: 13px; font-weight: 700; color: #33425c; padding-top: 2px; }
@@ -692,7 +694,7 @@ details summary { list-style-position: inside; }
 .tv-voix-choix select { height: 40px; }
 
 /* Studio : la scène sombre */
-.tv-studio-scene { width: 100%; max-width: 1480px; margin: 12px auto 40px; box-sizing: border-box; border-radius: 30px; padding: 18px; color: #fff; background: radial-gradient(900px 500px at 50% 0%, #123f94 0%, rgba(18,63,148,0) 70%), #120A38; box-shadow: 0 30px 70px rgba(6,26,68,0.35); display: flex; flex-direction: column; gap: 16px; }
+.tv-studio-scene { width: 100%; max-width: 1480px; margin: 12px auto 40px; box-sizing: border-box; border-radius: 30px; padding: 18px; color: #fff; background: radial-gradient(900px 500px at 50% 0%, #3A1FA8 0%, rgba(58,31,168,0) 70%), #120A38; box-shadow: 0 30px 70px rgba(6,26,68,0.35); display: flex; flex-direction: column; gap: 16px; }
 @media (max-width: 1023px) { .tv-studio-scene { border-radius: 0; margin: 0; padding: 14px 12px 120px; } }
 .tv-studio-barre { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
 .tv-verre-btn { width: 44px; height: 44px; border-radius: 14px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #fff; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
@@ -744,7 +746,7 @@ details summary { list-style-position: inside; }
 .tv-fichier .infos strong { font-size: 14px !important; }
 .tv-fichier-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 6px 10px 12px; border-top: 1px solid #edf1f7; }
 .tv-fichier-actions button { min-height: 40px; padding: 0 8px; border-radius: 10px; border: 1px solid #c9d3e3; background: #fff; font: inherit; font-size: 13px; font-weight: 700; color: var(--nuit); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
-.tv-fichier-actions button:hover:not(:disabled) { background: #F1EEFF; border-color: #93b4f5; }
+.tv-fichier-actions button:hover:not(:disabled) { background: #F1EEFF; border-color: #B3A3F5; }
 .tv-fichier-actions button.danger { color: #b42318; border-color: #f2a3ac; }
 .tv-fichier-actions button.danger:hover:not(:disabled) { background: #fdeef0; }
 .tv-fichier-actions button:disabled { color: #9aa8be; border-color: #e3e9f3; background: #f6f8fb; cursor: not-allowed; }
@@ -820,7 +822,7 @@ button.tv-etape-fixe:hover:not([aria-current="step"]) { background: rgba(27,15,7
 .tv-acces .scene { flex: 1; display: flex; align-items: center; gap: 48px; flex-wrap: wrap; }
 .tv-acces .gauche { flex: 1 1 520px; min-width: 0; max-width: 620px; display: flex; flex-direction: column; gap: 18px; }
 .tv-acces h1 { margin: 0; font-family: var(--font-mont), Montserrat, sans-serif; font-weight: 800; font-size: clamp(36px, 4.4vw, 58px); line-height: 1.02; letter-spacing: -1.8px; color: #fff; text-shadow: 0 6px 30px rgba(0,0,0,.25); }
-.tv-acces h1 span { background: linear-gradient(90deg, #ff8a4c, #E11D74 45%, #ffc9a8); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.tv-acces h1 span { background: linear-gradient(90deg, #FF5FA2, #E11D74 45%, #FFC2DD); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .tv-acces .definition { display: flex; flex-direction: column; gap: 6px; padding: 14px 18px; border-radius: 18px; background: rgba(6,26,68,.45); border: 1px solid rgba(255,255,255,.18); backdrop-filter: blur(8px); }
 .tv-acces .definition p { margin: 0; font-size: 14px; line-height: 1.5; color: #e6ecfa; }
 .tv-acces .definition p:first-child { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
@@ -855,14 +857,14 @@ button.tv-etape-fixe:hover:not([aria-current="step"]) { background: rgba(27,15,7
 .tv-acces .autocollant .anneau i { position: absolute; left: 50%; top: 0; height: 50%; transform-origin: bottom center; font-style: normal; font-size: 11px; font-weight: 900; color: #fff; }
 .tv-acces .autocollant .photo { position: absolute; inset: 26px; border-radius: 50%; border: 3px solid #fff; background: #fff url(/studio/saut.jpg) center 20% / cover; }
 .tv-acces .carte-wrap { position: relative; width: 100%; max-width: 420px; }
-.tv-acces .languette { position: absolute; left: 50%; top: -22px; transform: translateX(-50%) rotate(-8deg); width: 70px; height: 52px; border-radius: 14px; background: linear-gradient(160deg, #ff8a4c, #E11D74); }
+.tv-acces .languette { position: absolute; left: 50%; top: -22px; transform: translateX(-50%) rotate(-8deg); width: 70px; height: 52px; border-radius: 14px; background: linear-gradient(160deg, #FF5FA2, #E11D74); }
 .tv-acces .carte { position: relative; box-sizing: border-box; padding: 30px; border-radius: 28px; background: rgba(255,255,255,.95); border: 1px solid #fff; box-shadow: 0 30px 70px rgba(0,0,0,.25); display: flex; flex-direction: column; gap: 18px; }
 .tv-acces .ident { display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; }
 .tv-acces .ident strong { font-family: var(--font-mont), Montserrat, sans-serif; font-size: 22px; letter-spacing: -.4px; }
 .tv-acces .ident > span:last-child { font-size: 13px; color: #5b6b86; }
 .tv-acces .login-pass input { background: #f7f9fc; border-radius: 14px; }
 .tv-acces .maj { margin: 0; align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; padding: 7px 12px; border-radius: 12px; background: #fef3c7; color: #92400e; font-size: 12px; font-weight: 700; }
-.tv-acces .go { height: 54px; border-radius: 14px; border: 0; background: linear-gradient(180deg, #f25a14, #E11D74); color: #fff; font: inherit; font-size: 15px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer; box-shadow: 0 14px 28px rgba(225,29,116,.3); }
+.tv-acces .go { height: 54px; border-radius: 14px; border: 0; background: linear-gradient(180deg, #7C5CFF, #E11D74); color: #fff; font: inherit; font-size: 15px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer; box-shadow: 0 14px 28px rgba(225,29,116,.3); }
 .tv-acces .go:disabled { opacity: .7; cursor: wait; }
 .tv-acces .note { margin: 0; display: flex; gap: 10px; align-items: flex-start; font-size: 12px; line-height: 1.45; color: #5b6b86; }
 .tv-acces .note > svg { flex-shrink: 0; margin-top: 1px; color: #05603a; }
@@ -892,7 +894,7 @@ button.tv-etape-fixe:hover:not([aria-current="step"]) { background: rgba(27,15,7
   .tv-acces .gauche { flex: none; height: 330px; justify-content: flex-end; padding: 0 16px 60px; box-sizing: border-box; }
   .tv-acces h1 { font-size: 32px; letter-spacing: -1px; }
   .tv-acces h1 br { display: none; }
-  .tv-acces h1 span { background: none; color: #ff8a4c; }
+  .tv-acces h1 span { background: none; color: #FF5FA2; }
   .tv-acces .droite { flex: none; width: 100%; padding: 0 16px; box-sizing: border-box; margin-top: -44px; }
   .tv-acces .carte { padding: 22px; box-shadow: 0 20px 50px rgba(27,15,77,.14); }
   .tv-acces .legal { color: #5b6b86; text-shadow: none; }
@@ -916,11 +918,11 @@ button.tv-etape-fixe:hover:not([aria-current="step"]) { background: rgba(27,15,7
 .tv-acces .qui button[aria-selected="true"] { background: #fff; color: #1B0F4D; box-shadow: 0 2px 6px rgba(27,15,77,.1); }
 
 /* Mon compte */
-.tv-compte-principal { border-radius: 28px; padding: 22px; color: #fff; background: radial-gradient(90% 120% at 90% 0%, #1f4fbf 0%, #1B0F4D 55%, #120A38 100%); display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+.tv-compte-principal { border-radius: 28px; padding: 22px; color: #fff; background: radial-gradient(90% 120% at 90% 0%, #4B2BD6 0%, #1B0F4D 55%, #120A38 100%); display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
 .tv-compte-principal .etoile { position: absolute; right: -4px; bottom: -4px; width: 26px; height: 26px; border-radius: 13px; background: #E11D74; border: 3px solid #1B0F4D; display: flex; align-items: center; justify-content: center; }
 .tv-membre { display: flex; align-items: center; gap: 12px; padding: 14px 0; border-top: 1px solid #edf1f7; flex-wrap: wrap; }
 .tv-membre[data-statut="suspendu"] { opacity: .65; }
-.tv-membre select { height: 38px; padding: 0 10px; border-radius: 12px; border: 0; background: #e0eaff; color: #1e3a8a; font: inherit; font-size: 13px; font-weight: 800; }
+.tv-membre select { height: 38px; padding: 0 10px; border-radius: 12px; border: 0; background: #ECE6FF; color: #3B1F8A; font: inherit; font-size: 13px; font-weight: 800; }
 .tv-lien-invit { display: flex; flex-direction: column; gap: 8px; padding: 12px 14px; border-radius: 14px; background: #f4f7fc; border: 1px dashed #c9d3e3; }
 .tv-lien-invit code { font-size: 12px; word-break: break-all; color: #1B0F4D; }
 .tv-droits { width: 100%; border-collapse: collapse; font-size: 13px; }
@@ -962,7 +964,7 @@ button.tv-etape-fixe:hover:not([aria-current="step"]) { background: rgba(27,15,7
 .tv-ap-cote { flex: 1 1 240px; max-width: 320px; min-width: 0; display: flex; flex-direction: column; gap: 12px; padding-top: 12px; }
 .tv-ap-cote .bloc { border-radius: 20px; padding: 16px; background: #fff; display: flex; flex-direction: column; gap: 10px; }
 .tv-ap-cote .texte { font-size: 14px; line-height: 1.55; color: #150E33; white-space: pre-wrap; overflow-wrap: anywhere; max-height: 420px; overflow-y: auto; overflow-x: hidden; }
-.tv-ap-quand { border-radius: 28px; padding: 22px; color: #fff; background: radial-gradient(90% 120% at 90% 0%, #1f4fbf 0%, #1B0F4D 55%, #120A38 100%); display: flex; flex-direction: column; gap: 12px; }
+.tv-ap-quand { border-radius: 28px; padding: 22px; color: #fff; background: radial-gradient(90% 120% at 90% 0%, #4B2BD6 0%, #1B0F4D 55%, #120A38 100%); display: flex; flex-direction: column; gap: 12px; }
 .tv-ap-quand.pub { background: radial-gradient(90% 120% at 90% 0%, #16a34a 0%, #0b5d34 55%, #063b22 100%); }
 .tv-ap-quand.err { background: radial-gradient(90% 120% at 90% 0%, #E11D74 0%, #8a2a04 60%, #4a1702 100%); }
 .tv-ap-quand .tv-kicker { color: #FF9CC6; letter-spacing: 2px; }
@@ -1022,7 +1024,7 @@ button.tv-etape-fixe:hover:not([aria-current="step"]) { background: rgba(27,15,7
 .tv-vid-etapes b { flex: 0 0 24px; height: 24px; border-radius: 8px; background: #E11D74; color: #fff; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; }
 .tv-vid-modale { position: fixed; inset: 0; z-index: 80; background: rgba(6,26,68,0.55); display: flex; align-items: center; justify-content: center; padding: 16px; }
 .tv-vid-modale .boite { width: min(560px, 100%); max-height: calc(100vh - 32px); overflow: auto; background: #fff; border-radius: 24px; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
-.tv-vid-depot { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 26px; border: 2px dashed #9DB3DD; border-radius: 18px; cursor: pointer; text-align: center; color: #1B0F4D; }
+.tv-vid-depot { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 26px; border: 2px dashed #B5AADD; border-radius: 18px; cursor: pointer; text-align: center; color: #1B0F4D; }
 .tv-vid-depot span { font-size: 12px; color: #5B6B86; }
 .tv-vid-depot input { display: none; }
 @media (max-width: 900px) { .tv-vid-liste, .tv-vid-side { max-width: none; } }

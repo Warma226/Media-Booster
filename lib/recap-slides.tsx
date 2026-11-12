@@ -164,7 +164,7 @@ function fin(base: string) {
 
 function Vignette({ photo, categorie, w, h }: { photo?: string; categorie?: string; w: number; h: number }) {
   return (
-    <div style={{ display: "flex", position: "relative", width: w, height: h, overflow: "hidden", borderRadius: 6, background: "#1E3A8A", boxShadow: "0 4px 10px rgba(0,0,0,0.25)" }}>
+    <div style={{ display: "flex", position: "relative", width: w, height: h, overflow: "hidden", borderRadius: 6, background: "#3B1F8A", boxShadow: "0 4px 10px rgba(0,0,0,0.25)" }}>
       {photo ? (
         <img src={photo} alt="" width={w} height={h} style={{ position: "absolute", left: 0, top: 0, width: w, height: h, objectFit: "cover" }} />
       ) : (
